@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{AFF60ED7-B5B8-456E-AE00-0B3D87F81937}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NppMarkdownPanel</RootNamespace>
+    <AssemblyName>NppMarkdownPanel</AssemblyName>
+    <OutputPath>bin\Debug\</OutputPath>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug-x64</OutputPath>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release-x64</OutputPath>
+    <DebugType>pdbonly</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x64</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Default values for debugging sso it start correct version of Notepad++
+         $(ProgramW6432) and $(MSBuildProgramFiles32) points to the 64 and 32 bit "Program Files" directories -->
+    <StartAction>Program</StartAction>
+    <StartProgram Condition="'$(Platform)'=='x64'">$(ProgramW6432)\Notepad++\notepad++.exe</StartProgram>
+    <StartProgram Condition="'$(Platform)'=='x86'">$(MSBuildProgramFiles32)\Notepad++\notepad++.exe</StartProgram>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CommonMark\CommonMarkAdditionalFeatures.cs" />
+    <Compile Include="CommonMark\CommonMarkConverter.cs" />
+    <Compile Include="CommonMark\CommonMarkException.cs" />
+    <Compile Include="CommonMark\CommonMarkSettings.cs" />
+    <Compile Include="CommonMark\Formatters\HtmlFormatter.cs" />
+    <Compile Include="CommonMark\Formatters\HtmlFormatterSlim.cs" />
+    <Compile Include="CommonMark\Formatters\HtmlTextWriter.cs" />
+    <Compile Include="CommonMark\Formatters\Printer.cs" />
+    <Compile Include="CommonMark\Func.cs" />
+    <Compile Include="CommonMark\Lazy.cs" />
+    <Compile Include="CommonMark\OutputFormat.cs" />
+    <Compile Include="CommonMark\Parser\BlockMethods.cs" />
+    <Compile Include="CommonMark\Parser\EntityDecoder.cs" />
+    <Compile Include="CommonMark\Parser\InlineMethods.cs" />
+    <Compile Include="CommonMark\Parser\InlineStack.cs" />
+    <Compile Include="CommonMark\Parser\LineInfo.cs" />
+    <Compile Include="CommonMark\Parser\PositionOffset.cs" />
+    <Compile Include="CommonMark\Parser\PositionTracker.cs" />
+    <Compile Include="CommonMark\Parser\Scanner.cs" />
+    <Compile Include="CommonMark\Parser\ScannerCharacterMatcher.cs" />
+    <Compile Include="CommonMark\Parser\ScannerHtmlTag.cs" />
+    <Compile Include="CommonMark\Parser\Subject.cs" />
+    <Compile Include="CommonMark\Parser\TabTextReader.cs" />
+    <Compile Include="CommonMark\Syntax\Block.cs" />
+    <Compile Include="CommonMark\Syntax\BlockTag.cs" />
+    <Compile Include="CommonMark\Syntax\DocumentData.cs" />
+    <Compile Include="CommonMark\Syntax\EmphasisData.cs" />
+    <Compile Include="CommonMark\Syntax\Enumerable.cs" />
+    <Compile Include="CommonMark\Syntax\EnumeratorEntry.cs" />
+    <Compile Include="CommonMark\Syntax\FencedCodeData.cs" />
+    <Compile Include="CommonMark\Syntax\HeadingData.cs" />
+    <Compile Include="CommonMark\Syntax\HtmlBlockType.cs" />
+    <Compile Include="CommonMark\Syntax\Inline.cs" />
+    <Compile Include="CommonMark\Syntax\InlineContentLinkable.cs" />
+    <Compile Include="CommonMark\Syntax\InlineTag.cs" />
+    <Compile Include="CommonMark\Syntax\ListData.cs" />
+    <Compile Include="CommonMark\Syntax\ListDelimiter.cs" />
+    <Compile Include="CommonMark\Syntax\ListType.cs" />
+    <Compile Include="CommonMark\Syntax\Reference.cs" />
+    <Compile Include="CommonMark\Syntax\StringContent.cs" />
+    <Compile Include="CommonMark\Syntax\StringContentPart.cs" />
+    <Compile Include="CommonMark\Utilities.cs" />
+    <Compile Include="Forms\MainResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MarkdownPreviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MarkdownPreviewForm.Designer.cs">
+      <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MarkdownPanelController.cs" />
+    <Compile Include="PluginInfrastructure\ClikeStringArray.cs" />
+    <Compile Include="PluginInfrastructure\DllExport\DllExportAttribute.cs" />
+    <Compile Include="PluginInfrastructure\Win32.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="PluginInfrastructure\GatewayDomain.cs" />
+    <Compile Include="PluginInfrastructure\NotepadPPGateway.cs" />
+    <Compile Include="PluginInfrastructure\ScintillaGateway.cs" />
+    <Compile Include="PluginInfrastructure\IScintillaGateway.cs" />
+    <Compile Include="PluginInfrastructure\NppPluginNETBase.cs" />
+    <Compile Include="PluginInfrastructure\NppPluginNETHelper.cs" />
+    <Compile Include="PluginInfrastructure\Docking_h.cs" />
+    <Compile Include="PluginInfrastructure\MenuCmdID_h.cs" />
+    <Compile Include="PluginInfrastructure\Scintilla_iface.cs" />
+    <Compile Include="PluginInfrastructure\Msgs_h.cs" />
+    <Compile Include="PluginInfrastructure\Preference_h.cs" />
+    <Compile Include="PluginInfrastructure\Resource_h.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\MainResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MainResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MarkdownPreviewForm.resx">
+      <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\32x20.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\markdown-16x16-solid.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\markdown-16x16-solid.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildProjectDirectory)\PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
