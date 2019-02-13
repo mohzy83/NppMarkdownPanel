@@ -162,9 +162,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\32x20.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\markdown-16x16-solid.png" />
   </ItemGroup>
   <ItemGroup>

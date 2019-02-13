@@ -31,14 +31,12 @@
             this.panelPreview = new System.Windows.Forms.Panel();
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.btnPrintPreview = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.panelPreview.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPreview
             // 
             this.panelPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelPreview.Controls.Add(this.button1);
             this.panelPreview.Controls.Add(this.webBrowserPreview);
             this.panelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPreview.Location = new System.Drawing.Point(0, 0);
@@ -70,17 +68,6 @@
             this.btnPrintPreview.Text = "Print Preview";
             this.btnPrintPreview.UseVisualStyleBackColor = true;
             this.btnPrintPreview.Visible = false;
-            this.btnPrintPreview.Click += new System.EventHandler(this.btnPrintPreview_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(633, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(67, 36);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Zoom";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // MarkdownPreviewForm
             // 
@@ -102,6 +89,5 @@
         private System.Windows.Forms.Panel panelPreview;
         private System.Windows.Forms.WebBrowser webBrowserPreview;
         private System.Windows.Forms.Button btnPrintPreview;
-        private System.Windows.Forms.Button button1;
     }
 }

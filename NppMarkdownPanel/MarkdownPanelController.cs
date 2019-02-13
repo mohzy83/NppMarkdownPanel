@@ -15,23 +15,26 @@ namespace NppMarkdownPanel
 {
     public class MarkdownPanelController
     {
-        public IScintillaGateway ScintillaGateway { get; protected set; }
-        public INotepadPPGateway NotepadPPGateway { get; protected set; }
         private MarkdownPreviewForm markdownPreviewForm;
-
-        //private string iniFilePath = null;
-        //private bool someSetting = false;
+        private Timer renderTimer;
 
         private int idMyDlg = -1;
+        private const int renderRefreshRateMilliSeconds = 600;
 
         private bool isPanelVisible;
         private bool isUpdating = false;
 
+        private IScintillaGateway scintillaGateway;
+        private INotepadPPGateway notepadPPGateway;
+
         public MarkdownPanelController()
         {
-            ScintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
-            NotepadPPGateway = new NotepadPPGateway();
-            markdownPreviewForm = new MarkdownPreviewForm();
+            scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            notepadPPGateway = new NotepadPPGateway();
+            markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction);
+            renderTimer = new Timer();
+            renderTimer.Interval = renderRefreshRateMilliSeconds;
+            renderTimer.Tick += OnTimedEvent;
         }
 
         public void OnNotification(ScNotification notification)
@@ -43,16 +46,9 @@ namespace NppMarkdownPanel
                     //Update the view
                     //Update((notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0);
                     //bool scrollbarUpdated = (notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0;
-                    //if (!scrollbarUpdated)
-                    //    RenderMarkdown();
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
-                    //Update the scintilla handle in all cases to keep track of which instance is active
-                    //UpdateEditorInformation();
-                    //((ScintillaGateway)ScintillaGateway).CurrentBufferID = notification.Header.IdFrom;
-                    //Update(true, true);
-                    //mdfilename = 
                     RenderMarkdown();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
@@ -68,32 +64,29 @@ namespace NppMarkdownPanel
 
         private void RenderMarkdown()
         {
+            // Start if the timer is not already running
+            if (!renderTimer.Enabled) renderTimer.Enabled = true;
+        }
+
+        private void OnTimedEvent(object source, EventArgs e)
+        {
+            renderTimer.Enabled = false;
             try
             {
                 if (!isUpdating)
                 {
                     isUpdating = true;
-                    markdownPreviewForm.RenderMarkdown(ScintillaGateway.GetText(ScintillaGateway.GetLength()), NotepadPPGateway.GetCurrentFilePath());
+                    markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength()), notepadPPGateway.GetCurrentFilePath());
                     isUpdating = false;
                 }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-
             }
-
         }
 
         public void InitCommandMenu()
         {
-
-            //StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
-            //Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
-            //iniFilePath = sbIniFilePath.ToString();
-            //if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
-            //iniFilePath = Path.Combine(iniFilePath, Main.PluginName + ".ini");
-            //someSetting = (Win32.GetPrivateProfileInt("SomeSection", "SomeKey", 0, iniFilePath) != 0);
-
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
             idMyDlg = 1;
@@ -123,7 +116,6 @@ namespace NppMarkdownPanel
 
         private void TogglePanelVisible()
         {
-
             if (!initDialog)
             {
                 NppTbData _nppTbData = new NppTbData();
@@ -161,6 +153,14 @@ namespace NppMarkdownPanel
                 g.DrawImage(bitmapImage, new Rectangle(0, 0, 16, 16), 0, 0, 16, 16, GraphicsUnit.Pixel, attr);
                 return Icon.FromHandle(newBmp.GetHicon());
             }
+        }
+
+        /// <summary>
+        /// Actions to do after the tool window was closed
+        /// </summary>
+        private void ToolWindowCloseAction()
+        {
+            TogglePanelVisible();
         }
 
     }

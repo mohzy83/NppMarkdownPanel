@@ -1,4 +1,5 @@
 ﻿using CommonMark;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,9 +38,15 @@ namespace NppMarkdownPanel.Forms
         private string currentText;
         private string filepath;
         private Task<string> renderTask;
+        private bool dpiAdjusted;
+        private Action toolWindowCloseAction;
+        private int lastScrollPosition;
 
-        public MarkdownPreviewForm()
+        public int WM_NOTIFY { get; private set; }
+
+        public MarkdownPreviewForm(Action toolWindowCloseAction)
         {
+            this.toolWindowCloseAction = toolWindowCloseAction;
             InitializeComponent();
             CommonMarkSettings.Default.UriResolver =
                 (fname) =>
@@ -80,17 +88,23 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private void btnPrintPreview_Click(object sender, EventArgs e)
-        {
-            webBrowserPreview.ShowPrintPreviewDialog();
-        }
-
         private void webBrowserPreview_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-
+            if (!dpiAdjusted)
+            {
+                dpiAdjusted = true;
+                ZoomBrowserForCurrentDpi();
+            }
+            else
+            {             
+                // jump to last scroll position
+            }
+            webBrowserPreview.Document.Window.ScrollTo(0, lastScrollPosition);
+            Cursor.Current = Cursors.IBeam;
+            Application.DoEvents();
         }
 
-        private void ZoomBrowser()
+        private void ZoomBrowserForCurrentDpi()
         {
             float dpiX, dpiY;
             using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
@@ -105,9 +119,35 @@ namespace NppMarkdownPanel.Forms
             browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, browserZoom, IntPtr.Zero);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NMHDR
         {
-            ZoomBrowser();
+            public IntPtr hwndFrom;
+            public IntPtr idFrom;
+            public int code;
         }
+
+        public enum WindowsMessage
+        {
+            WM_NOTIFY = 0x004E
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            //Listen for the closing of the dockable panel to toggle the toolbar icon
+            switch (m.Msg)
+            {
+                case (int)WindowsMessage.WM_NOTIFY:
+                    var notify = (NMHDR)Marshal.PtrToStructure(m.LParam, typeof(NMHDR));
+                    if (notify.code == (int)DockMgrMsg.DMN_CLOSE)
+                    {
+                        toolWindowCloseAction();
+                    }
+                    break;
+            }
+            //Continue the processing, as we only toggle
+            base.WndProc(ref m);
+        }
+
     }
 }
