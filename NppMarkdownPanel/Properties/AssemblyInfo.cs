@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NppMarkdownPanel")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Plugin to preview markdown files")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MyName")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NppMarkdownPanel")]
-[assembly: AssemblyCopyright("Copyright © MyName 2011")]
+[assembly: AssemblyCopyright("Copyright © Moritz Hasse 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

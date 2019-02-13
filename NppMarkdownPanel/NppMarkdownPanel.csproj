@@ -170,6 +170,17 @@
   <ItemGroup>
     <None Include="Resources\markdown-16x16-solid.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildProjectDirectory)\PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
