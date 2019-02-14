@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.panelPreview = new System.Windows.Forms.Panel();
+            this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.btnPrintPreview = new System.Windows.Forms.Button();
-            this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
             this.panelPreview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScreenshot)).BeginInit();
             this.SuspendLayout();
@@ -48,6 +48,16 @@
             this.panelPreview.Size = new System.Drawing.Size(813, 602);
             this.panelPreview.TabIndex = 0;
             // 
+            // pictureBoxScreenshot
+            // 
+            this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxScreenshot.Name = "pictureBoxScreenshot";
+            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 600);
+            this.pictureBoxScreenshot.TabIndex = 1;
+            this.pictureBoxScreenshot.TabStop = false;
+            this.pictureBoxScreenshot.Visible = false;
+            // 
             // webBrowserPreview
             // 
             this.webBrowserPreview.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -58,6 +68,7 @@
             this.webBrowserPreview.Size = new System.Drawing.Size(811, 600);
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
+
             // 
             // btnPrintPreview
             // 
@@ -71,16 +82,6 @@
             this.btnPrintPreview.Text = "Print Preview";
             this.btnPrintPreview.UseVisualStyleBackColor = true;
             this.btnPrintPreview.Visible = false;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxScreenshot.Name = "pictureBox1";
-            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 600);
-            this.pictureBoxScreenshot.TabIndex = 1;
-            this.pictureBoxScreenshot.TabStop = false;
-            this.pictureBoxScreenshot.Visible = false;
             // 
             // MarkdownPreviewForm
             // 

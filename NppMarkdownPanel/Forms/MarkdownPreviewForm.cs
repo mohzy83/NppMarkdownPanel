@@ -199,5 +199,6 @@ namespace NppMarkdownPanel.Forms
             //Continue the processing, as we only toggle
             base.WndProc(ref m);
         }
+
     }
 }
