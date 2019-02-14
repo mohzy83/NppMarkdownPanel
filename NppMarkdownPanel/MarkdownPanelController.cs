@@ -19,10 +19,12 @@ namespace NppMarkdownPanel
         private Timer renderTimer;
 
         private int idMyDlg = -1;
-        private const int renderRefreshRateMilliSeconds = 600;
+
+        private const int renderRefreshRateMilliSeconds = 500;
+        private const int inputUpdateThresholdMiliseconds = 400;
+        private int lastTickCount = 0;
 
         private bool isPanelVisible;
-        private bool isUpdating = false;
 
         private IScintillaGateway scintillaGateway;
         private INotepadPPGateway notepadPPGateway;
@@ -34,7 +36,7 @@ namespace NppMarkdownPanel
             markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction);
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
-            renderTimer.Tick += OnTimedEvent;
+            renderTimer.Tick += OnRenderTimerElapsed;
         }
 
         public void OnNotification(ScNotification notification)
@@ -55,30 +57,35 @@ namespace NppMarkdownPanel
                 {
                     bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
                     bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
-
-                    //Track if any text modifications have been made
-                    if (isInsert || isDelete) RenderMarkdown();
+                    // Any modifications made ?
+                    if (isInsert || isDelete)
+                    {
+                        lastTickCount = Environment.TickCount;
+                        RenderMarkdown();
+                    }
                 }
             }
         }
 
         private void RenderMarkdown()
         {
-            // Start if the timer is not already running
-            if (!renderTimer.Enabled) renderTimer.Enabled = true;
+            // if we get a lot of key stroks within a short period, dont update preview
+            var currentDeltaMilliseconds = Environment.TickCount - lastTickCount;
+            if (currentDeltaMilliseconds < inputUpdateThresholdMiliseconds)
+            {
+                // Reset Timer
+                renderTimer.Stop();
+            }
+            renderTimer.Start();
+            lastTickCount = Environment.TickCount;
         }
 
-        private void OnTimedEvent(object source, EventArgs e)
+        private void OnRenderTimerElapsed(object source, EventArgs e)
         {
-            renderTimer.Enabled = false;
+            renderTimer.Stop();
             try
             {
-                if (!isUpdating)
-                {
-                    isUpdating = true;
-                    markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength()), notepadPPGateway.GetCurrentFilePath());
-                    isUpdating = false;
-                }
+                markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength()), notepadPPGateway.GetCurrentFilePath());
             }
             catch (Exception ex)
             {
@@ -109,7 +116,17 @@ namespace NppMarkdownPanel
 
         private void ShowAboutDialog()
         {
-            MessageBox.Show("NppMarkdownPanel for Notepad++\nCreated by Mohzy 2019\nGithub: https://github.com/mohzy83/NppMarkdownPanel", "About");
+            MessageBox.Show(
+                "NppMarkdownPanel for Notepad++\n"+
+                "Created by Mohzy 2019\n"+                
+                "Github: https://github.com/mohzy83/NppMarkdownPanel\n"+
+                "\n" +
+                "Using markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css\n"+
+                "\n" +
+                "Using CommonMark.NET by Knagis - https://github.com/Knagis/CommonMark.NET\n"+
+                "\n" +
+                "Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - https://github.com/nea/MarkdownViewerPlusPlus"
+                , "About");
         }
 
         private bool initDialog;

@@ -40,7 +40,7 @@ namespace NppMarkdownPanel.Forms
         private Task<string> renderTask;
         private bool dpiAdjusted;
         private Action toolWindowCloseAction;
-        private int lastScrollPosition;
+
 
         public int WM_NOTIFY { get; private set; }
 
@@ -82,7 +82,7 @@ namespace NppMarkdownPanel.Forms
                 renderTask.ContinueWith((renderedText) =>
                 {
                     webBrowserPreview.DocumentText = renderedText.Result;
-
+                    AdjustZoomForCurrentDpi();
                 }, context);
                 renderTask.Start();
             }
@@ -90,33 +90,32 @@ namespace NppMarkdownPanel.Forms
 
         private void webBrowserPreview_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (!dpiAdjusted)
-            {
-                dpiAdjusted = true;
-                ZoomBrowserForCurrentDpi();
-            }
-            else
-            {             
-                // jump to last scroll position
-            }
-            webBrowserPreview.Document.Window.ScrollTo(0, lastScrollPosition);
             Cursor.Current = Cursors.IBeam;
             Application.DoEvents();
         }
 
-        private void ZoomBrowserForCurrentDpi()
+        /// <summary>
+        /// Increase Zoomlevel in case of higher DPI settings
+        /// </summary>
+        private void AdjustZoomForCurrentDpi()
         {
-            float dpiX, dpiY;
-            using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+            Application.DoEvents();
+            if (!dpiAdjusted)
             {
-                dpiX = graphics.DpiX;
-                dpiY = graphics.DpiY;
-            }
+                dpiAdjusted = true;
+                float dpiX, dpiY;
+                using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
+                {
+                    dpiX = graphics.DpiX;
+                    dpiY = graphics.DpiY;
+                }
 
-            float zoomfactor = 120 * (dpiX / 96);
-            int browserZoom = Convert.ToInt32(zoomfactor);
-            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
-            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, browserZoom, IntPtr.Zero);
+                float zoomfactor = 120 * (dpiX / 96);
+                int browserZoom = Convert.ToInt32(zoomfactor);
+                var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
+                browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, browserZoom, IntPtr.Zero);
+                webBrowserPreview.Document.Window.ScrollTo(0, 0);
+            }
         }
 
         [StructLayout(LayoutKind.Sequential)]
