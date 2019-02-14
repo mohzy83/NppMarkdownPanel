@@ -122,6 +122,7 @@
     <Compile Include="Forms\MarkdownPreviewForm.Designer.cs">
       <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ActiveXScreenShotMaker.cs" />
     <Compile Include="MarkdownPanelController.cs" />
     <Compile Include="PluginInfrastructure\ClikeStringArray.cs" />
     <Compile Include="PluginInfrastructure\DllExport\DllExportAttribute.cs" />

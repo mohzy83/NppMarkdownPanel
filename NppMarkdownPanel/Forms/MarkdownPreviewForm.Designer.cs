@@ -31,12 +31,15 @@
             this.panelPreview = new System.Windows.Forms.Panel();
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.btnPrintPreview = new System.Windows.Forms.Button();
+            this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
             this.panelPreview.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScreenshot)).BeginInit();
             this.SuspendLayout();
             // 
             // panelPreview
             // 
             this.panelPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelPreview.Controls.Add(this.pictureBoxScreenshot);
             this.panelPreview.Controls.Add(this.webBrowserPreview);
             this.panelPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelPreview.Location = new System.Drawing.Point(0, 0);
@@ -69,6 +72,16 @@
             this.btnPrintPreview.UseVisualStyleBackColor = true;
             this.btnPrintPreview.Visible = false;
             // 
+            // pictureBox1
+            // 
+            this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxScreenshot.Name = "pictureBox1";
+            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 600);
+            this.pictureBoxScreenshot.TabIndex = 1;
+            this.pictureBoxScreenshot.TabStop = false;
+            this.pictureBoxScreenshot.Visible = false;
+            // 
             // MarkdownPreviewForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
@@ -80,6 +93,7 @@
             this.Name = "MarkdownPreviewForm";
             this.Text = "MarkdownPreviewForm";
             this.panelPreview.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScreenshot)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -89,5 +103,6 @@
         private System.Windows.Forms.Panel panelPreview;
         private System.Windows.Forms.WebBrowser webBrowserPreview;
         private System.Windows.Forms.Button btnPrintPreview;
+        private System.Windows.Forms.PictureBox pictureBoxScreenshot;
     }
 }

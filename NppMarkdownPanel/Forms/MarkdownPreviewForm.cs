@@ -40,9 +40,7 @@ namespace NppMarkdownPanel.Forms
         private Task<string> renderTask;
         private bool dpiAdjusted;
         private Action toolWindowCloseAction;
-
-
-        public int WM_NOTIFY { get; private set; }
+        int lastVerticalScroll = 0;
 
         public MarkdownPreviewForm(Action toolWindowCloseAction)
         {
@@ -70,6 +68,9 @@ namespace NppMarkdownPanel.Forms
         {
             if (renderTask == null || renderTask.IsCompleted)
             {
+                SaveLastVerticalScrollPosition();
+                MakeAndDisplayScreenShot();
+
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
                 renderTask = new Task<string>(() =>
                 {
@@ -77,7 +78,9 @@ namespace NppMarkdownPanel.Forms
                     this.filepath = filepath;
                     var result = CommonMarkConverter.Convert(currentText);
                     var defaultBodyStyle = "";
-                    return string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MainResources.DefaultCss, defaultBodyStyle, result);
+                    var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MainResources.DefaultCss, defaultBodyStyle, result);
+                    return rr;
+
                 });
                 renderTask.ContinueWith((renderedText) =>
                 {
@@ -87,11 +90,50 @@ namespace NppMarkdownPanel.Forms
                 renderTask.Start();
             }
         }
+        /// <summary>
+        /// Makes and displays a screenshot of the current browser content to prevent it from flickering 
+        /// while loading updated content
+        /// </summary>
+        private void MakeAndDisplayScreenShot()
+        {
+            Bitmap screenshot = new Bitmap(webBrowserPreview.Width, webBrowserPreview.Height);
+            ActiveXScreenShotMaker.GetImage(webBrowserPreview.ActiveXInstance, screenshot, Color.White);
+            pictureBoxScreenshot.Image = screenshot;
+            pictureBoxScreenshot.Visible = true;
+        }
+
+        /// <summary>
+        /// Saves the last vertical scrollpositions, after reloading the position will be 0
+        /// </summary>
+        private void SaveLastVerticalScrollPosition()
+        {
+            if (webBrowserPreview.Document != null)
+            {
+                try
+                {
+                    lastVerticalScroll = webBrowserPreview.Document.GetElementsByTagName("HTML")[0].ScrollTop;
+                }
+                catch { }
+            }
+        }
 
         private void webBrowserPreview_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
             Cursor.Current = Cursors.IBeam;
+            GoToLastVerticalScrollPosition();
+            HideScreenshotAndShowBrowser();
+        }
+
+        private void GoToLastVerticalScrollPosition()
+        {
+            webBrowserPreview.Document.Window.ScrollTo(0, lastVerticalScroll);
             Application.DoEvents();
+        }
+
+        private void HideScreenshotAndShowBrowser()
+        {
+            pictureBoxScreenshot.Visible = false;
+            pictureBoxScreenshot.Image = null;
         }
 
         /// <summary>
@@ -117,6 +159,16 @@ namespace NppMarkdownPanel.Forms
                 webBrowserPreview.Document.Window.ScrollTo(0, 0);
             }
         }
+
+        //public void ScrollByRatioVertically(double scrollRatio)
+        //{
+        //    if (webBrowserPreview.Document != null)
+        //    {
+        //        var rect = webBrowserPreview.Document.Body.ScrollRectangle;
+        //        int verticalScroll = (int)((rect.Height - webBrowserPreview.Height) * scrollRatio);
+        //        webBrowserPreview.Document.Window.ScrollTo(0, verticalScroll);
+        //    }
+        //}
 
         [StructLayout(LayoutKind.Sequential)]
         public struct NMHDR
@@ -147,6 +199,5 @@ namespace NppMarkdownPanel.Forms
             //Continue the processing, as we only toggle
             base.WndProc(ref m);
         }
-
     }
 }

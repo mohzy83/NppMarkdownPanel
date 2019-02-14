@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace NppMarkdownPanel
 {
@@ -43,13 +44,16 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
-                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
-                {
-                    //Update the view
-                    //Update((notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0);
-                    //bool scrollbarUpdated = (notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0;
-                }
-                else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+                //if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
+                //{
+                //    bool scrollbarUpdated = (notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0;
+                //    if (scrollbarUpdated)
+                //    {
+                //        UpdateScrollBar();
+                //    }
+                //}
+                //else 
+                if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     RenderMarkdown();
                 }
@@ -92,6 +96,32 @@ namespace NppMarkdownPanel
             }
         }
 
+        //private void UpdateScrollBar()
+        //{
+        //    try
+        //    {
+        //        ScrollInfo scrollInfo = this.scintillaGateway.GetScrollInfo(ScrollInfoMask.SIF_ALL, ScrollInfoBar.SB_VERT);
+        //        double totalRange = scrollInfo.nMax - scrollInfo.nMin + 1;
+        //        double scrollRatio;
+
+        //        // Is "Enable scrolling beyond last line" checked?
+        //        if (scintillaGateway.GetEndAtLastLine() == false)
+        //        {
+        //            var actualThumbHeight = totalRange / (totalRange / scrollInfo.nPage - 1);
+        //            var actualTrackPos = Math.Max(scrollInfo.nTrackPos, scrollInfo.nPos) * actualThumbHeight / scrollInfo.nPage;
+
+        //            scrollRatio = Math.Min(1, actualTrackPos / (totalRange - actualThumbHeight));
+        //        }
+        //        else
+        //        {
+        //            scrollRatio = Math.Max(scrollInfo.nTrackPos, scrollInfo.nPos) / (totalRange - scrollInfo.nPage);
+        //        }
+
+        //        markdownPreviewForm.ScrollByRatioVertically(scrollRatio);
+        //    }
+        //    catch { }
+        //}
+
         public void InitCommandMenu()
         {
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
@@ -117,13 +147,13 @@ namespace NppMarkdownPanel
         private void ShowAboutDialog()
         {
             MessageBox.Show(
-                "NppMarkdownPanel for Notepad++\n"+
-                "Created by Mohzy 2019\n"+                
-                "Github: https://github.com/mohzy83/NppMarkdownPanel\n"+
+                "NppMarkdownPanel for Notepad++\n" +
+                "Created by Mohzy 2019\n" +
+                "Github: https://github.com/mohzy83/NppMarkdownPanel\n" +
                 "\n" +
-                "Using markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css\n"+
+                "Using markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css\n" +
                 "\n" +
-                "Using CommonMark.NET by Knagis - https://github.com/Knagis/CommonMark.NET\n"+
+                "Using CommonMark.NET by Knagis - https://github.com/Knagis/CommonMark.NET\n" +
                 "\n" +
                 "Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - https://github.com/nea/MarkdownViewerPlusPlus"
                 , "About");
@@ -179,6 +209,5 @@ namespace NppMarkdownPanel
         {
             TogglePanelVisible();
         }
-
     }
 }
