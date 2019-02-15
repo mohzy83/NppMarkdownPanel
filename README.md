@@ -6,9 +6,13 @@ Plugin to preview Markdown files in Notepad++
 
 Using **CommonMark.NET** by Knagis - [https://github.com/Knagis/CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
 
+Using **NotepadPlusPlusPluginPack.Net** by kbilsted - [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)	
+
 Using Markdown style **github-markdown-css** by sindresorhus - [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)
 
 Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)
+
+Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark) 
 
 ## Installation
 
@@ -25,3 +29,4 @@ Just click it to show the markdown preview. Click again to hide the preview.
 Thats all you need to do ;)
 
 ![npp-preview](help/npp-preview.png "Layout of the plugin folder after installation")
+
