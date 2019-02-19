@@ -89,7 +89,7 @@ namespace NppMarkdownPanel
             renderTimer.Stop();
             try
             {
-                markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength()), notepadPPGateway.GetCurrentFilePath());
+                markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength() + 1), notepadPPGateway.GetCurrentFilePath());
             }
             catch (Exception ex)
             {
