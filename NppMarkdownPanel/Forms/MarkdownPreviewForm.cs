@@ -40,7 +40,7 @@ namespace NppMarkdownPanel.Forms
         private Task<string> renderTask;
         private bool dpiAdjusted;
         private Action toolWindowCloseAction;
-        int lastVerticalScroll = 0;
+        private int lastVerticalScroll = 0;
 
         public MarkdownPreviewForm(Action toolWindowCloseAction)
         {
@@ -134,6 +134,18 @@ namespace NppMarkdownPanel.Forms
         {
             pictureBoxScreenshot.Visible = false;
             pictureBoxScreenshot.Image = null;
+        }
+
+        public void ScrollToChildWithIndex(int elementIndex)
+        {
+            Application.DoEvents();
+            if (webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null && webBrowserPreview.Document.Body.Children.Count > elementIndex - 1)
+            {
+                var currentTop = webBrowserPreview.Document.GetElementsByTagName("HTML")[0].ScrollTop;
+                var child = webBrowserPreview.Document.Body.Children[elementIndex - 1];
+
+                if (child != null && (child.OffsetRectangle.Top < currentTop || child.OffsetRectangle.Bottom > currentTop + webBrowserPreview.Height)) child.ScrollIntoView(true);
+            }
         }
 
         /// <summary>

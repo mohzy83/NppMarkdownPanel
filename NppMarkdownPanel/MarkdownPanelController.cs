@@ -1,4 +1,5 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using CommonMark;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Forms;
 using System;
 using System.Collections.Generic;
@@ -44,15 +45,11 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
-                //if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
-                //{
-                //    bool scrollbarUpdated = (notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) != 0;
-                //    if (scrollbarUpdated)
-                //    {
-                //        UpdateScrollBar();
-                //    }
-                //}
-                //else 
+                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
+                {
+                    ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
+                }
+                else
                 if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     RenderMarkdown();
@@ -89,38 +86,36 @@ namespace NppMarkdownPanel
             renderTimer.Stop();
             try
             {
-                markdownPreviewForm.RenderMarkdown(scintillaGateway.GetText(scintillaGateway.GetLength() + 1), notepadPPGateway.GetCurrentFilePath());
+                markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
             }
             catch (Exception ex)
             {
             }
         }
 
-        //private void UpdateScrollBar()
-        //{
-        //    try
-        //    {
-        //        ScrollInfo scrollInfo = this.scintillaGateway.GetScrollInfo(ScrollInfoMask.SIF_ALL, ScrollInfoBar.SB_VERT);
-        //        double totalRange = scrollInfo.nMax - scrollInfo.nMin + 1;
-        //        double scrollRatio;
+        private string GetCurrentEditorText()
+        {
+            return scintillaGateway.GetText(scintillaGateway.GetLength() + 1);
+        }
 
-        //        // Is "Enable scrolling beyond last line" checked?
-        //        if (scintillaGateway.GetEndAtLastLine() == false)
-        //        {
-        //            var actualThumbHeight = totalRange / (totalRange / scrollInfo.nPage - 1);
-        //            var actualTrackPos = Math.Max(scrollInfo.nTrackPos, scrollInfo.nPos) * actualThumbHeight / scrollInfo.nPage;
+        private void ScrollToElementAtCaretPosition(Position caretPosition)
+        {
+            var count = 0;
+            var mdText = GetCurrentEditorText();
+            var rootBlock = CommonMarkConverter.Parse(mdText, new CommonMarkSettings { TrackSourcePosition = true });
+            if (rootBlock != null)
+            {
+                var currentBlock = rootBlock.FirstChild;
 
-        //            scrollRatio = Math.Min(1, actualTrackPos / (totalRange - actualThumbHeight));
-        //        }
-        //        else
-        //        {
-        //            scrollRatio = Math.Max(scrollInfo.nTrackPos, scrollInfo.nPos) / (totalRange - scrollInfo.nPage);
-        //        }
-
-        //        markdownPreviewForm.ScrollByRatioVertically(scrollRatio);
-        //    }
-        //    catch { }
-        //}
+                while (currentBlock != null)
+                {
+                    if (currentBlock.SourcePosition > caretPosition.Value) break;
+                    count++;
+                    currentBlock = currentBlock.NextSibling;
+                }
+            }
+            markdownPreviewForm.ScrollToChildWithIndex(count);
+        }
 
         public void InitCommandMenu()
         {
@@ -182,8 +177,9 @@ namespace NppMarkdownPanel
             {
                 Win32.SendMessage(PluginBase.nppData._nppHandle, !isPanelVisible ? (uint)NppMsg.NPPM_DMMSHOW : (uint)NppMsg.NPPM_DMMHIDE, 0, markdownPreviewForm.Handle);
             }
-            RenderMarkdown();
             isPanelVisible = !isPanelVisible;
+            if (isPanelVisible)
+                RenderMarkdown();
         }
 
         private Icon ConvertBitmapToIcon(Bitmap bitmapImage)
