@@ -136,15 +136,28 @@ namespace NppMarkdownPanel.Forms
             pictureBoxScreenshot.Image = null;
         }
 
-        public void ScrollToChildWithIndex(int elementIndex)
+        public void ScrollToChildWithIndex(List<int> elementIndexesForAllLevels)
         {
             Application.DoEvents();
-            if (webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null && webBrowserPreview.Document.Body.Children.Count > elementIndex - 1)
+            if (elementIndexesForAllLevels.Count > 0 && webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null /*&& webBrowserPreview.Document.Body.Children.Count > elementIndex - 1*/)
             {
-                var currentTop = webBrowserPreview.Document.GetElementsByTagName("HTML")[0].ScrollTop;
-                var child = webBrowserPreview.Document.Body.Children[elementIndex - 1];
+                HtmlElement currentElement = webBrowserPreview.Document.Body;
+                HtmlElement child = null;
+                foreach (int elementIndexForCurrentLevel in elementIndexesForAllLevels)
+                {
+                    if (currentElement.Children.Count > elementIndexForCurrentLevel)
+                    {
+                        child = currentElement.Children[elementIndexForCurrentLevel];
+                        currentElement = child;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
 
-                if (child != null && (child.OffsetRectangle.Top < currentTop || child.OffsetRectangle.Bottom > currentTop + webBrowserPreview.Height)) child.ScrollIntoView(true);
+                if (child != null)
+                    webBrowserPreview.Document.Window.ScrollTo(0, child.OffsetRectangle.Top - 20);
             }
         }
 

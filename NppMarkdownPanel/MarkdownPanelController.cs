@@ -1,4 +1,5 @@
 ﻿using CommonMark;
+using CommonMark.Syntax;
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Forms;
 using System;
@@ -30,6 +31,9 @@ namespace NppMarkdownPanel
 
         private IScintillaGateway scintillaGateway;
         private INotepadPPGateway notepadPPGateway;
+        private int lastCaretPosition;
+        private string iniFilePath;
+        private bool syncViewWithCaretPosition;
 
         public MarkdownPanelController()
         {
@@ -47,7 +51,11 @@ namespace NppMarkdownPanel
             {
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
-                    ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
+                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
+                    {
+                        lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
+                        ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
+                    }
                 }
                 else
                 if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
@@ -98,30 +106,88 @@ namespace NppMarkdownPanel
             return scintillaGateway.GetText(scintillaGateway.GetLength() + 1);
         }
 
+        private Block lastParserResult;
         private void ScrollToElementAtCaretPosition(Position caretPosition)
         {
             var count = 0;
+            // Stores the postion of an element within the syntax tree, which is as close as possbile to the caret position
+            List<int> elementPosPerLevel = new List<int>();
             var mdText = GetCurrentEditorText();
-            var rootBlock = CommonMarkConverter.Parse(mdText, new CommonMarkSettings { TrackSourcePosition = true });
+            Block rootBlock;
+            if (CheckEditorTextHasChanged(mdText))
+            {
+                rootBlock = CommonMarkConverter.Parse(mdText, new CommonMarkSettings { TrackSourcePosition = true });
+                lastParserResult = rootBlock;
+            }
+            else
+            {
+                rootBlock = lastParserResult;
+            }
             if (rootBlock != null)
             {
                 var currentBlock = rootBlock.FirstChild;
 
                 while (currentBlock != null)
                 {
-                    if (currentBlock.SourcePosition > caretPosition.Value) break;
-                    count++;
-                    currentBlock = currentBlock.NextSibling;
+                    if (currentBlock.NextSibling != null && currentBlock.NextSibling.SourcePosition < caretPosition.Value)
+                    {
+                        if (!(currentBlock.Tag == CommonMark.Syntax.BlockTag.Paragraph && currentBlock.Parent != null && currentBlock.Parent.ListData != null && currentBlock.Parent.ListData.IsTight))
+                            count++;
+                        currentBlock = currentBlock.NextSibling;
+                    }
+                    else
+                    {
+                        if (currentBlock.FirstChild != null)
+                        {
+                            currentBlock = currentBlock.FirstChild;
+                            elementPosPerLevel.Add(count);
+                            count = 0;
+                        }
+                        else
+                        {
+                            elementPosPerLevel.Add(count);
+                            break;
+                        }
+                    }
                 }
             }
-            markdownPreviewForm.ScrollToChildWithIndex(count);
+            markdownPreviewForm.ScrollToChildWithIndex(elementPosPerLevel);
+        }
+
+        private string lastEditorTextHash;
+        private bool CheckEditorTextHasChanged(string text)
+        {
+            bool hasChanged = false;
+            var newHash = Utils.CreateMD5(text);
+            if (!string.Equals(newHash, lastEditorTextHash)) hasChanged = true;
+            lastEditorTextHash = newHash;
+            return hasChanged;
         }
 
         public void InitCommandMenu()
         {
+            SetIniFilePath();
+            syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
+            PluginBase.SetCommand(2, "Synchronize viewer with caret positionb", SyncViewWithCaret, syncViewWithCaretPosition);
             idMyDlg = 1;
+        }
+
+        private void SetIniFilePath()
+        {
+            StringBuilder sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
+            iniFilePath = sbIniFilePath.ToString();
+            if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
+            iniFilePath = Path.Combine(iniFilePath, Main.PluginName + ".ini");
+        }
+
+        private void SyncViewWithCaret()
+        {
+            syncViewWithCaretPosition = !syncViewWithCaretPosition;
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            if (syncViewWithCaretPosition) ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
         }
 
         public void SetToolBarIcon()
@@ -136,7 +202,7 @@ namespace NppMarkdownPanel
 
         public void PluginCleanUp()
         {
-            //Win32.WritePrivateProfileString("SomeSection", "SomeKey", someSetting ? "1" : "0", iniFilePath);
+            Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
         }
 
         private void ShowAboutDialog()
