@@ -5,6 +5,11 @@ VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppMarkdownPanel", "NppMarkdownPanel\NppMarkdownPanel.csproj", "{AFF60ED7-B5B8-456E-AE00-0B3D87F81937}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4D703D84-09F0-413F-9CAA-B176B5C006C9}"
+	ProjectSection(SolutionItems) = preProject
+		makerelease.ps1 = makerelease.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
