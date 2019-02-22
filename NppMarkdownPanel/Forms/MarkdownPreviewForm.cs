@@ -76,7 +76,9 @@ namespace NppMarkdownPanel.Forms
                 {
                     this.currentText = currentText;
                     this.filepath = filepath;
-                    var result = CommonMarkConverter.Convert(currentText);
+                    var commonMarkSettings = CommonMarkSettings.Default.Clone();
+                    commonMarkSettings.TrackSourcePosition = true;
+                    var result = CommonMarkConverter.Convert(currentText, commonMarkSettings);
                     var defaultBodyStyle = "";
                     var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MainResources.DefaultCss, defaultBodyStyle, result);
                     return rr;

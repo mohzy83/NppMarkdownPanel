@@ -131,8 +131,7 @@ namespace NppMarkdownPanel
                 {
                     if (currentBlock.NextSibling != null && currentBlock.NextSibling.SourcePosition < caretPosition.Value)
                     {
-                        if (!(currentBlock.Tag == CommonMark.Syntax.BlockTag.Paragraph && currentBlock.Parent != null && currentBlock.Parent.ListData != null && currentBlock.Parent.ListData.IsTight))
-                            count++;
+                        count++;
                         currentBlock = currentBlock.NextSibling;
                     }
                     else
