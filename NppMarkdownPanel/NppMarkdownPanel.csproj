@@ -22,6 +22,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
@@ -33,6 +34,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +46,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
@@ -71,48 +74,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonMark\CommonMarkAdditionalFeatures.cs" />
-    <Compile Include="CommonMark\CommonMarkConverter.cs" />
-    <Compile Include="CommonMark\CommonMarkException.cs" />
-    <Compile Include="CommonMark\CommonMarkSettings.cs" />
-    <Compile Include="CommonMark\Formatters\HtmlFormatter.cs" />
-    <Compile Include="CommonMark\Formatters\HtmlFormatterSlim.cs" />
-    <Compile Include="CommonMark\Formatters\HtmlTextWriter.cs" />
-    <Compile Include="CommonMark\Formatters\Printer.cs" />
-    <Compile Include="CommonMark\Func.cs" />
-    <Compile Include="CommonMark\Lazy.cs" />
-    <Compile Include="CommonMark\OutputFormat.cs" />
-    <Compile Include="CommonMark\Parser\BlockMethods.cs" />
-    <Compile Include="CommonMark\Parser\EntityDecoder.cs" />
-    <Compile Include="CommonMark\Parser\InlineMethods.cs" />
-    <Compile Include="CommonMark\Parser\InlineStack.cs" />
-    <Compile Include="CommonMark\Parser\LineInfo.cs" />
-    <Compile Include="CommonMark\Parser\PositionOffset.cs" />
-    <Compile Include="CommonMark\Parser\PositionTracker.cs" />
-    <Compile Include="CommonMark\Parser\Scanner.cs" />
-    <Compile Include="CommonMark\Parser\ScannerCharacterMatcher.cs" />
-    <Compile Include="CommonMark\Parser\ScannerHtmlTag.cs" />
-    <Compile Include="CommonMark\Parser\Subject.cs" />
-    <Compile Include="CommonMark\Parser\TabTextReader.cs" />
-    <Compile Include="CommonMark\Syntax\Block.cs" />
-    <Compile Include="CommonMark\Syntax\BlockTag.cs" />
-    <Compile Include="CommonMark\Syntax\DocumentData.cs" />
-    <Compile Include="CommonMark\Syntax\EmphasisData.cs" />
-    <Compile Include="CommonMark\Syntax\Enumerable.cs" />
-    <Compile Include="CommonMark\Syntax\EnumeratorEntry.cs" />
-    <Compile Include="CommonMark\Syntax\FencedCodeData.cs" />
-    <Compile Include="CommonMark\Syntax\HeadingData.cs" />
-    <Compile Include="CommonMark\Syntax\HtmlBlockType.cs" />
-    <Compile Include="CommonMark\Syntax\Inline.cs" />
-    <Compile Include="CommonMark\Syntax\InlineContentLinkable.cs" />
-    <Compile Include="CommonMark\Syntax\InlineTag.cs" />
-    <Compile Include="CommonMark\Syntax\ListData.cs" />
-    <Compile Include="CommonMark\Syntax\ListDelimiter.cs" />
-    <Compile Include="CommonMark\Syntax\ListType.cs" />
-    <Compile Include="CommonMark\Syntax\Reference.cs" />
-    <Compile Include="CommonMark\Syntax\StringContent.cs" />
-    <Compile Include="CommonMark\Syntax\StringContentPart.cs" />
-    <Compile Include="CommonMark\Utilities.cs" />
     <Compile Include="Forms\MainResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -125,6 +86,266 @@
       <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ActiveXScreenShotMaker.cs" />
+    <Compile Include="IMarkdownGenerator.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\Abbreviation.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\AbbreviationExtension.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\AbbreviationHelper.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\AbbreviationInline.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\AbbreviationParser.cs" />
+    <Compile Include="Markdig\Extensions\Abbreviations\HtmlAbbreviationRenderer.cs" />
+    <Compile Include="Markdig\Extensions\AutoIdentifiers\AutoIdentifierExtension.cs" />
+    <Compile Include="Markdig\Extensions\AutoIdentifiers\AutoIdentifierOptions.cs" />
+    <Compile Include="Markdig\Extensions\AutoIdentifiers\HeadingLinkReferenceDefinition.cs" />
+    <Compile Include="Markdig\Extensions\AutoLinks\AutoLinkExtension.cs" />
+    <Compile Include="Markdig\Extensions\AutoLinks\AutoLinkParser.cs" />
+    <Compile Include="Markdig\Extensions\AutoLinks\NormalizeAutoLinkRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Bootstrap\BootstrapExtension.cs" />
+    <Compile Include="Markdig\Extensions\Citations\CitationExtension.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\CustomContainer.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\CustomContainerExtension.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\CustomContainerInline.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\CustomContainerParser.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\HtmlCustomContainerInlineRenderer.cs" />
+    <Compile Include="Markdig\Extensions\CustomContainers\HtmlCustomContainerRenderer.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\DefinitionItem.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\DefinitionList.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\DefinitionListExtension.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\DefinitionListParser.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\DefinitionTerm.cs" />
+    <Compile Include="Markdig\Extensions\DefinitionLists\HtmlDefinitionListRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Diagrams\DiagramExtension.cs" />
+    <Compile Include="Markdig\Extensions\Emoji\EmojiExtension.cs" />
+    <Compile Include="Markdig\Extensions\Emoji\EmojiInline.cs" />
+    <Compile Include="Markdig\Extensions\Emoji\EmojiParser.cs" />
+    <Compile Include="Markdig\Extensions\EmphasisExtras\EmphasisExtraExtension.cs" />
+    <Compile Include="Markdig\Extensions\EmphasisExtras\EmphasisExtraOptions.cs" />
+    <Compile Include="Markdig\Extensions\Figures\Figure.cs" />
+    <Compile Include="Markdig\Extensions\Figures\FigureBlockParser.cs" />
+    <Compile Include="Markdig\Extensions\Figures\FigureCaption.cs" />
+    <Compile Include="Markdig\Extensions\Figures\FigureExtension.cs" />
+    <Compile Include="Markdig\Extensions\Figures\HtmlFigureCaptionRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Figures\HtmlFigureRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Footers\FooterBlock.cs" />
+    <Compile Include="Markdig\Extensions\Footers\FooterBlockParser.cs" />
+    <Compile Include="Markdig\Extensions\Footers\FooterExtension.cs" />
+    <Compile Include="Markdig\Extensions\Footers\HtmlFooterRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\Footnote.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\FootnoteExtension.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\FootnoteGroup.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\FootnoteLink.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\FootnoteLinkReferenceDefinition.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\FootnoteParser.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\HtmlFootnoteGroupRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Footnotes\HtmlFootnoteLinkRenderer.cs" />
+    <Compile Include="Markdig\Extensions\GenericAttributes\GenericAttributesExtension.cs" />
+    <Compile Include="Markdig\Extensions\GenericAttributes\GenericAttributesParser.cs" />
+    <Compile Include="Markdig\Extensions\Globalization\GlobalizationExtension.cs" />
+    <Compile Include="Markdig\Extensions\Hardlines\SoftlineBreakAsHardlineExtension.cs" />
+    <Compile Include="Markdig\Extensions\JiraLinks\JiraLink.cs" />
+    <Compile Include="Markdig\Extensions\JiraLinks\JiraLinkExtension.cs" />
+    <Compile Include="Markdig\Extensions\JiraLinks\JiraLinkInlineParser.cs" />
+    <Compile Include="Markdig\Extensions\JiraLinks\JiraLinkOptions.cs" />
+    <Compile Include="Markdig\Extensions\JiraLinks\NormalizeJiraLinksRenderer.cs" />
+    <Compile Include="Markdig\Extensions\ListExtras\ListExtraExtension.cs" />
+    <Compile Include="Markdig\Extensions\ListExtras\ListExtraItemParser.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\HtmlMathBlockRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\HtmlMathInlineRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\MathBlock.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\MathBlockParser.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\MathExtension.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\MathInline.cs" />
+    <Compile Include="Markdig\Extensions\Mathematics\MathInlineParser.cs" />
+    <Compile Include="Markdig\Extensions\MediaLinks\MediaLinkExtension.cs" />
+    <Compile Include="Markdig\Extensions\MediaLinks\MediaOptions.cs" />
+    <Compile Include="Markdig\Extensions\NonAsciiNoEscape\NonAsciiNoEscapeExtension.cs" />
+    <Compile Include="Markdig\Extensions\NoRefLinks\NoFollowLinksExtension.cs" />
+    <Compile Include="Markdig\Extensions\PragmaLines\PragmaLineExtension.cs" />
+    <Compile Include="Markdig\Extensions\SelfPipeline\SelfPipelineExtension.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\HtmlSmartyPantRenderer.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\SmartyPant.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\SmartyPantOptions.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\SmartyPantsExtension.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\SmartyPantsInlineParser.cs" />
+    <Compile Include="Markdig\Extensions\SmartyPants\SmartyPantType.cs" />
+    <Compile Include="Markdig\Extensions\Tables\GridTableExtension.cs" />
+    <Compile Include="Markdig\Extensions\Tables\GridTableParser.cs" />
+    <Compile Include="Markdig\Extensions\Tables\GridTableState.cs" />
+    <Compile Include="Markdig\Extensions\Tables\HtmlTableRenderer.cs" />
+    <Compile Include="Markdig\Extensions\Tables\PipeTableBlockParser.cs" />
+    <Compile Include="Markdig\Extensions\Tables\PipeTableDelimiterInline.cs" />
+    <Compile Include="Markdig\Extensions\Tables\PipeTableExtension.cs" />
+    <Compile Include="Markdig\Extensions\Tables\PipeTableOptions.cs" />
+    <Compile Include="Markdig\Extensions\Tables\PipeTableParser.cs" />
+    <Compile Include="Markdig\Extensions\Tables\Table.cs" />
+    <Compile Include="Markdig\Extensions\Tables\TableCell.cs" />
+    <Compile Include="Markdig\Extensions\Tables\TableColumnAlign.cs" />
+    <Compile Include="Markdig\Extensions\Tables\TableColumnDefinition.cs" />
+    <Compile Include="Markdig\Extensions\Tables\TableHelper.cs" />
+    <Compile Include="Markdig\Extensions\Tables\TableRow.cs" />
+    <Compile Include="Markdig\Extensions\TaskLists\HtmlTaskListRenderer.cs" />
+    <Compile Include="Markdig\Extensions\TaskLists\NormalizeTaskListRenderer.cs" />
+    <Compile Include="Markdig\Extensions\TaskLists\TaskList.cs" />
+    <Compile Include="Markdig\Extensions\TaskLists\TaskListExtension.cs" />
+    <Compile Include="Markdig\Extensions\TaskLists\TaskListInlineParser.cs" />
+    <Compile Include="Markdig\Extensions\TextRenderer\ConfigureNewLineExtension.cs" />
+    <Compile Include="Markdig\Extensions\Yaml\YamlFrontMatterBlock.cs" />
+    <Compile Include="Markdig\Extensions\Yaml\YamlFrontMatterExtension.cs" />
+    <Compile Include="Markdig\Extensions\Yaml\YamlFrontMatterParser.cs" />
+    <Compile Include="Markdig\Extensions\Yaml\YamlFrontMatterRenderer.cs" />
+    <Compile Include="Markdig\Helpers\ArrayHelper.cs" />
+    <Compile Include="Markdig\Helpers\CharacterMap.cs" />
+    <Compile Include="Markdig\Helpers\CharHelper.cs" />
+    <Compile Include="Markdig\Helpers\CharNormalizer.cs" />
+    <Compile Include="Markdig\Helpers\CompactPrefixTree.cs" />
+    <Compile Include="Markdig\Helpers\DefaultObjectCache.cs" />
+    <Compile Include="Markdig\Helpers\EntityHelper.cs" />
+    <Compile Include="Markdig\Helpers\HtmlHelper.cs" />
+    <Compile Include="Markdig\Helpers\ICharIterator.cs" />
+    <Compile Include="Markdig\Helpers\LineReader.cs" />
+    <Compile Include="Markdig\Helpers\LinkHelper.cs" />
+    <Compile Include="Markdig\Helpers\MethodImplOptionPortable.cs" />
+    <Compile Include="Markdig\Helpers\ObjectCache.cs" />
+    <Compile Include="Markdig\Helpers\OrderedList.cs" />
+    <Compile Include="Markdig\Helpers\StringBuilderCache.cs" />
+    <Compile Include="Markdig\Helpers\StringBuilderExtensions.cs" />
+    <Compile Include="Markdig\Helpers\StringLine.cs" />
+    <Compile Include="Markdig\Helpers\StringLineGroup.cs" />
+    <Compile Include="Markdig\Helpers\StringSlice.cs" />
+    <Compile Include="Markdig\Helpers\ThrowHelper.cs" />
+    <Compile Include="Markdig\IMarkdownExtension.cs" />
+    <Compile Include="Markdig\Markdown.cs" />
+    <Compile Include="Markdig\MarkdownExtensions.cs" />
+    <Compile Include="Markdig\MarkdownParserContext.cs" />
+    <Compile Include="Markdig\MarkdownPipeline.cs" />
+    <Compile Include="Markdig\MarkdownPipelineBuilder.cs" />
+    <Compile Include="Markdig\Parsers\BlockParser.cs" />
+    <Compile Include="Markdig\Parsers\BlockParserList.cs" />
+    <Compile Include="Markdig\Parsers\BlockProcessor.cs" />
+    <Compile Include="Markdig\Parsers\BlockState.cs" />
+    <Compile Include="Markdig\Parsers\BlockStateExtensions.cs" />
+    <Compile Include="Markdig\Parsers\FencedBlockParserBase.cs" />
+    <Compile Include="Markdig\Parsers\FencedCodeBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\HeadingBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\HtmlBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\IAttributesParseable.cs" />
+    <Compile Include="Markdig\Parsers\IBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\IInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\IMarkdownParser.cs" />
+    <Compile Include="Markdig\Parsers\IndentedCodeBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\InlineParser.cs" />
+    <Compile Include="Markdig\Parsers\InlineParserList.cs" />
+    <Compile Include="Markdig\Parsers\InlineProcessor.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\AutolineInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\CodeInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\EmphasisDescriptor.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\EmphasisInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\EscapeInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\HtmlEntityParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\LineBreakInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\LinkInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\Inlines\LiteralInlineParser.cs" />
+    <Compile Include="Markdig\Parsers\IPostInlineProcessor.cs" />
+    <Compile Include="Markdig\Parsers\ListBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\ListInfo.cs" />
+    <Compile Include="Markdig\Parsers\ListItemParser.cs" />
+    <Compile Include="Markdig\Parsers\MarkdownParser.cs" />
+    <Compile Include="Markdig\Parsers\NumberedListItemParser.cs" />
+    <Compile Include="Markdig\Parsers\OrderedListItemParser.cs" />
+    <Compile Include="Markdig\Parsers\ParagraphBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\ParserBase.cs" />
+    <Compile Include="Markdig\Parsers\ParserList.cs" />
+    <Compile Include="Markdig\Parsers\QuoteBlockParser.cs" />
+    <Compile Include="Markdig\Parsers\ThematicBreakParser.cs" />
+    <Compile Include="Markdig\Parsers\UnorderedListItemParser.cs" />
+    <Compile Include="Markdig\Renderers\HtmlRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\CodeBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\HeadingRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\HtmlAttributes.cs" />
+    <Compile Include="Markdig\Renderers\Html\HtmlBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\HtmlObjectRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\AutolinkInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\CodeInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\DelimiterInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\EmphasisInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\HtmlEntityInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\HtmlInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\LineBreakInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\LinkInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\Inlines\LiteralInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\ListRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\ParagraphRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\QuoteBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Html\ThematicBreakRenderer.cs" />
+    <Compile Include="Markdig\Renderers\IMarkdownObjectRenderer.cs" />
+    <Compile Include="Markdig\Renderers\IMarkdownRenderer.cs" />
+    <Compile Include="Markdig\Renderers\MarkdownObjectRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\CodeBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\HeadingRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\HtmlBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\AutolinkInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\CodeInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\DelimiterInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\EmphasisInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\LineBreakInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\LinkInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\LiteralInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\NormalizeHtmlEntityInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\Inlines\NormalizeHtmlInlineRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\LinkReferenceDefinitionGroupRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\LinkReferenceDefinitionRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\ListRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\NormalizeObjectRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\NormalizeOptions.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\NormalizeRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\ParagraphRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\QuoteBlockRenderer.cs" />
+    <Compile Include="Markdig\Renderers\Normalize\ThematicBreakRenderer.cs" />
+    <Compile Include="Markdig\Renderers\ObjectRendererCollection.cs" />
+    <Compile Include="Markdig\Renderers\RendererBase.cs" />
+    <Compile Include="Markdig\Renderers\TextRendererBase.cs" />
+    <Compile Include="Markdig\Syntax\BlankLineBlock.cs" />
+    <Compile Include="Markdig\Syntax\Block.cs" />
+    <Compile Include="Markdig\Syntax\BlockExtensions.cs" />
+    <Compile Include="Markdig\Syntax\CharIteratorHelper.cs" />
+    <Compile Include="Markdig\Syntax\CodeBlock.cs" />
+    <Compile Include="Markdig\Syntax\ContainerBlock.cs" />
+    <Compile Include="Markdig\Syntax\FencedCodeBlock.cs" />
+    <Compile Include="Markdig\Syntax\HeadingBlock.cs" />
+    <Compile Include="Markdig\Syntax\HtmlBlock.cs" />
+    <Compile Include="Markdig\Syntax\HtmlBlockType.cs" />
+    <Compile Include="Markdig\Syntax\IBlock.cs" />
+    <Compile Include="Markdig\Syntax\IFencedBlock.cs" />
+    <Compile Include="Markdig\Syntax\IMarkdownObject.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\AutolinkInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\CodeInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\ContainerInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\DelimiterInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\DelimiterType.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\EmphasisDelimiterInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\EmphasisInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\HtmlEntityInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\HtmlInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\IInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\Inline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\LeafInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\LineBreakInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\LinkDelimiterInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\LinkInline.cs" />
+    <Compile Include="Markdig\Syntax\Inlines\LiteralInline.cs" />
+    <Compile Include="Markdig\Syntax\LeafBlock.cs" />
+    <Compile Include="Markdig\Syntax\LinkReferenceDefinition.cs" />
+    <Compile Include="Markdig\Syntax\LinkReferenceDefinitionExtensions.cs" />
+    <Compile Include="Markdig\Syntax\LinkReferenceDefinitionGroup.cs" />
+    <Compile Include="Markdig\Syntax\ListBlock.cs" />
+    <Compile Include="Markdig\Syntax\ListItemBlock.cs" />
+    <Compile Include="Markdig\Syntax\MarkdownDocument.cs" />
+    <Compile Include="Markdig\Syntax\MarkdownObject.cs" />
+    <Compile Include="Markdig\Syntax\MarkdownObjectExtensions.cs" />
+    <Compile Include="Markdig\Syntax\ParagraphBlock.cs" />
+    <Compile Include="Markdig\Syntax\QuoteBlock.cs" />
+    <Compile Include="Markdig\Syntax\SourceSpan.cs" />
+    <Compile Include="Markdig\Syntax\ThematicBreakBlock.cs" />
+    <Compile Include="MarkdigMarkdownGenerator.cs" />
     <Compile Include="MarkdownPanelController.cs" />
     <Compile Include="PluginInfrastructure\ClikeStringArray.cs" />
     <Compile Include="PluginInfrastructure\DllExport\DllExportAttribute.cs" />
@@ -155,6 +376,7 @@
     <EmbeddedResource Include="Forms\MainResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MainResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MarkdownPreviewForm.resx">
       <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>

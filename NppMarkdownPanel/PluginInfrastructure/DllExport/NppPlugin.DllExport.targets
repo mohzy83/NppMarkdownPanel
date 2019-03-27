@@ -32,13 +32,13 @@
 		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) -->
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="C:\npp32\plugins\$(ProjectName)\" 
-        Condition="Exists('C:\npp32\plugins\$(ProjectName)\') AND '$(Platform)'=='x86'"
+        DestinationFolder="C:\npp\npp32\plugins\$(ProjectName)\" 
+        Condition="Exists('C:\npp\npp32\plugins\$(ProjectName)\') AND '$(Platform)'=='x86'"
         ContinueOnError="false" /> 
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="C:\npp64\plugins\$(ProjectName)\" 
-        Condition="Exists('C:\npp64\plugins\$(ProjectName)\') AND '$(Platform)'=='x64'"
+        DestinationFolder="C:\npp\npp64\plugins\$(ProjectName)\" 
+        Condition="Exists('C:\npp\npp64\plugins\$(ProjectName)\') AND '$(Platform)'=='x64'"
         ContinueOnError="false" />
   </Target>
 </Project>

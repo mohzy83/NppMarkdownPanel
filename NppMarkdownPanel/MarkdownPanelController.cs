@@ -1,5 +1,4 @@
-﻿using CommonMark;
-using CommonMark.Syntax;
+﻿
 using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Forms;
 using System;
@@ -12,6 +11,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Markdig;
+using Markdig.Renderers.Html;
+using Markdig.Syntax;
 using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace NppMarkdownPanel
@@ -29,8 +31,8 @@ namespace NppMarkdownPanel
 
         private bool isPanelVisible;
 
-        private IScintillaGateway scintillaGateway;
-        private INotepadPPGateway notepadPPGateway;
+        private readonly IScintillaGateway scintillaGateway;
+        private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
         private bool syncViewWithCaretPosition;
@@ -54,7 +56,7 @@ namespace NppMarkdownPanel
                     if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
                     {
                         lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
-                        ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
+                        ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
                     }
                 }
                 else
@@ -106,61 +108,9 @@ namespace NppMarkdownPanel
             return scintillaGateway.GetText(scintillaGateway.GetLength() + 1);
         }
 
-        private Block lastParserResult;
-        private void ScrollToElementAtCaretPosition(Position caretPosition)
+        private void ScrollToElementAtLineNo(int lineNo)
         {
-            var count = 0;
-            // Stores the postion of an element within the syntax tree, which is as close as possbile to the caret position
-            List<int> elementPosPerLevel = new List<int>();
-            var mdText = GetCurrentEditorText();
-            Block rootBlock;
-            if (CheckEditorTextHasChanged(mdText))
-            {
-                rootBlock = CommonMarkConverter.Parse(mdText, new CommonMarkSettings { TrackSourcePosition = true });
-                lastParserResult = rootBlock;
-            }
-            else
-            {
-                rootBlock = lastParserResult;
-            }
-            if (rootBlock != null)
-            {
-                var currentBlock = rootBlock.FirstChild;
-
-                while (currentBlock != null)
-                {
-                    if (currentBlock.NextSibling != null && currentBlock.NextSibling.SourcePosition < caretPosition.Value)
-                    {
-                        count++;
-                        currentBlock = currentBlock.NextSibling;
-                    }
-                    else
-                    {
-                        if (currentBlock.FirstChild != null)
-                        {
-                            currentBlock = currentBlock.FirstChild;
-                            elementPosPerLevel.Add(count);
-                            count = 0;
-                        }
-                        else
-                        {
-                            elementPosPerLevel.Add(count);
-                            break;
-                        }
-                    }
-                }
-            }
-            markdownPreviewForm.ScrollToChildWithIndex(elementPosPerLevel);
-        }
-
-        private string lastEditorTextHash;
-        private bool CheckEditorTextHasChanged(string text)
-        {
-            bool hasChanged = false;
-            var newHash = Utils.CreateMD5(text);
-            if (!string.Equals(newHash, lastEditorTextHash)) hasChanged = true;
-            lastEditorTextHash = newHash;
-            return hasChanged;
+            markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
         }
 
         public void InitCommandMenu()
@@ -186,7 +136,7 @@ namespace NppMarkdownPanel
         {
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
-            if (syncViewWithCaretPosition) ScrollToElementAtCaretPosition(scintillaGateway.GetCurrentPos());
+            if (syncViewWithCaretPosition) ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
         }
 
         public void SetToolBarIcon()
@@ -207,15 +157,7 @@ namespace NppMarkdownPanel
         private void ShowAboutDialog()
         {
             MessageBox.Show(
-                "NppMarkdownPanel for Notepad++\n" +
-                "Created by Mohzy 2019\n" +
-                "Github: https://github.com/mohzy83/NppMarkdownPanel\n" +
-                "\n" +
-                "Using markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css\n" +
-                "\n" +
-                "Using CommonMark.NET by Knagis - https://github.com/Knagis/CommonMark.NET\n" +
-                "\n" +
-                "Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - https://github.com/nea/MarkdownViewerPlusPlus"
+                MainResources.AboutDialogText
                 , "About");
         }
 
@@ -269,6 +211,11 @@ namespace NppMarkdownPanel
         private void ToolWindowCloseAction()
         {
             TogglePanelVisible();
+        }
+
+        public static IMarkdownGenerator GetMarkdownGeneratorImpl()
+        {
+            return new MarkdigMarkdownGenerator();
         }
     }
 }

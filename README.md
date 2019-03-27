@@ -1,4 +1,4 @@
-# NppMarkdownPanel
+	# NppMarkdownPanel
 Plugin to preview Markdown files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
@@ -6,11 +6,11 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.3.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.4.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
-Using **CommonMark.NET** by Knagis - [https://github.com/Knagis/CommonMark.NET](https://github.com/Knagis/CommonMark.NET)
+Using **Markdig** by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
 
 Using **NotepadPlusPlusPluginPack.Net** by kbilsted - [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)	
 

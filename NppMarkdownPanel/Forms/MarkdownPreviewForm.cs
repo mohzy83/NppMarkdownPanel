@@ -1,10 +1,10 @@
-﻿using CommonMark;
-using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -35,33 +35,18 @@ namespace NppMarkdownPanel.Forms
             <html>
             ";
 
-        private string currentText;
-        private string filepath;
         private Task<string> renderTask;
         private bool dpiAdjusted;
-        private Action toolWindowCloseAction;
+        private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
+
+        private IMarkdownGenerator markdownGenerator;
 
         public MarkdownPreviewForm(Action toolWindowCloseAction)
         {
             this.toolWindowCloseAction = toolWindowCloseAction;
             InitializeComponent();
-            CommonMarkSettings.Default.UriResolver =
-                (fname) =>
-                {
-                    // ignore uri with http
-                    var absolutePath = fname != null && !fname.StartsWith("http", StringComparison.CurrentCultureIgnoreCase) ? Path.Combine(Path.GetDirectoryName(filepath), fname) : fname;
-
-                    try
-                    {
-                        var uri = new Uri(absolutePath);
-                        return uri.AbsoluteUri;
-                    }
-                    catch (Exception e)
-                    {
-                        return fname;
-                    }
-                };
+            markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
         public void RenderMarkdown(string currentText, string filepath)
@@ -74,11 +59,7 @@ namespace NppMarkdownPanel.Forms
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
                 renderTask = new Task<string>(() =>
                 {
-                    this.currentText = currentText;
-                    this.filepath = filepath;
-                    var commonMarkSettings = CommonMarkSettings.Default.Clone();
-                    commonMarkSettings.TrackSourcePosition = true;
-                    var result = CommonMarkConverter.Convert(currentText, commonMarkSettings);
+                    var result = markdownGenerator.ConvertToHtml(currentText, filepath);
                     var defaultBodyStyle = "";
                     var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MainResources.DefaultCss, defaultBodyStyle, result);
                     return rr;
@@ -138,29 +119,61 @@ namespace NppMarkdownPanel.Forms
             pictureBoxScreenshot.Image = null;
         }
 
-        public void ScrollToChildWithIndex(List<int> elementIndexesForAllLevels)
+        public void ScrollToElementWithLineNo(int lineNo)
         {
             Application.DoEvents();
-            if (elementIndexesForAllLevels.Count > 0 && webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null /*&& webBrowserPreview.Document.Body.Children.Count > elementIndex - 1*/)
+            if (webBrowserPreview.Document != null)
             {
-                HtmlElement currentElement = webBrowserPreview.Document.Body;
                 HtmlElement child = null;
-                foreach (int elementIndexForCurrentLevel in elementIndexesForAllLevels)
+
+                for (int i = lineNo; i >= 0; i--)
                 {
-                    if (currentElement.Children.Count > elementIndexForCurrentLevel)
+                    var htmlElement = webBrowserPreview.Document.GetElementById(i.ToString());
+                    if (htmlElement != null)
                     {
-                        child = currentElement.Children[elementIndexForCurrentLevel];
-                        currentElement = child;
-                    }
-                    else
-                    {
+                        child = htmlElement;
                         break;
                     }
                 }
 
                 if (child != null)
-                    webBrowserPreview.Document.Window.ScrollTo(0, child.OffsetRectangle.Top - 20);
+                    webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
             }
+
+
+            //if (elementIndexesForAllLevels != null && elementIndexesForAllLevels.Count > 0 && webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null /*&& webBrowserPreview.Document.Body.Children.Count > elementIndex - 1*/)
+            //{
+            //    HtmlElement currentElement = webBrowserPreview.Document.Body;
+            //    HtmlElement child = null;
+            //    foreach (int elementIndexForCurrentLevel in elementIndexesForAllLevels)
+            //    {
+            //        if (currentElement.Children.Count > elementIndexForCurrentLevel)
+            //        {
+            //            child = currentElement.Children[elementIndexForCurrentLevel];
+            //            currentElement = child;
+            //        }
+            //        else
+            //        {
+            //            break;
+            //        }
+            //    }
+
+            //    if (child != null)
+            //        webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
+            //}
+        }
+
+        private int CalculateAbsoluteYOffset(HtmlElement currentElement)
+        {
+            int baseY = currentElement.OffsetRectangle.Top;
+            var offsetParent = currentElement.OffsetParent;
+            while (offsetParent != null)
+            {
+                baseY += offsetParent.OffsetRectangle.Top;
+                offsetParent = offsetParent.OffsetParent;
+            }
+
+            return baseY;
         }
 
         /// <summary>
@@ -186,16 +199,6 @@ namespace NppMarkdownPanel.Forms
                 webBrowserPreview.Document.Window.ScrollTo(0, 0);
             }
         }
-
-        //public void ScrollByRatioVertically(double scrollRatio)
-        //{
-        //    if (webBrowserPreview.Document != null)
-        //    {
-        //        var rect = webBrowserPreview.Document.Body.ScrollRectangle;
-        //        int verticalScroll = (int)((rect.Height - webBrowserPreview.Height) * scrollRatio);
-        //        webBrowserPreview.Document.Window.ScrollTo(0, verticalScroll);
-        //    }
-        //}
 
         [StructLayout(LayoutKind.Sequential)]
         public struct NMHDR
@@ -227,5 +230,15 @@ namespace NppMarkdownPanel.Forms
             base.WndProc(ref m);
         }
 
+        private void webBrowserPreview_Navigating(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            if (e.Url.ToString() != "about:blank")
+            {
+                e.Cancel = true;
+                var p = new Process();
+                p.StartInfo = new ProcessStartInfo(e.Url.ToString());
+                p.Start();
+            }
+        }
     }
 }

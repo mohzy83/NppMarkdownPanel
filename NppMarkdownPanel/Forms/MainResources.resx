@@ -251,13 +251,14 @@ p, blockquote, ul, ol, dl, li, table, pre {
   margin: 15px 0;
 }
 
+/*
 hr {
   border: 0 none;
   color: #cccccc;
   height: 4px;
   padding: 0;
 }
-
+*/
 body &gt; h2:first-child {
   margin-top: 0;
   padding-top: 0;
@@ -524,5 +525,24 @@ pre code, pre tt {
   background-color: transparent;
   border: none;
 }</value>
+  </data>
+  <data name="AboutDialogText" xml:space="preserve">
+    <value>NppMarkdownPanel for Notepad++
+
+Version 0.4.0
+
+Created by Mohzy 2019
+
+Github: https://github.com/mohzy83/NppMarkdownPanel
+
+Using Markdig by xoofx - https://github.com/lunet-io/markdig
+
+Using NotepadPlusPlusPluginPack.Net by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+
+Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
+
+Using portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/nea/MarkdownViewerPlusPlus
+
+Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark</value>
   </data>
 </root>

@@ -61,6 +61,29 @@ namespace NppMarkdownPanel.Forms {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die NppMarkdownPanel for Notepad++
+        ///
+        ///Version 0.4.0
+        ///
+        ///Created by Mohzy 2019
+        ///
+        ///Github: https://github.com/mohzy83/NppMarkdownPanel
+        ///
+        ///Using Markdig by xoofx - https://github.com/lunet-io/markdig
+        ///
+        ///Using NotepadPlusPlusPluginPack.Net by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+        ///
+        ///Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
+        ///
+        ///Using portions of nea&apos;s MarkdownViewerPlusPlus Plugin code - https://github.com/nea/Markdow [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        internal static string AboutDialogText {
+            get {
+                return ResourceManager.GetString("AboutDialogText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die /*
         ///Copyright (c) 2017 Chris Patuzzo
         ///https://twitter.com/chrispatuzzo

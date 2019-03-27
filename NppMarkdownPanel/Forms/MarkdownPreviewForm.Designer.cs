@@ -68,7 +68,7 @@
             this.webBrowserPreview.Size = new System.Drawing.Size(811, 600);
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
-
+            this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
             // 
             // btnPrintPreview
             // 
