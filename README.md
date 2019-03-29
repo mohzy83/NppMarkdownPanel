@@ -10,7 +10,7 @@ The current version is **0.4.0** it can be found [here](https://github.com/mohzy
 
 ### Used libs and icons
 
-Using **Markdig** by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
+Using **Markdig** v 0.16.0 by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
 
 Using **NotepadPlusPlusPluginPack.Net** by kbilsted - [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)	
 
