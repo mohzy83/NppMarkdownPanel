@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -61,7 +62,12 @@ namespace NppMarkdownPanel.Forms
                 {
                     var result = markdownGenerator.ConvertToHtml(currentText, filepath);
                     var defaultBodyStyle = "";
-                    var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MainResources.DefaultCss, defaultBodyStyle, result);
+
+                    // Path of plugin directory
+                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+                    var css = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+
+                    var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), css, defaultBodyStyle, result);
                     return rr;
 
                 });
