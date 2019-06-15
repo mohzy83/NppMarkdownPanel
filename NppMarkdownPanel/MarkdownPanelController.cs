@@ -119,8 +119,15 @@ namespace NppMarkdownPanel
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(2, "Edit Settings", EditSettings);
+            PluginBase.SetCommand(3, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
             idMyDlg = 1;
+        }
+
+        private void EditSettings()
+        {
+            var settingsForm = new SettingsForms(100,"C:\\sdfsdfsdfsdfsdf");
+            settingsForm.ShowDialog();
         }
 
         private void SetIniFilePath()
