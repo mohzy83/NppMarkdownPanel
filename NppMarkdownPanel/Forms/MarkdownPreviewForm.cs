@@ -37,7 +37,6 @@ namespace NppMarkdownPanel.Forms
             ";
 
         private Task<string> renderTask;
-        private bool dpiAdjusted;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
 

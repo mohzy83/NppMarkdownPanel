@@ -97,7 +97,7 @@ namespace NppMarkdownPanel
             {
                 markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
             }
-            catch (Exception ex)
+            catch 
             {
             }
         }

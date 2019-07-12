@@ -33,7 +33,7 @@ namespace NppMarkdownPanel
             {
                 htmlRenderer.BaseUrl = new Uri(filepath);
             }
-            catch (Exception e)
+            catch
             {
             }
             sb.Clear();
