@@ -120,8 +120,9 @@ namespace NppMarkdownPanel
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(2, "Edit Settings", EditSettings);
-            PluginBase.SetCommand(3, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(3, "Edit Settings", EditSettings);
+
             idMyDlg = 1;
         }
 
