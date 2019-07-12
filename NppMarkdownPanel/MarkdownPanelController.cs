@@ -1,5 +1,4 @@
-﻿
-using Kbg.NppPluginNET.PluginInfrastructure;
+﻿using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Forms;
 using System;
 using System.Collections.Generic;
@@ -117,6 +116,8 @@ namespace NppMarkdownPanel
         {
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
+            markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
+            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(2, "Edit Settings", EditSettings);
@@ -124,10 +125,18 @@ namespace NppMarkdownPanel
             idMyDlg = 1;
         }
 
+
         private void EditSettings()
         {
-            var settingsForm = new SettingsForms(100,"C:\\sdfsdfsdfsdfsdf");
-            settingsForm.ShowDialog();
+            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName);
+            if (settingsForm.ShowDialog() == DialogResult.OK)
+            {
+                markdownPreviewForm.CssFileName = settingsForm.CssFileName;
+                markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
+                SaveSettings();
+                //Update Preview
+                RenderMarkdown();
+            }
         }
 
         private void SetIniFilePath()
@@ -159,6 +168,13 @@ namespace NppMarkdownPanel
         public void PluginCleanUp()
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
+            SaveSettings();
+        }
+
+        private void SaveSettings()
+        {
+            Win32.WriteIniValue("Options", "CssFileName", markdownPreviewForm.CssFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
         }
 
         private void ShowAboutDialog()

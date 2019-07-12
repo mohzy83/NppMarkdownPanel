@@ -39,6 +39,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.lblZoomValue = new System.Windows.Forms.Label();
+            this.btnChooseCss = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -46,8 +48,7 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.label1);
@@ -113,7 +114,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCssFile.Location = new System.Drawing.Point(138, 97);
             this.tbCssFile.Name = "tbCssFile";
-            this.tbCssFile.Size = new System.Drawing.Size(513, 25);
+            this.tbCssFile.Size = new System.Drawing.Size(422, 25);
             this.tbCssFile.TabIndex = 4;
             this.tbCssFile.TextChanged += new System.EventHandler(this.tbCssFile_TextChanged);
             // 
@@ -131,11 +132,11 @@
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 1;
-            this.trackBar1.Location = new System.Drawing.Point(138, 161);
-            this.trackBar1.Maximum = 150;
+            this.trackBar1.Location = new System.Drawing.Point(130, 161);
+            this.trackBar1.Maximum = 200;
             this.trackBar1.Minimum = 90;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(463, 56);
+            this.trackBar1.Size = new System.Drawing.Size(512, 56);
             this.trackBar1.TabIndex = 6;
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -146,17 +147,41 @@
             // 
             this.lblZoomValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblZoomValue.AutoSize = true;
-            this.lblZoomValue.Location = new System.Drawing.Point(607, 174);
+            this.lblZoomValue.Location = new System.Drawing.Point(648, 176);
             this.lblZoomValue.Name = "lblZoomValue";
             this.lblZoomValue.Size = new System.Drawing.Size(36, 19);
             this.lblZoomValue.TabIndex = 7;
             this.lblZoomValue.Text = "90%";
+            // 
+            // btnChooseCss
+            // 
+            this.btnChooseCss.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnChooseCss.Location = new System.Drawing.Point(566, 96);
+            this.btnChooseCss.Name = "btnChooseCss";
+            this.btnChooseCss.Size = new System.Drawing.Size(39, 25);
+            this.btnChooseCss.TabIndex = 8;
+            this.btnChooseCss.Text = "...";
+            this.btnChooseCss.UseVisualStyleBackColor = true;
+            this.btnChooseCss.Click += new System.EventHandler(this.btnChooseCss_Click);
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(611, 97);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(73, 26);
+            this.button1.TabIndex = 9;
+            this.button1.Text = "Default";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // SettingsForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 478);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnChooseCss);
             this.Controls.Add(this.lblZoomValue);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label3);
@@ -192,5 +217,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label lblZoomValue;
+        private System.Windows.Forms.Button btnChooseCss;
+        private System.Windows.Forms.Button button1;
     }
 }

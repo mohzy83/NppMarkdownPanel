@@ -280,6 +280,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public static extern int GetPrivateProfileInt(string lpAppName, string lpKeyName, int nDefault, string lpFileName);
 
         [DllImport("kernel32")]
+        private static extern int GetPrivateProfileString(string section,
+            string key, string def, StringBuilder retVal,
+            int size, string filePath);
+
+
+        [DllImport("kernel32")]
         public static extern bool WritePrivateProfileString(string lpAppName, string lpKeyName, string lpString, string lpFileName);
 
         public const int MF_BYCOMMAND = 0;
@@ -309,5 +315,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <returns></returns>
         [DllImport("user32")]
         public static extern int GetScrollInfo(IntPtr hwnd, int nBar, ref ScrollInfo scrollInfo);
+
+
+        public static string ReadIniValue(string section, string key, string iniFileName,string defaultValue="")
+        {
+            StringBuilder temp = new StringBuilder(255);
+            int i = GetPrivateProfileString(section, key, defaultValue, temp,
+                255, iniFileName);
+            return temp.ToString();
+        }
+
+        public static void WriteIniValue(string section, string key, string value, string iniFileName)
+        {
+            WritePrivateProfileString(section, key, value, iniFileName);
+        }
     }
 }

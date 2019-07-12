@@ -12,8 +12,6 @@ namespace NppMarkdownPanel.Forms
 {
     public partial class SettingsForms : Form
     {
-
-
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
 
@@ -46,6 +44,25 @@ namespace NppMarkdownPanel.Forms
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
+        }
+
+        private void btnChooseCss_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "css files (*.css)|*.css|All files (*.*)|*.*";
+                openFileDialog.RestoreDirectory = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    CssFileName = openFileDialog.FileName;
+                    tbCssFile.Text = CssFileName;
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tbCssFile.Text = "";
         }
     }
 }

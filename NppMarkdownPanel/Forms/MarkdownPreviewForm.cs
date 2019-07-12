@@ -41,6 +41,9 @@ namespace NppMarkdownPanel.Forms
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
 
+        public string CssFileName { get; set; }
+        public int ZoomLevel { get; set; }
+
         private IMarkdownGenerator markdownGenerator;
 
         public MarkdownPreviewForm(Action toolWindowCloseAction)
@@ -64,17 +67,26 @@ namespace NppMarkdownPanel.Forms
                     var defaultBodyStyle = "";
 
                     // Path of plugin directory
+                    var markdownStyleContent = "";
+
                     var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-                    var css = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
 
-                    var rr = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), css, defaultBodyStyle, result);
-                    return rr;
+                    if (File.Exists(CssFileName))
+                    {
+                        markdownStyleContent = File.ReadAllText(CssFileName);
+                    }
+                    else
+                    {
+                        markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+                    }
 
+                    var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
+                    return markdownHtml;
                 });
                 renderTask.ContinueWith((renderedText) =>
                 {
                     webBrowserPreview.DocumentText = renderedText.Result;
-                    AdjustZoomForCurrentDpi();
+                    AdjustZoomLevel();
                 }, context);
                 renderTask.Start();
             }
@@ -185,25 +197,14 @@ namespace NppMarkdownPanel.Forms
         /// <summary>
         /// Increase Zoomlevel in case of higher DPI settings
         /// </summary>
-        private void AdjustZoomForCurrentDpi()
+        private void AdjustZoomLevel()
         {
             Application.DoEvents();
-            if (!dpiAdjusted)
-            {
-                dpiAdjusted = true;
-                float dpiX, dpiY;
-                using (Graphics graphics = Graphics.FromHwnd(IntPtr.Zero))
-                {
-                    dpiX = graphics.DpiX;
-                    dpiY = graphics.DpiY;
-                }
 
-                float zoomfactor = 120 * (dpiX / 96);
-                int browserZoom = Convert.ToInt32(zoomfactor);
-                var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
-                browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, browserZoom, IntPtr.Zero);
-                webBrowserPreview.Document.Window.ScrollTo(0, 0);
-            }
+            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
+            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, ZoomLevel, IntPtr.Zero);
+            //   webBrowserPreview.Document.Window.ScrollTo(0, 0);
+
         }
 
         [StructLayout(LayoutKind.Sequential)]
