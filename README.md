@@ -25,7 +25,7 @@ Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-m
 
 ## Installation
 ### Installation over Notepad++ 
-The plugin can be installed over the integrated Notepad++ "Plugin Management".
+The plugin can be installed over the integrated Notepad++ "Plugin Admin..".
 ### Manual Installation
 Create the folder "NppMarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
 
