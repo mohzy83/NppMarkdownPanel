@@ -45,6 +45,8 @@ Thats all you need to do ;)
 - change zoomlevel for the preview in settings dialog
 - change css file for the markdown style
 - the new settings are persistent
+- open settings dialog: Plugins-> NppMarkdownPanel -> Edit Settings
+![npp-settings](help/open-settings.png "open settings dialog")
 
 ### Version 0.4.0
 - switched from CommonMark.Net to markdig rendering library
