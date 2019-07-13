@@ -6,7 +6,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.4.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
@@ -39,9 +39,27 @@ Thats all you need to do ;)
 
 ![npp-preview](help/npp-preview.png "Layout of the plugin folder after installation")
 
+## Version History
+
+### Version 0.5.0
+- change zoomlevel for the preview in settings dialog
+- change css file for the markdown style
+- the new settings are persistent
+
+### Version 0.4.0
+- switched from CommonMark.Net to markdig rendering library
+
+### Version 0.3.0
+- synchronize viewer with caret position
+
+### Version 0.2.0
+- Initial release
+
+
 ### Feature - Synchronize viewer with caret position
 
 ![npp-sync-caret](help/sync_caret.gif "Synchronize viewer with caret position")
+
 
 ## License
 
