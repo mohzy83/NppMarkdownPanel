@@ -3,6 +3,7 @@ Plugin to preview Markdown files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
 - displaying rendered markdown html with embedded IE11
+- can save rendered html to a file
 
 ### Current Version
 
@@ -40,6 +41,34 @@ Just click it to show the markdown preview. Click again to hide the preview.
 Thats all you need to do ;)
 
 ![npp-preview](help/npp-preview.png "Layout of the plugin folder after installation")
+
+### Settings
+
+To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settings
+
+* #### CSS File
+    This allows you to select a CSS file to use if you don't want the default style of the preview
+
+* #### Zoom Level
+    This allows you to set the zoom level of the preview
+
+* #### Automatic HTML Output
+    This allows you ot select a file to save the rendered HTML to every time the preview is rendered. This is a way to automatically save the rendered content to use elsewhere. Leaving this empty disables the automatic saving.  
+    __Note: This is a global setting, so all previewed documents will save to the same file.__
+
+* #### Show Toolbar in Preview Window
+    Checking this box will enable the toolbar in the preview window. By default, this is unchecked.
+
+### Preview Window Toolbar
+
+* #### Save As... (![save-btn](help/save-btn.png "Picture of the Save button on the preview panel toolbar"))
+    Clicking this button allows you to save the rendered preview as an HTML document.
+
+### Synchronize viewer with caret position
+
+Enabling this in the plugin's menu (Plugins -> NppMarkdownPanel) makes the preview panel stay in sync with the caret in the markdown document that is being edited.  
+This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for keeping two open editing panels scrolling together.
+
 
 ## Version History
 
