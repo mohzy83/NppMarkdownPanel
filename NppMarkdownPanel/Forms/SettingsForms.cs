@@ -14,15 +14,21 @@ namespace NppMarkdownPanel.Forms
     {
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
+        public string HtmlFileName { get; set; }
+        public bool ShowToolbar { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName)
+        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
+            HtmlFileName = htmlFileName;
+            ShowToolbar = showToolbar;
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
             tbCssFile.Text = cssFileName;
+            tbHtmlFile.Text = htmlFileName;
+            cbShowToolbar.Checked = showToolbar;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -38,7 +44,19 @@ namespace NppMarkdownPanel.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
+            if (!String.IsNullOrEmpty(tbHtmlFile.Text) && String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+            {
+                bool validHtmlPath = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
+                if (!validHtmlPath)
+                    sblInvalidHtmlPath.Text = error;
+                else
+                    tbHtmlFile.Text = validPath;
+            }
+            
+            if (String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+            {
+                this.DialogResult = DialogResult.OK;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -64,5 +82,62 @@ namespace NppMarkdownPanel.Forms
         {
             tbCssFile.Text = "";
         }
+
+        #region Output HTML File
+        private void tbHtmlFile_TextChanged(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrWhiteSpace(tbHtmlFile.Text))
+            {
+                bool valid = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
+                if (valid)
+                {
+                    HtmlFileName = validPath;
+                    if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+                        sblInvalidHtmlPath.Text = String.Empty;
+                }
+                else
+                {
+                    sblInvalidHtmlPath.Text = error;
+                }
+            }
+            else
+            {
+                HtmlFileName = String.Empty;
+                if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+                    sblInvalidHtmlPath.Text = String.Empty;
+            }
+        }
+
+        private void tbHtmlFile_Leave(object sender, EventArgs e)
+        {
+            tbHtmlFile.Text = HtmlFileName;
+        }
+
+        private void btnChooseHtml_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
+                saveFileDialog.RestoreDirectory = true;
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    HtmlFileName = saveFileDialog.FileName;
+                    tbHtmlFile.Text = HtmlFileName;
+                }
+            }
+        }
+
+        private void btnResetHtml_Click(object sender, EventArgs e)
+        {
+            tbHtmlFile.Text = "";
+        }
+        #endregion
+
+        #region Show Toolbar
+        private void cbShowToolbar_Changed(object sender, EventArgs e)
+        {
+            ShowToolbar = cbShowToolbar.Checked;
+        }
+        #endregion
     }
 }
