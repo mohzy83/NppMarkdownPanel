@@ -117,9 +117,13 @@ namespace NppMarkdownPanel
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
+            markdownPreviewForm.MarkdownStyleContent = null; //(re)read it from CssFileName
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
+            markdownPreviewForm.UseRegExp = Utils.ReadIniBool("Options", "UseRegExp", iniFilePath);
+            markdownPreviewForm.RegExpFileName = Win32.ReadIniValue("Options", "RegExpFileName", iniFilePath, "RegExp3.txt");
+            markdownPreviewForm.RegExp3lines = null; //(re)read it in markdownPreviewForm
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
@@ -131,13 +135,17 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar);
+            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.UseRegExp, markdownPreviewForm.RegExpFileName);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
+                markdownPreviewForm.MarkdownStyleContent = null; //(re)read it from CssFileName
                 markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
                 markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
+                markdownPreviewForm.UseRegExp = settingsForm.UseRegExp;
+                markdownPreviewForm.RegExpFileName = settingsForm.RegExpFileName;
+                markdownPreviewForm.RegExp3lines = null; //(re)read it in markdownPreviewForm
                 SaveSettings();
                 //Update Preview
                 RenderMarkdown();
@@ -182,6 +190,8 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "HtmlFileName", markdownPreviewForm.HtmlFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "UseRegExp", markdownPreviewForm.UseRegExp.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "RegExpFileName", markdownPreviewForm.RegExpFileName, iniFilePath);
         }
 
         private void ShowAboutDialog()

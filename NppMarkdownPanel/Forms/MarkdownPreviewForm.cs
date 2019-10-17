@@ -43,6 +43,9 @@ namespace NppMarkdownPanel.Forms
         private bool showToolbar;
 
         public string CssFileName { get; set; }
+
+        public string MarkdownStyleContent { get; set; } //(re)read it from CssFileName if null
+
         public int ZoomLevel { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar {
@@ -52,6 +55,11 @@ namespace NppMarkdownPanel.Forms
                 tbPreview.Visible = value;
             }
         }
+
+        public bool UseRegExp { get; set; }
+        public string RegExpFileName { get; set; }
+        public string[] RegExp3lines { get; set; } //(re)read it from RegExpFileName if null
+            //multiply 3-strings: Comment, Pattern, ReplacementPattern
 
         private IMarkdownGenerator markdownGenerator;
         
@@ -72,24 +80,41 @@ namespace NppMarkdownPanel.Forms
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
                 renderTask = new Task<string>(() =>
                 {
+                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+                    //AK2019
+                    //multipl. 3-rows of RegExp
+                    var markdownPreRegExp = "";
+
+                    if (UseRegExp)
+                    {
+                        if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string tmpRegExpFileName))
+                        {
+                            if (RegExp3lines is null)
+                            {//reread it
+                                RegExp3lines = Utils.ReadRegExp3lines(tmpRegExpFileName);
+                            } // label1.Text = String.Join("\r\n", RegExp3lines);
+                            currentText = Utils.RegExp3replace(currentText, RegExp3lines);
+                        }
+                    }
+               
                     var result = markdownGenerator.ConvertToHtml(currentText, filepath);
                     var defaultBodyStyle = "";
 
                     // Path of plugin directory
-                    var markdownStyleContent = "";
-
-                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-
-                    if (File.Exists(CssFileName))
+                    //var markdownStyleContent = "";
+                    if (MarkdownStyleContent is null)
                     {
-                        markdownStyleContent = File.ReadAllText(CssFileName);
-                    }
-                    else
-                    {
-                        markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+                        if (Utils.FileNameExists(CssFileName, assemblyPath + "\\" + MainResources.DefaultCssFile, out string tmpCssFileName))
+                        {
+                            MarkdownStyleContent = File.ReadAllText(tmpCssFileName);
+                        }
+                        else
+                        {
+                            MarkdownStyleContent = "";
+                        }
                     }
 
-                    var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
+                    var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MarkdownStyleContent, defaultBodyStyle, result);
                     return markdownHtml;
                 });
                 renderTask.ContinueWith((renderedText) =>

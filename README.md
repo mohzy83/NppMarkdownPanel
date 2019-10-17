@@ -7,7 +7,21 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.5.0** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+
+Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
+(forked from UrsineRaven/<https://github.com/UrsineRaven/NppMarkdownPanel> - add support for saving to html)
+
+![MdPanelSettins](help/MdPanelSettins.png "Picture of the Save button on the preview panel toolbar"){style="float:right;width:60%;"}
+Added possibility to multiply replase source Npp text with RegExp. See "Release...\RegExp3.txt" for some config. for Jekyll markdown corrections.
+
+"RegExp3.txt" should have multiply 3-lines: Comment, Pattern, ReplacementPattern for [RegExp](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference). In ReplacementPattern `\r`,`\n`,`\t` can be used
+
+Config. file "RegExp3.txt" (as "style.css") can be placed in Notepad++\plugins\NppMarkdownPanel\ folder.
+
+Files "RegExp3.txt" and "style.css" are re-read only on [Save] in Markdown Panel Setting (see in `MarkdownStyleContent` and ` RegExp3lines` in "Forms\MarkdownPreviewForm.cs"):
+
+
 
 ### Used libs and icons
 

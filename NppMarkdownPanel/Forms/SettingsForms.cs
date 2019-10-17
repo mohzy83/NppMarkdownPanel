@@ -16,19 +16,26 @@ namespace NppMarkdownPanel.Forms
         public string CssFileName { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
+        public bool UseRegExp { get; set; }
+        public string RegExpFileName { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
+        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, bool useRegExp, string regExpFileName)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
+            UseRegExp = useRegExp;
+            RegExpFileName = regExpFileName;
+
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
             tbCssFile.Text = cssFileName;
             tbHtmlFile.Text = htmlFileName;
             cbShowToolbar.Checked = showToolbar;
+            cbUseRegExp.Checked = useRegExp;
+            tbRegExpFile.Text = RegExpFileName;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -139,5 +146,39 @@ namespace NppMarkdownPanel.Forms
             ShowToolbar = cbShowToolbar.Checked;
         }
         #endregion
+
+        #region Use RegExp
+        private void cbUseRegExp_CheckedChanged(object sender, EventArgs e)
+        {
+            UseRegExp = cbUseRegExp.Checked;
+            tbRegExpFile.Enabled = UseRegExp;
+            btnChooseRegExp.Enabled = UseRegExp;
+            btnResetRegExp.Enabled = UseRegExp;
+        }
+
+        private void tbRegExpFile_TextChanged(object sender, EventArgs e)
+        {
+            RegExpFileName = tbRegExpFile.Text;
+        }
+        #endregion
+
+        private void btnResetRegExp_Click(object sender, EventArgs e)
+        {
+            tbRegExpFile.Text = "RegExp3.txt";
+        }
+
+        private void btnChooseRegExp_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                openFileDialog.RestoreDirectory = true;
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    RegExpFileName = openFileDialog.FileName;
+                    tbRegExpFile.Text = RegExpFileName;
+                }
+            }
+        }
     }
 }

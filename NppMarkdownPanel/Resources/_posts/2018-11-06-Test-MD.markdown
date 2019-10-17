@@ -1,0 +1,135 @@
+---
+layout: post
+title:  "Jekyll kramdown + mathjax"
+date:   2018-11-06 06:21:59 +0100
+categories: jekyll tests
+---
+## Some Jekyll tests
+
+Jekyll kramdown + mathjax test
+
+
+### Extensions
+
+~~strike through~~  (`~~`)
+
+<http://xy.z>
+
+<abc@xy.z>
+
+#### tasklist 
+- [x] foo
+  - [ ] bar
+  - [x] baz
+- [ ] bim
+
+#### Usefull links
+
+- <https://kramdown.gettalong.org/quickref.html>
+- <https://kramdown.gettalong.org/syntax.html>
+- <https://about.gitlab.com/2016/07/19/markdown-kramdown-tips-and-tricks/>
+- <https://about.gitlab.com/handbook/product/technical-writing/markdown-guide/>
+
+### Code
+
+```markdown
+#### tasklist 
+- [x] foo
+  - [ ] bar
+  - [x] baz
+- [ ] bim
+```
+
+```python
+if i > 0:
+    print(f''' i =  {i}
+2i = {2*i}''')
+```
+
+text `and code ` . . .
+
+- - - - -
+
+#### Local images (relative path)
+
+![./MarkdownIcon.png]({{ site.baseurl }}/assets/img/MarkdownIcon.png "MarkdownIcon.png"){:width="20px"}
+ `![./MarkdownIcon.png]({{ site.baseurl }}/assets/img/MarkdownIcon.png "MarkdownIcon.png"){:width="20px"}`
+
+![MarkdownIcon.png?raw=1]({{ site.baseurl }}/assets/img/MarkdownIcon.png?raw=1 "MarkdownIcon.png"){:style="float:right;width:44px;"} `![MarkdownIcon.png?raw=1]({{ site.baseurl }}/assets/img/MarkdownIcon.png?raw=1 "MarkdownIcon.png"){:style="float:right;width:33px;"}` (`?raw=1` works in some clouds)
+
+<img src="{{ site.baseurl }}/assets/img/MarkdownIcon.png?raw=1" alt="MarkdownIcon" width="30px"> `<img src="{{ site.baseurl }}/assets/img/MarkdownIcon.png?raw=1" alt="MarkdownIcon" width="30px"/>`
+
+#### HTTP image  ![Smiley face](https://www.wpclipart.com/smiley/wink/.cache/smile_wink.png "Smiley face")
+
+- - - - -
+
+#### Tabels
+
+header | _Pipe_ | table
+-------|-------:|:-----:
+  0    |      1 | 2
+  3    | 4      | 5
+
+### Math Inline
+
+<https://docs.mathjax.org/>
+
+#### **AsciiMath2jax** (`''` or `€€`) 
+- see <http://www.wjagray.co.uk/maths/SymbolList.html> and use "`''<space>...<space>''`" as defined in <https://github.com/andrzejQ/jekyll_1> `_includes/mathjs { asciimath2jax: {delimiters:...`: 
+
+'' sum_(k=1)^n k = 1+2+ cdots +n=(n(n+1)) / 2 '' _ _ _ '' f'(x) = dy/dx ''  
+
+'' int_0^oo (x^3)/(e^x-1) dx = (pi^4)/(15) ''  {% comment %}
+- problem in N++ Md Panel; working version: '' int_0\^oo (x\^3)/(e\^x-1) dx = (pi\^4)/(15) ''
+{% endcomment %}
+
+'' ( a bc\ d ) \ \  [[a,b],[c,d]] ''
+
+'' ((n),(r)) ''; _ _ _ 
+'' A_(m,n) = ((a_(11), cdots , a_(1n)),(vdots, ddots, vdots),(a_(m1), cdots , a_(mn))) ''
+€€ S_(m,n) = ((s_(11), cdots , s_(1n)),(vdots, ddots, vdots),(s_(m1), cdots , s_(mn))) €€
+
+#### **TeX2jax** (`$` or `\\(`, `$$` or `\\[`):
+
+...  $ \(ax^2 + bx + c = 0\) $   ... **in**line ... 
+$\left(\begin{array}{c} n \newline r \end{array}\right)$
+= ...
+
+
+xxxx \\(\(ax^2 + bx + c = 0\)\\) xxxx
+
+$$
+\begin{equation}
+  \int_0^\infty \frac{x^3}{e^x-1} dx = \frac{\pi^4}{15}
+  \label{eq:sample}
+\end{equation}
+$$
+
+$$
+A_{m,n} = 
+\begin{pmatrix}
+  a_{1,1} & a_{1,2} & \cdots & a_{1,n} \\
+  a_{2,1} & a_{2,2} & \cdots & a_{2,n} \\
+  \vdots  & \vdots  & \ddots & \vdots  \\
+  a_{m,1} & a_{m,2} & \cdots & a_{m,n} 
+\end{pmatrix}
+$$
+
+Problems
+1. "`\`" before any ASCII punctuation character is [backslash escape](https://github.github.com/gfm/#example-301), so "`\(`" should be written as "`\\(`".
+2. kramdown converts "`''`" to different combinations of "`‘’`" - see special conf. in `_includes/mathjs { asciimath2jax:` .
+<!-- -->
+
+Async Mathjax Support at the end of the markdown file (`% include mathjs %` in curly brackets)
+{% include mathjs %}
+
+<!--mathjs in Notepad++ Markdown Panel--> 
+{% comment %}
+<script type="text/javascript">
+  window.MathJax = {
+    tex2jax: {inlineMath: [['$','$'],['\\(','\\)']],displayMath: [['$$','$$'],['\\[','\\]']],processEscapes:true}, 
+    asciimath2jax: {delimiters: [['€€','€€'],["''","''"]]}
+  };
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+{% endcomment %}

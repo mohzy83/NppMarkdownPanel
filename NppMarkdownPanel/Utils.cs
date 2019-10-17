@@ -117,5 +117,101 @@ namespace NppMarkdownPanel
                     return false;
             }
         }
+        /// <summary>
+        /// Takes a fileName or fileName2 and returns it in validFileName whether file exists.
+        /// </summary>
+        /// <param name="fileName">Filename or path of file</param>
+        /// <param name="fileName2">Filename or path of file</param>
+        /// <param name="validFileName">File name of existing file</param>
+        /// <returns>Boolean representing whether file with fileName or fileName2 exists</returns>
+        public static bool FileNameExists(string fileName, string fileName2, out string validFileName)
+        {
+            validFileName = "";
+            if (File.Exists(fileName))
+            {
+                validFileName = fileName;
+            }
+            else
+            {
+                if (File.Exists(fileName2))
+                {
+                    validFileName = fileName2;
+                }
+            }
+            return !String.IsNullOrWhiteSpace(validFileName);
+        }
+
+        /// <summary>
+        /// RegExp3replace
+        /// </summary>
+        /// <param name="inputStr">...</param>
+        /// <param name="regExp3str">multiply 3-strings: Comment, Pattern, ReplacementPattern
+        /// https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
+        /// </param>
+        /// <returns>modified string</returns>
+        public static string RegExp3replace(string inputStr, string[] regExp3lines)
+        {
+            if (regExp3lines.Length > 0)
+            {
+                string[] s123 = new String[3];
+                for (int i = 0; i < regExp3lines.Length; i += 3)
+                {
+                    Array.Copy(regExp3lines, i, s123, 0, 3);
+
+                    //https://regexone.com/references/csharp
+                    //https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
+                    inputStr = System.Text.RegularExpressions.Regex.Replace(inputStr, s123[1], s123[2]);//comment in s123[0])
+
+                }
+
+            }
+            return inputStr;
+        }
+
+        /// <summary>
+        /// readRegExp3lines
+        /// </summary>
+        /// <param name="FinalRegExpFName">...</param>
+        /// <returns>regExp3lines</returns>
+        /// 
+
+        public static string[] ReadRegExp3lines(string finalRegExpFName)
+        {
+            string regExp3str = File.ReadAllText(finalRegExpFName, Encoding.UTF8);//Utf8 with or w/o BOM 
+
+            string[] regExp3lines = regExp3str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            if ((regExp3lines.Length % 3 != 0)
+                && (regExp3lines[regExp3lines.Length - 1] == ""))
+            { //remove last empty elem.
+                Array.Resize(ref regExp3lines, regExp3lines.Length - 1);
+            }
+            int addSize = regExp3lines.Length % 3;
+            if (addSize > 0)
+            {
+                addSize = 3 - addSize;
+                Array.Resize(ref regExp3lines, regExp3lines.Length + addSize);
+                while (addSize > 0)
+                {
+                    regExp3lines[regExp3lines.Length - addSize--] = "";
+                }
+            }
+            for (int i = 2; i < regExp3lines.Length; i += 3)
+            {
+                regExp3lines[i] = regExp3lines[i]
+                                    .Replace("\\n", "\n")
+                                    .Replace("\\r", "\r")
+                                    .Replace("\\t", "\t");
+            }
+            return regExp3lines;
+        }
+
+
+
+
+
+
+
+
     }
 }
