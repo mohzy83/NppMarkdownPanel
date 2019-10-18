@@ -12,14 +12,26 @@ The current version is **0.5.0** - master branch can be found [here](https://git
 Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
 (forked from UrsineRaven/<https://github.com/UrsineRaven/NppMarkdownPanel> - add support for saving to html)
 
-![MdPanelSettins](help/MdPanelSettins.png "Picture of the Save button on the preview panel toolbar"){style="float:right;width:60%;"}
+![MdPanelSettins](help/MdPanelSettins.png "Picture of the Save button on the preview panel toolbar")
 Added possibility to multiply replase source Npp text with RegExp. See "Release...\RegExp3.txt" for some config. for Jekyll markdown corrections.
 
-"RegExp3.txt" should have multiply 3-lines: Comment, Pattern, ReplacementPattern for [RegExp](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference). In ReplacementPattern `\r`,`\n`,`\t` can be used
+"**RegExp3.txt**" should have multiply 3-lines: Comment (ignored), Pattern, ReplacementPattern for [RegExp](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference). In ReplacementPattern `\r`,`\n`,`\t` can be used. Example:
 
-Config. file "RegExp3.txt" (as "style.css") can be placed in Notepad++\plugins\NppMarkdownPanel\ folder.
+````cs
+    // Comment: {{ site.baseurl }} -> ..
+\{\{ site\.baseurl \}\}
+..
+    // .png){:style -> .png){style
+\)\{:
+){
+    // Jekyll front matter -> `$1$2$3` (in repl.patt.`\r`,`\n`,`\t` can be used, ex: ```\n$1$2$3\n```) 
+(?i)^(---)(\s+layout:[\s\S]+?)(---)
+`$1$2$3`
+````
 
-Files "RegExp3.txt" and "style.css" are re-read only on [Save] in Markdown Panel Setting (see in `MarkdownStyleContent` and ` RegExp3lines` in "Forms\MarkdownPreviewForm.cs"):
+Config. file "RegExp3.txt" (and "style.css") can be placed in Notepad++\plugins\NppMarkdownPanel\ folder.
+
+Files "RegExp3.txt" and "style.css" are re-read again only on [Save] action in Markdown Panel Setting (see `MarkdownStyleContent` and ` RegExp3lines` in "Forms\MarkdownPreviewForm.cs"):
 
 
 

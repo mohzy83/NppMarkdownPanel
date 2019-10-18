@@ -142,10 +142,10 @@ namespace NppMarkdownPanel
         }
 
         /// <summary>
-        /// RegExp3replace
+        /// Loop - convert inputStr according to regExp3lines
         /// </summary>
-        /// <param name="inputStr">...</param>
-        /// <param name="regExp3str">multiply 3-strings: Comment, Pattern, ReplacementPattern
+        /// <param name="inputStr">Text to replace</param>
+        /// <param name="regExp3str">multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
         /// https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
         /// </param>
         /// <returns>modified string</returns>
@@ -158,8 +158,6 @@ namespace NppMarkdownPanel
                 {
                     Array.Copy(regExp3lines, i, s123, 0, 3);
 
-                    //https://regexone.com/references/csharp
-                    //https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
                     inputStr = System.Text.RegularExpressions.Regex.Replace(inputStr, s123[1], s123[2]);//comment in s123[0])
 
                 }
@@ -171,10 +169,9 @@ namespace NppMarkdownPanel
         /// <summary>
         /// readRegExp3lines
         /// </summary>
-        /// <param name="FinalRegExpFName">...</param>
-        /// <returns>regExp3lines</returns>
+        /// <param name="FinalRegExpFName">Txt with multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern</param>
+        /// <returns>regExp3lines - string[], Length = 3*n</returns>
         /// 
-
         public static string[] ReadRegExp3lines(string finalRegExpFName)
         {
             string regExp3str = File.ReadAllText(finalRegExpFName, Encoding.UTF8);//Utf8 with or w/o BOM 
@@ -207,11 +204,7 @@ namespace NppMarkdownPanel
         }
 
 
-
-
-
-
-
+//...
 
     }
 }

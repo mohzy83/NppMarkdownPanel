@@ -82,18 +82,20 @@ namespace NppMarkdownPanel.Forms
                 {
                     var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
                     //AK2019
-                    //multipl. 3-rows of RegExp
-                    var markdownPreRegExp = "";
-
+                    //multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
                     if (UseRegExp)
                     {
                         if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string tmpRegExpFileName))
                         {
                             if (RegExp3lines is null)
-                            {//reread it
+                            {//re-read it
                                 RegExp3lines = Utils.ReadRegExp3lines(tmpRegExpFileName);
-                            } // label1.Text = String.Join("\r\n", RegExp3lines);
+                            }
                             currentText = Utils.RegExp3replace(currentText, RegExp3lines);
+                        }
+                        else
+                        {
+                            RegExp3lines = new string[0]; //!= null - don't re-read RegExpFile
                         }
                     }
                
@@ -110,7 +112,7 @@ namespace NppMarkdownPanel.Forms
                         }
                         else
                         {
-                            MarkdownStyleContent = "";
+                            MarkdownStyleContent = ""; //!= null - don't re-read CssFile
                         }
                     }
 
