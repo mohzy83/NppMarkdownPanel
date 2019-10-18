@@ -7,6 +7,8 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
+My (UrsineRaven) changes to [mohzy83's repo](https://github.com/mohzy83/NppMarkdownPanel) can be found in the [version history](#version-history) below.
+
 The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
@@ -71,6 +73,18 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### UrsineRaven change set 1
+- add ability to save the preview to HTML document
+    - can automatically save every time it's rendered
+    - can show a toolbar on the preview panel to allow saving on button click
+- add settings to settings window to allow:
+    - selecting the file for automatic saving
+    - enabling/disabling the preview panel toolbar
+    - added some basic validation for some of the fields
+- updated README.md
+    - added a section describing the Settings options
+    - added my changes to version history
 
 ### Version 0.5.0
 - change zoomlevel for the preview in settings dialog
