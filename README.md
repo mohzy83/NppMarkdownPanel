@@ -21,9 +21,9 @@ Added possibility to multiply replase source Npp text with RegExp. See "Release.
     // Comment: {{ site.baseurl }} -> ..
 \{\{ site\.baseurl \}\}
 ..
-    // .png){:style -> .png){style
-\)\{:
-){
+    // ....{:style -> ...{style
+(\S\{):
+$1
     // Jekyll front matter -> `$1$2$3` (in repl.patt.`\r`,`\n`,`\t` can be used, ex: ```\n$1$2$3\n```) 
 (?i)^(---)(\s+layout:[\s\S]+?)(---)
 `$1$2$3`
