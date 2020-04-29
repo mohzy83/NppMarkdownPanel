@@ -35,6 +35,7 @@ namespace NppMarkdownPanel
         private int lastCaretPosition;
         private string iniFilePath;
         private bool syncViewWithCaretPosition;
+        private int ScrollBuffer;
 
         public MarkdownPanelController()
         {
@@ -55,7 +56,14 @@ namespace NppMarkdownPanel
                     if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
                     {
                         lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
-                        ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
+                        if ((scintillaGateway.GetCurrentLineNumber() - ScrollBuffer) < 0)
+                        {
+                            ScrollToElementAtLineNo(0);
+                        }
+                        else
+                        {
+                            ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber() - ScrollBuffer);
+                        }
                     }
                 }
                 else
@@ -65,14 +73,14 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
-                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
-                    // Any modifications made ?
-                    if (isInsert || isDelete)
-                    {
+                    // bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
+                    // bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
+                    // // Any modifications made ?
+                    // if (isInsert || isDelete)
+                    // {
                         lastTickCount = Environment.TickCount;
                         RenderMarkdown();
-                    }
+                    // }
                 }
             }
         }
@@ -117,7 +125,8 @@ namespace NppMarkdownPanel
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
-            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
+            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
+            ScrollBuffer = Win32.GetPrivateProfileInt("Options", "ScrollBuffer", 10, iniFilePath);
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
@@ -173,6 +182,7 @@ namespace NppMarkdownPanel
         public void PluginCleanUp()
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
+            Win32.WriteIniValue("Options", "ScrollBuffer", ScrollBuffer.ToString(), iniFilePath);
             SaveSettings();
         }
 
