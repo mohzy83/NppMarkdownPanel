@@ -7,6 +7,9 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
+My ([VinsWorldcom](https://github.com/VinsWorldcom/NppMarkdownPanel)) changes to [UrsineRaven's repo](https://github.com/UrsineRaven/NppMarkdownPanel) can be found in the [version history](#version-history) below.
+The current version with my modifications (0.5.0.2) can be found [here](https://github.com/VinsWorldcom/NppMarkdownPanel/releases)
+
 My ([UrsineRaven](https://github.com/UrsineRaven/NppMarkdownPanel)) changes to [mohzy83's repo](https://github.com/mohzy83/NppMarkdownPanel) can be found in the [version history](#version-history) below.
 The current version with my modifications (0.5.0.1) can be found [here](https://github.com/UrsineRaven/NppMarkdownPanel/releases)
 
@@ -75,6 +78,10 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### VinsWorldcom change set 1 (Version 0.5.0.2)
+- automatically updating view when typing in N++ bugfix
+- scroll buffer configuration (.INI only) for header buffer view
 
 ### UrsineRaven change set 1 (Version 0.5.0.1)
 - add ability to save the preview to HTML document
