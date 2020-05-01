@@ -40,7 +40,7 @@ namespace Kbg.NppPluginNET
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(Main.PluginName);
+                _ptrPluginName = Marshal.StringToHGlobalUni(Main.PluginTitle);
             return _ptrPluginName;
         }
 

@@ -179,14 +179,14 @@ namespace NppMarkdownPanel
             syncViewWithScrollPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithScrollPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
-            FileExtensions = Win32.ReadIniValue("Options", "FileExtensions", iniFilePath, "md,mkdn,mkd");
+            FileExtensions = Win32.ReadIniValue("Options", "FileExtensions", iniFilePath, ".md,.mkdn,.mkd");
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
-            PluginBase.SetCommand(0, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(1, "Synchronize with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
-            PluginBase.SetCommand(2, "Synchronize on vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
-            PluginBase.SetCommand(3, "Edit Settings", EditSettings);
-            PluginBase.SetCommand(4, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
+            PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
+            PluginBase.SetCommand(1, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(2, "Synchronize on &vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
+            PluginBase.SetCommand(3, "Edit &Settings", EditSettings);
+            PluginBase.SetCommand(4, "&About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
 
             idMyDlg = 0;
         }
@@ -194,13 +194,14 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar);
+            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, FileExtensions);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
                 markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
                 markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
+                FileExtensions = settingsForm.FileExtensions;
                 SaveSettings();
                 //Update Preview
                 RenderMarkdown();

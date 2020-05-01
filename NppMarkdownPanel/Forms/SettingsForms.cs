@@ -15,19 +15,22 @@ namespace NppMarkdownPanel.Forms
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
         public string HtmlFileName { get; set; }
+        public string FileExtensions { get; set; }
         public bool ShowToolbar { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
+        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string fileExtensions)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
+            FileExtensions = fileExtensions;
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
             tbCssFile.Text = cssFileName;
             tbHtmlFile.Text = htmlFileName;
+            tbFileExts.Text = fileExtensions;
             cbShowToolbar.Checked = showToolbar;
         }
 
@@ -40,6 +43,16 @@ namespace NppMarkdownPanel.Forms
         private void tbCssFile_TextChanged(object sender, EventArgs e)
         {
             CssFileName = tbCssFile.Text;
+        }
+
+        private void tbFileExts_TextChanged(object sender, EventArgs e)
+        {
+            FileExtensions = tbFileExts.Text;
+        }
+
+        private void btnResetExts_Click(object sender, EventArgs e)
+        {
+            tbFileExts.Text = ".md,.mkdn,.mkd";
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -78,9 +91,9 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnResetCss_Click(object sender, EventArgs e)
         {
-            tbCssFile.Text = "";
+            tbCssFile.Text = "style.css";
         }
 
         #region Output HTML File
