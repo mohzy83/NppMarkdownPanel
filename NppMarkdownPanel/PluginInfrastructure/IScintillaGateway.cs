@@ -13,6 +13,27 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     /// </summary>
     public interface IScintillaGateway
     {
+        /// <summary>
+        /// Change the Scintilla window handle for this Gateway
+        /// and return the previous handle for potentially final updates.
+        /// </summary>
+        /// <param name="newHandle"></param>
+        /// <returns></returns>
+        IntPtr SetScintillaHandle(IntPtr newHandle);
+
+        /// <summary>
+        /// Switch the handle between main and second window handle.
+        /// </summary>
+        void SwitchScintillaHandle();
+
+        /// <summary>
+        /// Return the current Scintilla window handle
+        /// </summary>
+        /// <returns></returns>
+        IntPtr GetScintillaHandle();
+
+        IntPtr CurrentBufferID { get; set; }
+
         int GetSelectionLength();
         void AppendTextAndMoveCursor(string text);
         void InsertTextAndMoveCursor(string text);

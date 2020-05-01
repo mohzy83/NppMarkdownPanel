@@ -16,9 +16,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     {
         private const int Unused = 0;
 
-        private readonly IntPtr scintilla;
+        private IntPtr scintilla;
 
         public static readonly int LengthZeroTerminator = "\0".Length;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IntPtr CurrentBufferID { get; set; }
 
 
         public ScintillaGateway(IntPtr scintilla)
@@ -26,9 +31,39 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             this.scintilla = scintilla;
         }
 
+        /// <summary>
+        /// Switch the handle between main and second window handle.
+        /// </summary>
+        public void SwitchScintillaHandle()
+        {
+            this.scintilla = this.scintilla == PluginBase.nppData._scintillaMainHandle ? PluginBase.nppData._scintillaSecondHandle : PluginBase.nppData._scintillaMainHandle;
+        }
+
+        /// <summary>
+        /// Change the Scintilla window handle for this Gateway
+        /// and return the previous handle for potentially final updates.
+        /// </summary>
+        /// <param name="newHandle"></param>
+        /// <returns></returns>
+        public IntPtr SetScintillaHandle(IntPtr newHandle)
+        {
+            IntPtr oldHandle = this.scintilla;
+            this.scintilla = newHandle;
+            return oldHandle;
+        }
+
+        /// <summary>
+        /// Return the current Scintilla window handle
+        /// </summary>
+        /// <returns></returns>
+        public IntPtr GetScintillaHandle()
+        {
+            return this.scintilla;
+        }
+
         public int GetSelectionLength()
         {
-            var selectionLength = (int)Win32.SendMessage(scintilla, SciMsg.SCI_GETSELTEXT, Unused, Unused) - LengthZeroTerminator;
+            var selectionLength = (int) Win32.SendMessage(scintilla, SciMsg.SCI_GETSELTEXT, Unused, Unused) - LengthZeroTerminator;
             return selectionLength;
         }
 
@@ -65,7 +100,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public int GetCurrentLineNumber()
         {
-            return LineFromPosition(GetCurrentPos());
+            return LineFromPosition(GetCurrentPos()); 
         }
 
         /// <summary>
@@ -89,7 +124,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ADDTEXT, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ADDTEXT, length, (IntPtr) textPtr);
             }
         }
 
@@ -98,7 +133,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (char* cPtr = c.Value)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ADDSTYLEDTEXT, length, (IntPtr)cPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ADDSTYLEDTEXT, length, (IntPtr) cPtr);
             }
         }
 
@@ -107,7 +142,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INSERTTEXT, pos.Value, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INSERTTEXT, pos.Value, (IntPtr) textPtr);
             }
         }
 
@@ -116,7 +151,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CHANGEINSERTION, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CHANGEINSERTION, length, (IntPtr) textPtr);
             }
         }
 
@@ -142,35 +177,35 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLength()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLENGTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Returns the character byte at the position. (Scintilla feature 2007)</summary>
         public int GetCharAt(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCHARAT, pos.Value, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Returns the position of the caret. (Scintilla feature 2008)</summary>
         public Position GetCurrentPos()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCURRENTPOS, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Returns the position of the opposite end of the selection to the caret. (Scintilla feature 2009)</summary>
         public Position GetAnchor()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETANCHOR, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Returns the style byte at the position. (Scintilla feature 2010)</summary>
         public int GetStyleAt(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTYLEAT, pos.Value, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Redoes the next action on the undo history. (Scintilla feature 2011)</summary>
@@ -213,21 +248,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetStyledText(TextRange tr)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTYLEDTEXT, Unused, tr.NativePointer);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Are there any redoable actions in the undo history? (Scintilla feature 2016)</summary>
         public bool CanRedo()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CANREDO, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Retrieve the line number at which a particular marker is located. (Scintilla feature 2017)</summary>
         public int MarkerLineFromHandle(int handle)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERLINEFROMHANDLE, handle, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Delete a marker. (Scintilla feature 2018)</summary>
@@ -240,7 +275,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetUndoCollection()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETUNDOCOLLECTION, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -251,7 +286,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetViewWS()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETVIEWWS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Make white space characters invisible, always visible or visible outside indentation. (Scintilla feature 2021)</summary>
@@ -264,7 +299,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position PositionFromPoint(int x, int y)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONFROMPOINT, x, y);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>
@@ -275,7 +310,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position PositionFromPointClose(int x, int y)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONFROMPOINTCLOSE, x, y);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Set caret to start of a line and ensure it is visible. (Scintilla feature 2024)</summary>
@@ -311,7 +346,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCURLINE, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCURLINE, length, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -320,7 +355,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetEndStyled()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETENDSTYLED, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Convert all line endings in the document to one mode. (Scintilla feature 2029)</summary>
@@ -333,7 +368,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetEOLMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEOLMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the current end of line mode. (Scintilla feature 2031)</summary>
@@ -366,7 +401,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetBufferedDraw()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETBUFFEREDDRAW, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -389,7 +424,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetTabWidth()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTABWIDTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Clear explicit tabstops on a line. (Scintilla feature 2675)</summary>
@@ -408,7 +443,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetNextTabStop(int line, int x)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETNEXTTABSTOP, line, x);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -425,7 +460,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIMEInteraction()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETIMEINTERACTION, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Choose to display the the IME in a winow or inline. (Scintilla feature 2679)</summary>
@@ -468,7 +503,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int MarkerAdd(int line, int markerNumber)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERADD, line, markerNumber);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Delete a marker from a line. (Scintilla feature 2044)</summary>
@@ -487,7 +522,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int MarkerGet(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERGET, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -498,14 +533,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int MarkerNext(int lineStart, int markerMask)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERNEXT, lineStart, markerMask);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Find the previous line before lineStart that includes a marker in mask. (Scintilla feature 2048)</summary>
         public int MarkerPrevious(int lineStart, int markerMask)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERPREVIOUS, lineStart, markerMask);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Define a marker from a pixmap. (Scintilla feature 2049)</summary>
@@ -513,7 +548,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* pixmapPtr = Encoding.UTF8.GetBytes(pixmap))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERDEFINEPIXMAP, markerNumber, (IntPtr)pixmapPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERDEFINEPIXMAP, markerNumber, (IntPtr) pixmapPtr);
             }
         }
 
@@ -539,7 +574,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginTypeN(int margin)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINTYPEN, margin, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the width of a margin to a width expressed in pixels. (Scintilla feature 2242)</summary>
@@ -552,7 +587,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginWidthN(int margin)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINWIDTHN, margin, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set a mask that determines which markers are displayed in a margin. (Scintilla feature 2244)</summary>
@@ -565,7 +600,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginMaskN(int margin)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINMASKN, margin, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Make a margin sensitive or insensitive to mouse clicks. (Scintilla feature 2246)</summary>
@@ -578,7 +613,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetMarginSensitiveN(int margin)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINSENSITIVEN, margin, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set the cursor shown when the mouse is inside a margin. (Scintilla feature 2248)</summary>
@@ -591,7 +626,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginCursorN(int margin)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINCURSORN, margin, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Clear all the styles and make equivalent to the global default style. (Scintilla feature 2050)</summary>
@@ -635,7 +670,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* fontNamePtr = Encoding.UTF8.GetBytes(fontName))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLESETFONT, style, (IntPtr)fontNamePtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLESETFONT, style, (IntPtr) fontNamePtr);
             }
         }
 
@@ -661,35 +696,35 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour StyleGetFore(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETFORE, style, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Get the background colour of a style. (Scintilla feature 2482)</summary>
         public Colour StyleGetBack(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETBACK, style, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Get is a style bold or not. (Scintilla feature 2483)</summary>
         public bool StyleGetBold(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETBOLD, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Get is a style italic or not. (Scintilla feature 2484)</summary>
         public bool StyleGetItalic(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETITALIC, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Get the size of characters of a style. (Scintilla feature 2485)</summary>
         public int StyleGetSize(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETSIZE, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -703,7 +738,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] fontNameBuffer = new byte[10000];
             fixed (byte* fontNamePtr = fontNameBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETFONT, style, (IntPtr)fontNamePtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETFONT, style, (IntPtr) fontNamePtr);
                 return Encoding.UTF8.GetString(fontNameBuffer).TrimEnd('\0');
             }
         }
@@ -712,35 +747,35 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool StyleGetEOLFilled(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETEOLFILLED, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Get is a style underlined or not. (Scintilla feature 2488)</summary>
         public bool StyleGetUnderline(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETUNDERLINE, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Get is a style mixed case, or to force upper or lower case. (Scintilla feature 2489)</summary>
         public int StyleGetCase(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETCASE, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the character get of the font in a style. (Scintilla feature 2490)</summary>
         public int StyleGetCharacterSet(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETCHARACTERSET, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get is a style visible or not. (Scintilla feature 2491)</summary>
         public bool StyleGetVisible(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETVISIBLE, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -751,14 +786,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool StyleGetChangeable(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETCHANGEABLE, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Get is a style a hotspot or not. (Scintilla feature 2493)</summary>
         public bool StyleGetHotSpot(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETHOTSPOT, style, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set a style to be mixed case, or to force upper or lower case. (Scintilla feature 2060)</summary>
@@ -777,7 +812,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int StyleGetSizeFractional(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETSIZEFRACTIONAL, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the weight of characters of a style. (Scintilla feature 2063)</summary>
@@ -790,7 +825,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int StyleGetWeight(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_STYLEGETWEIGHT, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the character set of the font in a style. (Scintilla feature 2066)</summary>
@@ -821,7 +856,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetSelAlpha()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELALPHA, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the alpha of the selection. (Scintilla feature 2478)</summary>
@@ -834,7 +869,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetSelEOLFilled()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELEOLFILLED, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set the selection to have its end of line filled or not. (Scintilla feature 2480)</summary>
@@ -872,7 +907,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* stylesPtr = Encoding.UTF8.GetBytes(styles))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETSTYLINGEX, length, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETSTYLINGEX, length, (IntPtr) stylesPtr);
             }
         }
 
@@ -886,7 +921,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetCaretPeriod()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETPERIOD, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the time in milliseconds that the caret is on and off. 0 = steady on. (Scintilla feature 2076)</summary>
@@ -904,7 +939,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* charactersPtr = Encoding.UTF8.GetBytes(characters))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETWORDCHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETWORDCHARS, Unused, (IntPtr) charactersPtr);
             }
         }
 
@@ -918,7 +953,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] charactersBuffer = new byte[10000];
             fixed (byte* charactersPtr = charactersBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWORDCHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWORDCHARS, Unused, (IntPtr) charactersPtr);
                 return Encoding.UTF8.GetString(charactersBuffer).TrimEnd('\0');
             }
         }
@@ -949,7 +984,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicGetStyle(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETSTYLE, indic, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the foreground colour of an indicator. (Scintilla feature 2082)</summary>
@@ -962,7 +997,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour IndicGetFore(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETFORE, indic, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Set an indicator to draw under text or over(default). (Scintilla feature 2510)</summary>
@@ -975,7 +1010,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool IndicGetUnder(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETUNDER, indic, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set a hover indicator to plain, squiggle or TT. (Scintilla feature 2680)</summary>
@@ -988,7 +1023,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicGetHoverStyle(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETHOVERSTYLE, indic, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the foreground hover colour of an indicator. (Scintilla feature 2682)</summary>
@@ -1001,7 +1036,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour IndicGetHoverFore(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETHOVERFORE, indic, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Set the attributes of an indicator. (Scintilla feature 2684)</summary>
@@ -1014,7 +1049,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicGetFlags(int indic)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETFLAGS, indic, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the foreground colour of all whitespace and whether to use this setting. (Scintilla feature 2084)</summary>
@@ -1039,7 +1074,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWhitespaceSize()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWHITESPACESIZE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1057,7 +1092,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetStyleBits()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTYLEBITS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Used to hold extra styling information for each line. (Scintilla feature 2092)</summary>
@@ -1070,21 +1105,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLineState(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINESTATE, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the last line number that has line state. (Scintilla feature 2094)</summary>
         public int GetMaxLineState()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMAXLINESTATE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Is the background of the line containing the caret in a different colour? (Scintilla feature 2095)</summary>
         public bool GetCaretLineVisible()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETLINEVISIBLE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Display the background of the line containing the caret in a different colour. (Scintilla feature 2096)</summary>
@@ -1097,7 +1132,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour GetCaretLineBack()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETLINEBACK, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Set the colour of the background of the line containing the caret. (Scintilla feature 2098)</summary>
@@ -1126,7 +1161,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* itemListPtr = Encoding.UTF8.GetBytes(itemList))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSHOW, lenEntered, (IntPtr)itemListPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSHOW, lenEntered, (IntPtr) itemListPtr);
             }
         }
 
@@ -1140,14 +1175,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCActive()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCACTIVE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Retrieve the position of the caret when the auto-completion list was displayed. (Scintilla feature 2103)</summary>
         public Position AutoCPosStart()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCPOSSTART, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>User has selected an item so remove the list and insert the selection. (Scintilla feature 2104)</summary>
@@ -1161,7 +1196,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* characterSetPtr = Encoding.UTF8.GetBytes(characterSet))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSTOPS, Unused, (IntPtr)characterSetPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSTOPS, Unused, (IntPtr) characterSetPtr);
             }
         }
 
@@ -1179,7 +1214,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetSeparator()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETSEPARATOR, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Select the item in the auto-completion list that starts with a string. (Scintilla feature 2108)</summary>
@@ -1187,7 +1222,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSELECT, Unused, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSELECT, Unused, (IntPtr) textPtr);
             }
         }
 
@@ -1205,7 +1240,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCGetCancelAtStart()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCANCELATSTART, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -1217,7 +1252,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* characterSetPtr = Encoding.UTF8.GetBytes(characterSet))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSETFILLUPS, Unused, (IntPtr)characterSetPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCSETFILLUPS, Unused, (IntPtr) characterSetPtr);
             }
         }
 
@@ -1231,7 +1266,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCGetChooseSingle()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCHOOSESINGLE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set whether case is significant when performing auto-completion searches. (Scintilla feature 2115)</summary>
@@ -1244,7 +1279,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCGetIgnoreCase()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETIGNORECASE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Display a list of strings and send notification when user chooses one. (Scintilla feature 2117)</summary>
@@ -1252,7 +1287,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* itemListPtr = Encoding.UTF8.GetBytes(itemList))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_USERLISTSHOW, listType, (IntPtr)itemListPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_USERLISTSHOW, listType, (IntPtr) itemListPtr);
             }
         }
 
@@ -1266,7 +1301,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCGetAutoHide()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETAUTOHIDE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -1287,7 +1322,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool AutoCGetDropRestOfWord()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETDROPRESTOFWORD, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Register an XPM image for use in autocompletion lists. (Scintilla feature 2405)</summary>
@@ -1295,7 +1330,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* xpmDataPtr = Encoding.UTF8.GetBytes(xpmData))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REGISTERIMAGE, type, (IntPtr)xpmDataPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REGISTERIMAGE, type, (IntPtr) xpmDataPtr);
             }
         }
 
@@ -1309,7 +1344,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetTypeSeparator()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETTYPESEPARATOR, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1336,7 +1371,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetMaxWidth()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETMAXWIDTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1353,7 +1388,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetMaxHeight()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETMAXHEIGHT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the number of spaces used for one level of indentation. (Scintilla feature 2122)</summary>
@@ -1366,7 +1401,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIndent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETINDENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1383,7 +1418,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetUseTabs()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETUSETABS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Change the indentation of a line to a number of columns. (Scintilla feature 2126)</summary>
@@ -1396,28 +1431,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLineIndentation(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEINDENTATION, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the position before the first non indentation character on a line. (Scintilla feature 2128)</summary>
         public Position GetLineIndentPosition(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEINDENTPOSITION, line, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Retrieve the column number of a position, taking tab width into account. (Scintilla feature 2129)</summary>
         public int GetColumn(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCOLUMN, pos.Value, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Count characters between two positions. (Scintilla feature 2633)</summary>
         public int CountCharacters(int startPos, int endPos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_COUNTCHARACTERS, startPos, endPos);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Show or hide the horizontal scroll bar. (Scintilla feature 2130)</summary>
@@ -1430,7 +1465,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetHScrollBar()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHSCROLLBAR, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Show or hide indentation guides. (Scintilla feature 2132)</summary>
@@ -1443,7 +1478,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIndentationGuides()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETINDENTATIONGUIDES, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1460,35 +1495,35 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetHighlightGuide()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHIGHLIGHTGUIDE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the position after the last visible characters on a line. (Scintilla feature 2136)</summary>
         public Position GetLineEndPosition(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEENDPOSITION, line, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Get the code page used to interpret the bytes of the document as characters. (Scintilla feature 2137)</summary>
         public int GetCodePage()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCODEPAGE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the foreground colour of the caret. (Scintilla feature 2138)</summary>
         public Colour GetCaretFore()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETFORE, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>In read-only mode? (Scintilla feature 2140)</summary>
         public bool GetReadOnly()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETREADONLY, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Sets the position of the caret. (Scintilla feature 2141)</summary>
@@ -1507,7 +1542,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionStart()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONSTART, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Sets the position that ends the selection - this becomes the currentPosition. (Scintilla feature 2144)</summary>
@@ -1520,7 +1555,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionEnd()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONEND, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Set caret to a position, while removing any existing selection. (Scintilla feature 2556)</summary>
@@ -1539,7 +1574,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetPrintMagnification()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPRINTMAGNIFICATION, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Modify colours when printing for clearer printed text. (Scintilla feature 2148)</summary>
@@ -1552,21 +1587,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetPrintColourMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPRINTCOLOURMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Find some text in the document. (Scintilla feature 2150)</summary>
         public Position FindText(int flags, TextToFind ft)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_FINDTEXT, flags, ft.NativePointer);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Retrieve the display line at the top of the display. (Scintilla feature 2152)</summary>
         public int GetFirstVisibleLine()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFIRSTVISIBLELINE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1579,7 +1614,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINE, line, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINE, line, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -1588,7 +1623,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLineCount()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINECOUNT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets the size in pixels of the left margin. (Scintilla feature 2155)</summary>
@@ -1601,7 +1636,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginLeft()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINLEFT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets the size in pixels of the right margin. (Scintilla feature 2157)</summary>
@@ -1614,14 +1649,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginRight()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINRIGHT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Is the document different from when it was last saved? (Scintilla feature 2159)</summary>
         public bool GetModify()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMODIFY, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Select a range of text. (Scintilla feature 2160)</summary>
@@ -1641,7 +1676,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELTEXT, Unused, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELTEXT, Unused, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -1654,7 +1689,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetTextRange(TextRange tr)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXTRANGE, Unused, tr.NativePointer);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Draw the selection in normal style or with selection highlighted. (Scintilla feature 2163)</summary>
@@ -1667,28 +1702,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int PointXFromPosition(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POINTXFROMPOSITION, Unused, pos.Value);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the y value of the point in the window where a position is displayed. (Scintilla feature 2165)</summary>
         public int PointYFromPosition(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POINTYFROMPOSITION, Unused, pos.Value);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the line containing a position. (Scintilla feature 2166)</summary>
         public int LineFromPosition(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_LINEFROMPOSITION, pos.Value, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the position at the start of a line. (Scintilla feature 2167)</summary>
         public Position PositionFromLine(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONFROMLINE, line, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Scroll horizontally and vertically. (Scintilla feature 2168)</summary>
@@ -1719,7 +1754,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACESEL, Unused, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACESEL, Unused, (IntPtr) textPtr);
             }
         }
 
@@ -1739,14 +1774,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool CanPaste()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CANPASTE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Are there any undoable actions in the undo history? (Scintilla feature 2174)</summary>
         public bool CanUndo()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CANUNDO, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Delete the undo history. (Scintilla feature 2175)</summary>
@@ -1790,7 +1825,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETTEXT, Unused, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETTEXT, Unused, (IntPtr) textPtr);
             }
         }
 
@@ -1802,10 +1837,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public unsafe string GetText(int length)
         {
-            byte[] textBuffer = new byte[length + 1];
+            byte[] textBuffer = new byte[length];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXT, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXT, length, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -1814,7 +1849,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetTextLength()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXTLENGTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve a pointer to a function that processes messages for this Scintilla. (Scintilla feature 2184)</summary>
@@ -1843,7 +1878,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetOvertype()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETOVERTYPE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set the width of the insert mode caret. (Scintilla feature 2188)</summary>
@@ -1856,7 +1891,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetCaretWidth()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETWIDTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -1873,7 +1908,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetTargetStart()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTARGETSTART, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>
@@ -1890,7 +1925,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetTargetEnd()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTARGETEND, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Sets both the start and end of the target in one call. (Scintilla feature 2686)</summary>
@@ -1905,7 +1940,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] charactersBuffer = new byte[10000];
             fixed (byte* charactersPtr = charactersBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTARGETTEXT, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTARGETTEXT, Unused, (IntPtr) charactersPtr);
                 return Encoding.UTF8.GetString(charactersBuffer).TrimEnd('\0');
             }
         }
@@ -1920,8 +1955,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACETARGET, length, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACETARGET, length, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -1938,8 +1973,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACETARGETRE, length, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REPLACETARGETRE, length, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -1953,8 +1988,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHINTARGET, length, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHINTARGET, length, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -1968,7 +2003,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetSearchFlags()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSEARCHFLAGS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Show a call tip containing a definition near position pos. (Scintilla feature 2200)</summary>
@@ -1976,7 +2011,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* definitionPtr = Encoding.UTF8.GetBytes(definition))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CALLTIPSHOW, pos.Value, (IntPtr)definitionPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CALLTIPSHOW, pos.Value, (IntPtr) definitionPtr);
             }
         }
 
@@ -1990,14 +2025,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool CallTipActive()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CALLTIPACTIVE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Retrieve the position where the caret was before displaying the call tip. (Scintilla feature 2203)</summary>
         public Position CallTipPosStart()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CALLTIPPOSSTART, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Set the start position in order to change when backspacing removes the calltip. (Scintilla feature 2214)</summary>
@@ -2046,21 +2081,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int VisibleFromDocLine(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_VISIBLEFROMDOCLINE, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Find the document line of a display line taking hidden lines into account. (Scintilla feature 2221)</summary>
         public int DocLineFromVisible(int lineDisplay)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DOCLINEFROMVISIBLE, lineDisplay, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>The number of display lines needed to wrap a document line (Scintilla feature 2235)</summary>
         public int WrapCount(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_WRAPCOUNT, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -2078,21 +2113,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetFoldLevel(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFOLDLEVEL, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Find the last child line of a header line. (Scintilla feature 2224)</summary>
         public int GetLastChild(int line, int level)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLASTCHILD, line, level);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Find the parent line of a child line. (Scintilla feature 2225)</summary>
         public int GetFoldParent(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFOLDPARENT, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Make a range of lines visible. (Scintilla feature 2226)</summary>
@@ -2111,14 +2146,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetLineVisible(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEVISIBLE, line, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Are all lines visible? (Scintilla feature 2236)</summary>
         public bool GetAllLinesVisible()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETALLLINESVISIBLE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Show the children of a header line. (Scintilla feature 2229)</summary>
@@ -2131,7 +2166,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetFoldExpanded(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFOLDEXPANDED, line, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Switch a header line between expanded and contracted. (Scintilla feature 2231)</summary>
@@ -2180,7 +2215,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetAutomaticFold()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETAUTOMATICFOLD, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set some style options for folding. (Scintilla feature 2233)</summary>
@@ -2209,7 +2244,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetTabIndents()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTABINDENTS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Sets whether a backspace pressed when caret is within indentation unindents. (Scintilla feature 2262)</summary>
@@ -2222,7 +2257,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetBackSpaceUnIndents()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETBACKSPACEUNINDENTS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Sets the time the mouse must sit still to generate a mouse dwell event. (Scintilla feature 2264)</summary>
@@ -2235,21 +2270,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMouseDwellTime()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMOUSEDWELLTIME, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get position of start of word. (Scintilla feature 2266)</summary>
         public int WordStartPosition(Position pos, bool onlyWordCharacters)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_WORDSTARTPOSITION, pos.Value, onlyWordCharacters ? 1 : 0);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get position of end of word. (Scintilla feature 2267)</summary>
         public int WordEndPosition(Position pos, bool onlyWordCharacters)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_WORDENDPOSITION, pos.Value, onlyWordCharacters ? 1 : 0);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets whether text is word wrapped. (Scintilla feature 2268)</summary>
@@ -2262,7 +2297,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWrapMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWRAPMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the display mode of visual flags for wrapped lines. (Scintilla feature 2460)</summary>
@@ -2275,7 +2310,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWrapVisualFlags()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWRAPVISUALFLAGS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the location of visual flags for wrapped lines. (Scintilla feature 2462)</summary>
@@ -2288,7 +2323,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWrapVisualFlagsLocation()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWRAPVISUALFLAGSLOCATION, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the start indent for wrapped lines. (Scintilla feature 2464)</summary>
@@ -2301,7 +2336,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWrapStartIndent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWRAPSTARTINDENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets how wrapped sublines are placed. Default is fixed. (Scintilla feature 2472)</summary>
@@ -2314,7 +2349,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetWrapIndentMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWRAPINDENTMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets the degree of caching of layout information. (Scintilla feature 2272)</summary>
@@ -2327,7 +2362,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLayoutCache()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLAYOUTCACHE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets the document width assumed for scrolling. (Scintilla feature 2274)</summary>
@@ -2340,7 +2375,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetScrollWidth()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSCROLLWIDTH, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets whether the maximum width line displayed is used to set scroll width. (Scintilla feature 2516)</summary>
@@ -2353,7 +2388,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetScrollWidthTracking()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSCROLLWIDTHTRACKING, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -2366,8 +2401,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_TEXTWIDTH, style, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_TEXTWIDTH, style, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -2390,14 +2425,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetEndAtLastLine()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETENDATLASTLINE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Retrieve the height of a particular line of text in pixels. (Scintilla feature 2279)</summary>
         public int TextHeight(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_TEXTHEIGHT, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Show or hide the vertical scroll bar. (Scintilla feature 2280)</summary>
@@ -2410,7 +2445,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetVScrollBar()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETVSCROLLBAR, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Append a string to the end of the document without changing the selection. (Scintilla feature 2282)</summary>
@@ -2418,7 +2453,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_APPENDTEXT, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_APPENDTEXT, length, (IntPtr) textPtr);
             }
         }
 
@@ -2426,7 +2461,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetTwoPhaseDraw()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTWOPHASEDRAW, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -2443,7 +2478,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetPhasesDraw()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPHASESDRAW, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -2468,7 +2503,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetFontQuality()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFONTQUALITY, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Scroll so that a display line is at the top of the display. (Scintilla feature 2613)</summary>
@@ -2487,7 +2522,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMultiPaste()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMULTIPASTE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -2500,7 +2535,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] tagValueBuffer = new byte[10000];
             fixed (byte* tagValuePtr = tagValueBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTAG, tagNumber, (IntPtr)tagValuePtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTAG, tagNumber, (IntPtr) tagValuePtr);
                 return Encoding.UTF8.GetString(tagValueBuffer).TrimEnd('\0');
             }
         }
@@ -2959,7 +2994,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int LineLength(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_LINELENGTH, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Highlight the characters at two positions. (Scintilla feature 2351)</summary>
@@ -2990,14 +3025,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position BraceMatch(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_BRACEMATCH, pos.Value, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Are the end of line characters visible? (Scintilla feature 2355)</summary>
         public bool GetViewEOL()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETVIEWEOL, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Make the end of line characters visible or invisible. (Scintilla feature 2356)</summary>
@@ -3028,7 +3063,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetEdgeColumn()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEDGECOLUMN, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3045,7 +3080,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetEdgeMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEDGEMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3062,7 +3097,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour GetEdgeColour()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEDGECOLOUR, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Change the colour used in edge indication. (Scintilla feature 2365)</summary>
@@ -3086,8 +3121,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHNEXT, flags, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHNEXT, flags, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -3100,8 +3135,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHPREV, flags, (IntPtr)textPtr);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SEARCHPREV, flags, (IntPtr) textPtr);
+                return (int) res;
             }
         }
 
@@ -3109,7 +3144,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int LinesOnScreen()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_LINESONSCREEN, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3126,7 +3161,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool SelectionIsRectangle()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SELECTIONISRECTANGLE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -3143,7 +3178,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetZoom()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETZOOM, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3154,7 +3189,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int CreateDocument()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CREATEDOCUMENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Extend life of document. (Scintilla feature 2376)</summary>
@@ -3173,7 +3208,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetModEventMask()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMODEVENTMASK, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Change internal focus flag. (Scintilla feature 2380)</summary>
@@ -3186,7 +3221,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetFocus()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETFOCUS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Change error status - 0 = OK. (Scintilla feature 2382)</summary>
@@ -3199,7 +3234,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetStatus()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTATUS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set whether the mouse is captured when its button is pressed. (Scintilla feature 2384)</summary>
@@ -3212,7 +3247,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetMouseDownCaptures()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMOUSEDOWNCAPTURES, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Sets the cursor to one of the SC_CURSOR* values. (Scintilla feature 2386)</summary>
@@ -3225,7 +3260,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetCursor()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCURSOR, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3242,7 +3277,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetControlCharSymbol()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCONTROLCHARSYMBOL, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Move to the previous change in capitalisation. (Scintilla feature 2390)</summary>
@@ -3309,7 +3344,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetXOffset()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETXOFFSET, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the last x chosen value to be the caret x position. (Scintilla feature 2399)</summary>
@@ -3354,7 +3389,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetPrintWrapMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPRINTWRAPMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set a fore colour for active hotspots. (Scintilla feature 2410)</summary>
@@ -3367,7 +3402,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour GetHotspotActiveFore()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHOTSPOTACTIVEFORE, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Set a back colour for active hotspots. (Scintilla feature 2411)</summary>
@@ -3380,7 +3415,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour GetHotspotActiveBack()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHOTSPOTACTIVEBACK, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Enable / Disable underlining active hotspots. (Scintilla feature 2412)</summary>
@@ -3393,7 +3428,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetHotspotActiveUnderline()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHOTSPOTACTIVEUNDERLINE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Limit hotspots to single line so hotspots on two lines don't merge. (Scintilla feature 2421)</summary>
@@ -3406,7 +3441,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetHotspotSingleLine()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETHOTSPOTSINGLELINE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Move caret between paragraphs (delimited by empty lines). (Scintilla feature 2413)</summary>
@@ -3441,7 +3476,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position PositionBefore(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONBEFORE, pos.Value, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>
@@ -3452,7 +3487,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position PositionAfter(Position pos)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONAFTER, pos.Value, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>
@@ -3463,7 +3498,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position PositionRelative(Position pos, int relative)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_POSITIONRELATIVE, pos.Value, relative);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Copy a range of text to the clipboard. Positions are clipped into the document. (Scintilla feature 2419)</summary>
@@ -3477,7 +3512,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_COPYTEXT, length, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_COPYTEXT, length, (IntPtr) textPtr);
             }
         }
 
@@ -3495,21 +3530,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetSelectionMode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONMODE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line). (Scintilla feature 2424)</summary>
         public Position GetLineSelStartPosition(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINESELSTARTPOSITION, line, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line). (Scintilla feature 2425)</summary>
         public Position GetLineSelEndPosition(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINESELENDPOSITION, line, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Move caret down one line, extending rectangular selection to new caret position. (Scintilla feature 2426)</summary>
@@ -3628,7 +3663,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* charactersPtr = Encoding.UTF8.GetBytes(characters))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETWHITESPACECHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETWHITESPACECHARS, Unused, (IntPtr) charactersPtr);
             }
         }
 
@@ -3638,7 +3673,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] charactersBuffer = new byte[10000];
             fixed (byte* charactersPtr = charactersBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWHITESPACECHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETWHITESPACECHARS, Unused, (IntPtr) charactersPtr);
                 return Encoding.UTF8.GetString(charactersBuffer).TrimEnd('\0');
             }
         }
@@ -3652,7 +3687,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* charactersPtr = Encoding.UTF8.GetBytes(characters))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETPUNCTUATIONCHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETPUNCTUATIONCHARS, Unused, (IntPtr) charactersPtr);
             }
         }
 
@@ -3662,7 +3697,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] charactersBuffer = new byte[10000];
             fixed (byte* charactersPtr = charactersBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPUNCTUATIONCHARS, Unused, (IntPtr)charactersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPUNCTUATIONCHARS, Unused, (IntPtr) charactersPtr);
                 return Encoding.UTF8.GetString(charactersBuffer).TrimEnd('\0');
             }
         }
@@ -3677,7 +3712,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetCurrent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCURRENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -3691,7 +3726,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] sBuffer = new byte[10000];
             fixed (byte* sPtr = sBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCURRENTTEXT, Unused, (IntPtr)sPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCURRENTTEXT, Unused, (IntPtr) sPtr);
                 return Encoding.UTF8.GetString(sBuffer).TrimEnd('\0');
             }
         }
@@ -3706,7 +3741,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetCaseInsensitiveBehaviour()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETCASEINSENSITIVEBEHAVIOUR, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Change the effect of autocompleting when there are multiple selections. (Scintilla feature 2636)</summary>
@@ -3719,7 +3754,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetMulti()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETMULTI, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the way autocompletion lists are ordered. (Scintilla feature 2660)</summary>
@@ -3732,7 +3767,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AutoCGetOrder()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_AUTOCGETORDER, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Enlarge the document to a particular size of text bytes. (Scintilla feature 2446)</summary>
@@ -3751,7 +3786,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] sBuffer = new byte[10000];
             fixed (byte* sPtr = sBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_TARGETASUTF8, Unused, (IntPtr)sPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_TARGETASUTF8, Unused, (IntPtr) sPtr);
                 return Encoding.UTF8.GetString(sBuffer).TrimEnd('\0');
             }
         }
@@ -3779,7 +3814,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 byte[] encodedBuffer = new byte[10000];
                 fixed (byte* encodedPtr = encodedBuffer)
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ENCODEDFROMUTF8, (IntPtr)utf8Ptr, (IntPtr)encodedPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ENCODEDFROMUTF8, (IntPtr) utf8Ptr, (IntPtr) encodedPtr);
                     return Encoding.UTF8.GetString(encodedBuffer).TrimEnd('\0');
                 }
             }
@@ -3793,14 +3828,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int FindColumn(int line, int column)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_FINDCOLUMN, line, column);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Can the caret preferred x position only be changed by explicit movement commands? (Scintilla feature 2457)</summary>
         public int GetCaretSticky()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETSTICKY, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Stop the caret preferred x position changing when the user types. (Scintilla feature 2458)</summary>
@@ -3825,7 +3860,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetPasteConvertEndings()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPASTECONVERTENDINGS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Duplicate the selection. If selection empty duplicate the line containing the caret. (Scintilla feature 2469)</summary>
@@ -3844,7 +3879,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetCaretLineBackAlpha()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETLINEBACKALPHA, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the style of the caret to be drawn. (Scintilla feature 2512)</summary>
@@ -3857,7 +3892,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetCaretStyle()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETSTYLE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the indicator used for IndicatorFillRange and IndicatorClearRange (Scintilla feature 2500)</summary>
@@ -3870,7 +3905,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIndicatorCurrent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETINDICATORCURRENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the value used for IndicatorFillRange (Scintilla feature 2502)</summary>
@@ -3883,7 +3918,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIndicatorValue()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETINDICATORVALUE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Turn a indicator on over a range. (Scintilla feature 2504)</summary>
@@ -3902,28 +3937,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicatorAllOnFor(int position)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICATORALLONFOR, position, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>What value does a particular indicator have at at a position? (Scintilla feature 2507)</summary>
         public int IndicatorValueAt(int indicator, int position)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICATORVALUEAT, indicator, position);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Where does a particular indicator start? (Scintilla feature 2508)</summary>
         public int IndicatorStart(int indicator, int position)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICATORSTART, indicator, position);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Where does a particular indicator end? (Scintilla feature 2509)</summary>
         public int IndicatorEnd(int indicator, int position)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICATOREND, indicator, position);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set number of entries in position cache (Scintilla feature 2514)</summary>
@@ -3936,7 +3971,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetPositionCache()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPOSITIONCACHE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Copy the selection, if selection empty copy the line with the caret (Scintilla feature 2519)</summary>
@@ -3974,7 +4009,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetGapPosition()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETGAPPOSITION, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Set the alpha fill colour of the given indicator. (Scintilla feature 2523)</summary>
@@ -3987,7 +4022,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicGetAlpha(int indicator)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETALPHA, indicator, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the alpha outline colour of the given indicator. (Scintilla feature 2558)</summary>
@@ -4000,7 +4035,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int IndicGetOutlineAlpha(int indicator)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_INDICGETOUTLINEALPHA, indicator, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set extra ascent for each line (Scintilla feature 2525)</summary>
@@ -4013,7 +4048,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetExtraAscent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEXTRAASCENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set extra descent for each line (Scintilla feature 2527)</summary>
@@ -4026,14 +4061,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetExtraDescent()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETEXTRADESCENT, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Which symbol was defined for markerNumber with MarkerDefine (Scintilla feature 2529)</summary>
         public int MarkerSymbolDefined(int markerNumber)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERSYMBOLDEFINED, markerNumber, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the text in the text margin for a line (Scintilla feature 2530)</summary>
@@ -4041,7 +4076,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINSETTEXT, line, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINSETTEXT, line, (IntPtr) textPtr);
             }
         }
 
@@ -4051,7 +4086,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETTEXT, line, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETTEXT, line, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -4066,7 +4101,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int MarginGetStyle(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETSTYLE, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the style in the text margin for a line (Scintilla feature 2534)</summary>
@@ -4074,7 +4109,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* stylesPtr = Encoding.UTF8.GetBytes(styles))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINSETSTYLES, line, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINSETSTYLES, line, (IntPtr) stylesPtr);
             }
         }
 
@@ -4084,7 +4119,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] stylesBuffer = new byte[10000];
             fixed (byte* stylesPtr = stylesBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETSTYLES, line, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETSTYLES, line, (IntPtr) stylesPtr);
                 return Encoding.UTF8.GetString(stylesBuffer).TrimEnd('\0');
             }
         }
@@ -4105,7 +4140,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int MarginGetStyleOffset()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARGINGETSTYLEOFFSET, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the margin options. (Scintilla feature 2539)</summary>
@@ -4118,7 +4153,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMarginOptions()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMARGINOPTIONS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the annotation text for a line (Scintilla feature 2540)</summary>
@@ -4126,7 +4161,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* textPtr = Encoding.UTF8.GetBytes(text))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONSETTEXT, line, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONSETTEXT, line, (IntPtr) textPtr);
             }
         }
 
@@ -4136,7 +4171,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETTEXT, line, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETTEXT, line, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -4151,7 +4186,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AnnotationGetStyle(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETSTYLE, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the annotation styles for a line (Scintilla feature 2544)</summary>
@@ -4159,7 +4194,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* stylesPtr = Encoding.UTF8.GetBytes(styles))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONSETSTYLES, line, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONSETSTYLES, line, (IntPtr) stylesPtr);
             }
         }
 
@@ -4169,7 +4204,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] stylesBuffer = new byte[10000];
             fixed (byte* stylesPtr = stylesBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETSTYLES, line, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETSTYLES, line, (IntPtr) stylesPtr);
                 return Encoding.UTF8.GetString(stylesBuffer).TrimEnd('\0');
             }
         }
@@ -4178,7 +4213,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AnnotationGetLines(int line)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETLINES, line, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Clear the annotations from all lines (Scintilla feature 2547)</summary>
@@ -4197,7 +4232,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AnnotationGetVisible()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETVISIBLE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the start of the range of style numbers used for annotations (Scintilla feature 2550)</summary>
@@ -4210,7 +4245,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AnnotationGetStyleOffset()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ANNOTATIONGETSTYLEOFFSET, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Release all extended (>255) style numbers (Scintilla feature 2552)</summary>
@@ -4223,7 +4258,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int AllocateExtendedStyles(int numberStyles)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ALLOCATEEXTENDEDSTYLES, numberStyles, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Add a container action to the undo stack (Scintilla feature 2560)</summary>
@@ -4236,7 +4271,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position CharPositionFromPoint(int x, int y)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CHARPOSITIONFROMPOINT, x, y);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>
@@ -4247,7 +4282,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position CharPositionFromPointClose(int x, int y)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CHARPOSITIONFROMPOINTCLOSE, x, y);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Set whether switching to rectangular mode while selecting with the mouse is allowed. (Scintilla feature 2668)</summary>
@@ -4260,7 +4295,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetMouseSelectionRectangularSwitch()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMOUSESELECTIONRECTANGULARSWITCH, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set whether multiple selections can be made (Scintilla feature 2563)</summary>
@@ -4273,7 +4308,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetMultipleSelection()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMULTIPLESELECTION, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set whether typing can be performed into multiple selections (Scintilla feature 2565)</summary>
@@ -4286,7 +4321,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetAdditionalSelectionTyping()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETADDITIONALSELECTIONTYPING, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set whether additional carets will blink (Scintilla feature 2567)</summary>
@@ -4299,7 +4334,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetAdditionalCaretsBlink()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETADDITIONALCARETSBLINK, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Set whether additional carets are visible (Scintilla feature 2608)</summary>
@@ -4312,21 +4347,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetAdditionalCaretsVisible()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETADDITIONALCARETSVISIBLE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>How many selections are there? (Scintilla feature 2570)</summary>
         public int GetSelections()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Is every selected range empty? (Scintilla feature 2650)</summary>
         public bool GetSelectionEmpty()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONEMPTY, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Clear selections to a single empty stream selection (Scintilla feature 2571)</summary>
@@ -4339,14 +4374,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int SetSelection(int caret, int anchor)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETSELECTION, caret, anchor);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Add a selection (Scintilla feature 2573)</summary>
         public int AddSelection(int caret, int anchor)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ADDSELECTION, caret, anchor);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Drop one selection (Scintilla feature 2671)</summary>
@@ -4365,7 +4400,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetMainSelection()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETMAINSELECTION, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Which selection is the main selection (Scintilla feature 2576)</summary>
@@ -4378,7 +4413,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionNCaret(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNCARET, selection, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Which selection is the main selection (Scintilla feature 2578)</summary>
@@ -4391,7 +4426,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionNAnchor(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNANCHOR, selection, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Which selection is the main selection (Scintilla feature 2580)</summary>
@@ -4404,7 +4439,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetSelectionNCaretVirtualSpace(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNCARETVIRTUALSPACE, selection, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Which selection is the main selection (Scintilla feature 2582)</summary>
@@ -4417,7 +4452,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetSelectionNAnchorVirtualSpace(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNANCHORVIRTUALSPACE, selection, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Sets the position that starts the selection - this becomes the anchor. (Scintilla feature 2584)</summary>
@@ -4430,7 +4465,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionNStart(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNSTART, selection, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Sets the position that ends the selection - this becomes the currentPosition. (Scintilla feature 2586)</summary>
@@ -4443,7 +4478,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetSelectionNEnd(int selection)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSELECTIONNEND, selection, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2588)</summary>
@@ -4456,7 +4491,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetRectangularSelectionCaret()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETRECTANGULARSELECTIONCARET, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2590)</summary>
@@ -4469,7 +4504,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Position GetRectangularSelectionAnchor()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETRECTANGULARSELECTIONANCHOR, Unused, Unused);
-            return new Position((int)res);
+            return new Position((int) res);
         }
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2592)</summary>
@@ -4482,7 +4517,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetRectangularSelectionCaretVirtualSpace()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2594)</summary>
@@ -4495,7 +4530,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetRectangularSelectionAnchorVirtualSpace()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2596)</summary>
@@ -4508,7 +4543,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetVirtualSpaceOptions()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETVIRTUALSPACEOPTIONS, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -4527,7 +4562,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetRectangularSelectionModifier()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETRECTANGULARSELECTIONMODIFIER, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -4560,7 +4595,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetAdditionalSelAlpha()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETADDITIONALSELALPHA, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the foreground colour of additional carets. (Scintilla feature 2604)</summary>
@@ -4573,7 +4608,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public Colour GetAdditionalCaretFore()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETADDITIONALCARETFORE, Unused, Unused);
-            return new Colour((int)res);
+            return new Colour((int) res);
         }
 
         /// <summary>Set the main selection to the next selection. (Scintilla feature 2606)</summary>
@@ -4596,7 +4631,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int ChangeLexerState(Position start, Position end)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CHANGELEXERSTATE, start.Value, end.Value);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -4607,7 +4642,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int ContractedFoldNext(int lineStart)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CONTRACTEDFOLDNEXT, lineStart, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Centre current line in window. (Scintilla feature 2619)</summary>
@@ -4638,7 +4673,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetIdentifier()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETIDENTIFIER, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the width for future RGBA image data. (Scintilla feature 2624)</summary>
@@ -4668,7 +4703,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* pixelsPtr = Encoding.UTF8.GetBytes(pixels))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERDEFINERGBAIMAGE, markerNumber, (IntPtr)pixelsPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_MARKERDEFINERGBAIMAGE, markerNumber, (IntPtr) pixelsPtr);
             }
         }
 
@@ -4681,7 +4716,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* pixelsPtr = Encoding.UTF8.GetBytes(pixels))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REGISTERRGBAIMAGE, type, (IntPtr)pixelsPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_REGISTERRGBAIMAGE, type, (IntPtr) pixelsPtr);
             }
         }
 
@@ -4707,14 +4742,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetTechnology()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTECHNOLOGY, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Create an ILoader*. (Scintilla feature 2632)</summary>
         public int CreateLoader(int bytes)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CREATELOADER, bytes, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>On OS X, show a find indicator. (Scintilla feature 2640)</summary>
@@ -4755,7 +4790,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetCaretLineVisibleAlways()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETCARETLINEVISIBLEALWAYS, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>Sets the caret line to always visible. (Scintilla feature 2655)</summary>
@@ -4774,14 +4809,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLineEndTypesAllowed()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEENDTYPESALLOWED, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Get the line end types currently recognised. May be a subset of the allowed types due to lexer limitation. (Scintilla feature 2658)</summary>
         public int GetLineEndTypesActive()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEENDTYPESACTIVE, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Set the way a character is drawn. (Scintilla feature 2665)</summary>
@@ -4791,7 +4826,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             {
                 fixed (byte* representationPtr = Encoding.UTF8.GetBytes(representation))
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETREPRESENTATION, (IntPtr)encodedCharacterPtr, (IntPtr)representationPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETREPRESENTATION, (IntPtr) encodedCharacterPtr, (IntPtr) representationPtr);
                 }
             }
         }
@@ -4808,7 +4843,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 byte[] representationBuffer = new byte[10000];
                 fixed (byte* representationPtr = representationBuffer)
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETREPRESENTATION, (IntPtr)encodedCharacterPtr, (IntPtr)representationPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETREPRESENTATION, (IntPtr) encodedCharacterPtr, (IntPtr) representationPtr);
                     return Encoding.UTF8.GetString(representationBuffer).TrimEnd('\0');
                 }
             }
@@ -4819,7 +4854,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* encodedCharacterPtr = Encoding.UTF8.GetBytes(encodedCharacter))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CLEARREPRESENTATION, (IntPtr)encodedCharacterPtr, Unused);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_CLEARREPRESENTATION, (IntPtr) encodedCharacterPtr, Unused);
             }
         }
 
@@ -4845,7 +4880,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLexer()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLEXER, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Colourise a segment of the document using the current lexing language. (Scintilla feature 4003)</summary>
@@ -4861,7 +4896,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             {
                 fixed (byte* valuePtr = Encoding.UTF8.GetBytes(value))
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETPROPERTY, (IntPtr)keyPtr, (IntPtr)valuePtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETPROPERTY, (IntPtr) keyPtr, (IntPtr) valuePtr);
                 }
             }
         }
@@ -4871,7 +4906,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* keyWordsPtr = Encoding.UTF8.GetBytes(keyWords))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETKEYWORDS, keywordSet, (IntPtr)keyWordsPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETKEYWORDS, keywordSet, (IntPtr) keyWordsPtr);
             }
         }
 
@@ -4880,7 +4915,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* languagePtr = Encoding.UTF8.GetBytes(language))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETLEXERLANGUAGE, Unused, (IntPtr)languagePtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETLEXERLANGUAGE, Unused, (IntPtr) languagePtr);
             }
         }
 
@@ -4889,7 +4924,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* pathPtr = Encoding.UTF8.GetBytes(path))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_LOADLEXERLIBRARY, Unused, (IntPtr)pathPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_LOADLEXERLIBRARY, Unused, (IntPtr) pathPtr);
             }
         }
 
@@ -4905,7 +4940,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 byte[] bufBuffer = new byte[10000];
                 fixed (byte* bufPtr = bufBuffer)
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTY, (IntPtr)keyPtr, (IntPtr)bufPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTY, (IntPtr) keyPtr, (IntPtr) bufPtr);
                     return Encoding.UTF8.GetString(bufBuffer).TrimEnd('\0');
                 }
             }
@@ -4924,7 +4959,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 byte[] bufBuffer = new byte[10000];
                 fixed (byte* bufPtr = bufBuffer)
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTYEXPANDED, (IntPtr)keyPtr, (IntPtr)bufPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTYEXPANDED, (IntPtr) keyPtr, (IntPtr) bufPtr);
                     return Encoding.UTF8.GetString(bufBuffer).TrimEnd('\0');
                 }
             }
@@ -4939,8 +4974,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* keyPtr = Encoding.UTF8.GetBytes(key))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTYINT, (IntPtr)keyPtr, Unused);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPROPERTYINT, (IntPtr) keyPtr, Unused);
+                return (int) res;
             }
         }
 
@@ -4948,7 +4983,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetStyleBitsNeeded()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTYLEBITSNEEDED, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -4962,7 +4997,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] textBuffer = new byte[10000];
             fixed (byte* textPtr = textBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLEXERLANGUAGE, Unused, (IntPtr)textPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLEXERLANGUAGE, Unused, (IntPtr) textPtr);
                 return Encoding.UTF8.GetString(textBuffer).TrimEnd('\0');
             }
         }
@@ -4971,7 +5006,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int PrivateLexerCall(int operation, int pointer)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_PRIVATELEXERCALL, operation, pointer);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -4984,7 +5019,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] namesBuffer = new byte[10000];
             fixed (byte* namesPtr = namesBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_PROPERTYNAMES, Unused, (IntPtr)namesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_PROPERTYNAMES, Unused, (IntPtr) namesPtr);
                 return Encoding.UTF8.GetString(namesBuffer).TrimEnd('\0');
             }
         }
@@ -4994,8 +5029,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* namePtr = Encoding.UTF8.GetBytes(name))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_PROPERTYTYPE, (IntPtr)namePtr, Unused);
-                return (int)res;
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_PROPERTYTYPE, (IntPtr) namePtr, Unused);
+                return (int) res;
             }
         }
 
@@ -5011,7 +5046,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 byte[] descriptionBuffer = new byte[10000];
                 fixed (byte* descriptionPtr = descriptionBuffer)
                 {
-                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DESCRIBEPROPERTY, (IntPtr)namePtr, (IntPtr)descriptionPtr);
+                    IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DESCRIBEPROPERTY, (IntPtr) namePtr, (IntPtr) descriptionPtr);
                     return Encoding.UTF8.GetString(descriptionBuffer).TrimEnd('\0');
                 }
             }
@@ -5027,7 +5062,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] descriptionsBuffer = new byte[10000];
             fixed (byte* descriptionsPtr = descriptionsBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DESCRIBEKEYWORDSETS, Unused, (IntPtr)descriptionsPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DESCRIBEKEYWORDSETS, Unused, (IntPtr) descriptionsPtr);
                 return Encoding.UTF8.GetString(descriptionsBuffer).TrimEnd('\0');
             }
         }
@@ -5040,42 +5075,42 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int GetLineEndTypesSupported()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETLINEENDTYPESSUPPORTED, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Allocate a set of sub styles for a particular base style, returning start of range (Scintilla feature 4020)</summary>
         public int AllocateSubStyles(int styleBase, int numberStyles)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_ALLOCATESUBSTYLES, styleBase, numberStyles);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>The starting style number for the sub styles associated with a base style (Scintilla feature 4021)</summary>
         public int GetSubStylesStart(int styleBase)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSUBSTYLESSTART, styleBase, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>The number of sub styles associated with a base style (Scintilla feature 4022)</summary>
         public int GetSubStylesLength(int styleBase)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSUBSTYLESLENGTH, styleBase, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>For a sub style, return the base style, else return the argument. (Scintilla feature 4027)</summary>
         public int GetStyleFromSubStyle(int subStyle)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSTYLEFROMSUBSTYLE, subStyle, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>For a secondary style, return the primary style, else return the argument. (Scintilla feature 4028)</summary>
         public int GetPrimaryStyleFromStyle(int style)
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETPRIMARYSTYLEFROMSTYLE, style, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>Free allocated sub styles (Scintilla feature 4023)</summary>
@@ -5089,7 +5124,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             fixed (byte* identifiersPtr = Encoding.UTF8.GetBytes(identifiers))
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETIDENTIFIERS, style, (IntPtr)identifiersPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_SETIDENTIFIERS, style, (IntPtr) identifiersPtr);
             }
         }
 
@@ -5101,7 +5136,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public int DistanceToSecondaryStyles()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_DISTANCETOSECONDARYSTYLES, Unused, Unused);
-            return (int)res;
+            return (int) res;
         }
 
         /// <summary>
@@ -5114,7 +5149,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             byte[] stylesBuffer = new byte[10000];
             fixed (byte* stylesPtr = stylesBuffer)
             {
-                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSUBSTYLEBASES, Unused, (IntPtr)stylesPtr);
+                IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETSUBSTYLEBASES, Unused, (IntPtr) stylesPtr);
                 return Encoding.UTF8.GetString(stylesBuffer).TrimEnd('\0');
             }
         }
@@ -5127,7 +5162,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetUsePalette()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETUSEPALETTE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /// <summary>
@@ -5154,7 +5189,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public bool GetKeysUnicode()
         {
             IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETKEYSUNICODE, Unused, Unused);
-            return 1 == (int)res;
+            return 1 == (int) res;
         }
 
         /* --Autogenerated -- end of section automatically generated from Scintilla.iface */

@@ -70,6 +70,7 @@ namespace NppMarkdownPanel
                 else
                 if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
+                    UpdateEditorInformation();
                     RenderMarkdown();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
@@ -101,6 +102,11 @@ namespace NppMarkdownPanel
             {
                 return false;
             }
+        }
+
+        protected void UpdateEditorInformation()
+        {
+            scintillaGateway.SetScintillaHandle(PluginBase.GetCurrentScintilla());
         }
 
         private void RenderMarkdown()
@@ -253,7 +259,10 @@ namespace NppMarkdownPanel
             }
             isPanelVisible = !isPanelVisible;
             if (isPanelVisible)
+            {
+                UpdateEditorInformation();
                 RenderMarkdown();
+            }
         }
 
         private Icon ConvertBitmapToIcon(Bitmap bitmapImage)
