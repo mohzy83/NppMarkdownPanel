@@ -36,7 +36,7 @@ namespace NppMarkdownPanel
         private string iniFilePath;
         private string FileExtensions;
         private bool syncViewWithCaretPosition;
-        private int ScrollBuffer;
+        private bool syncViewWithScrollPosition;
 
         public MarkdownPanelController()
         {
@@ -54,16 +54,37 @@ namespace NppMarkdownPanel
             {
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI && ValidateExtension())
                 {
+                    var firstVisible = scintillaGateway.GetFirstVisibleLine();
+                    var buffer = scintillaGateway.LinesOnScreen()/2;
+                    var lastLine = scintillaGateway.GetLineCount();
+
                     if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
                     {
                         lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
-                        if ((scintillaGateway.GetCurrentLineNumber() - ScrollBuffer) < 0)
+                        if ((scintillaGateway.GetCurrentLineNumber() - buffer) < 0)
                         {
                             ScrollToElementAtLineNo(0);
                         }
                         else
                         {
-                            ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber() - ScrollBuffer);
+                            ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber() - buffer);
+                        }
+                    }
+                    else if (syncViewWithScrollPosition && lastCaretPosition != scintillaGateway.GetFirstVisibleLine())
+                    {
+                        lastCaretPosition = scintillaGateway.GetFirstVisibleLine();
+                        var middleLine = lastCaretPosition + buffer;
+                        if (scintillaGateway.GetFirstVisibleLine() == 0)
+                        {
+                            ScrollToElementAtLineNo(0);
+                        }
+                        else if ((lastCaretPosition + scintillaGateway.LinesOnScreen()) >= lastLine)
+                        {
+                            ScrollToElementAtLineNo(lastLine);
+                        }
+                        else
+                        {
+                            ScrollToElementAtLineNo(middleLine - buffer);
                         }
                     }
                 }
@@ -155,16 +176,17 @@ namespace NppMarkdownPanel
         {
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
+            syncViewWithScrollPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithScrollPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
-            ScrollBuffer = Win32.GetPrivateProfileInt("Options", "ScrollBuffer", 10, iniFilePath);
             FileExtensions = Win32.ReadIniValue("Options", "FileExtensions", iniFilePath, "md,mkdn,mkd");
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             PluginBase.SetCommand(0, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(1, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
-            PluginBase.SetCommand(2, "Edit Settings", EditSettings);
-            PluginBase.SetCommand(3, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
+            PluginBase.SetCommand(1, "Synchronize with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(2, "Synchronize on vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
+            PluginBase.SetCommand(3, "Edit Settings", EditSettings);
+            PluginBase.SetCommand(4, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
 
             idMyDlg = 0;
         }
@@ -197,8 +219,19 @@ namespace NppMarkdownPanel
         private void SyncViewWithCaret()
         {
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
+            syncViewWithScrollPosition = false;
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[1]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
             if (syncViewWithCaretPosition) ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
+        }
+
+        private void SyncViewWithScroll()
+        {
+            syncViewWithScrollPosition = !syncViewWithScrollPosition;
+            syncViewWithCaretPosition = false;
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[1]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            if (syncViewWithScrollPosition) ScrollToElementAtLineNo(scintillaGateway.GetFirstVisibleLine());
         }
 
         public void SetToolBarIcon()
@@ -214,7 +247,7 @@ namespace NppMarkdownPanel
         public void PluginCleanUp()
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
-            Win32.WriteIniValue("Options", "ScrollBuffer", ScrollBuffer.ToString(), iniFilePath);
+            Win32.WritePrivateProfileString("Options", "SyncViewWithScrollPosition", syncViewWithScrollPosition ? "1" : "0", iniFilePath);
             Win32.WriteIniValue("Options", "FileExtensions", FileExtensions.ToString(), iniFilePath);
             SaveSettings();
         }
