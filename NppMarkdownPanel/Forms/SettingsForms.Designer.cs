@@ -85,7 +85,7 @@
             this.pictureBox1.Location = new System.Drawing.Point(10, 19);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(24, 20);
-            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             // 
             // btnSave
@@ -94,7 +94,7 @@
             this.btnSave.Location = new System.Drawing.Point(472, 408);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 36);
-            this.btnSave.TabIndex = 1;
+            this.btnSave.TabIndex = 3;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -105,7 +105,7 @@
             this.btnCancel.Location = new System.Drawing.Point(583, 408);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(105, 36);
-            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -116,7 +116,7 @@
             this.label2.Location = new System.Drawing.Point(12, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(50, 13);
-            this.label2.TabIndex = 3;
+            this.label2.TabIndex = 5;
             this.label2.Text = "CSS File:";
             // 
             // tbCssFile
@@ -126,7 +126,7 @@
             this.tbCssFile.Location = new System.Drawing.Point(138, 97);
             this.tbCssFile.Name = "tbCssFile";
             this.tbCssFile.Size = new System.Drawing.Size(422, 21);
-            this.tbCssFile.TabIndex = 4;
+            this.tbCssFile.TabIndex = 6;
             this.tbCssFile.TextChanged += new System.EventHandler(this.tbCssFile_TextChanged);
             // 
             // btnChooseCss
@@ -135,7 +135,7 @@
             this.btnChooseCss.Location = new System.Drawing.Point(566, 95);
             this.btnChooseCss.Name = "btnChooseCss";
             this.btnChooseCss.Size = new System.Drawing.Size(39, 25);
-            this.btnChooseCss.TabIndex = 5;
+            this.btnChooseCss.TabIndex = 7;
             this.btnChooseCss.Text = "...";
             this.btnChooseCss.UseVisualStyleBackColor = true;
             this.btnChooseCss.Click += new System.EventHandler(this.btnChooseCss_Click);
@@ -146,7 +146,7 @@
             this.btnResetCss.Location = new System.Drawing.Point(611, 95);
             this.btnResetCss.Name = "btnResetCss";
             this.btnResetCss.Size = new System.Drawing.Size(73, 26);
-            this.btnResetCss.TabIndex = 6;
+            this.btnResetCss.TabIndex = 8;
             this.btnResetCss.Text = "Default";
             this.btnResetCss.UseVisualStyleBackColor = true;
             this.btnResetCss.Click += new System.EventHandler(this.btnResetCss_Click);
@@ -158,7 +158,7 @@
             this.label3.Location = new System.Drawing.Point(12, 161);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 13);
-            this.label3.TabIndex = 7;
+            this.label3.TabIndex = 9;
             this.label3.Text = "Zoom Level:";
             // 
             // trackBar1
@@ -171,7 +171,7 @@
             this.trackBar1.Minimum = 90;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(512, 45);
-            this.trackBar1.TabIndex = 8;
+            this.trackBar1.TabIndex = 10;
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.trackBar1.Value = 90;
@@ -184,7 +184,7 @@
             this.lblZoomValue.Location = new System.Drawing.Point(648, 176);
             this.lblZoomValue.Name = "lblZoomValue";
             this.lblZoomValue.Size = new System.Drawing.Size(28, 13);
-            this.lblZoomValue.TabIndex = 9;
+            this.lblZoomValue.TabIndex = 11;
             this.lblZoomValue.Text = "90%";
 
             // 
@@ -194,7 +194,7 @@
             this.lblHtmlFile.Location = new System.Drawing.Point(12, 230);
             this.lblHtmlFile.Name = "lblHtmlFile";
             this.lblHtmlFile.Size = new System.Drawing.Size(107, 39);
-            this.lblHtmlFile.TabIndex = 10;
+            this.lblHtmlFile.TabIndex = 12;
             this.lblHtmlFile.Text = "Automatically Save \r\nHTML from Current \r\nPreview to this File:";
             // 
             // tbHtmlFile
@@ -204,7 +204,7 @@
             this.tbHtmlFile.Location = new System.Drawing.Point(138, 240);
             this.tbHtmlFile.Name = "tbHtmlFile";
             this.tbHtmlFile.Size = new System.Drawing.Size(422, 21);
-            this.tbHtmlFile.TabIndex = 11;
+            this.tbHtmlFile.TabIndex = 13;
             this.tbHtmlFile.TextChanged += new System.EventHandler(this.tbHtmlFile_TextChanged);
             this.tbHtmlFile.Leave += new System.EventHandler(this.tbHtmlFile_Leave);
             // 
@@ -214,7 +214,7 @@
             this.btnChooseHtml.Location = new System.Drawing.Point(566, 238);
             this.btnChooseHtml.Name = "btnChooseHtml";
             this.btnChooseHtml.Size = new System.Drawing.Size(39, 25);
-            this.btnChooseHtml.TabIndex = 12;
+            this.btnChooseHtml.TabIndex = 14;
             this.btnChooseHtml.Text = "...";
             this.btnChooseHtml.UseVisualStyleBackColor = true;
             this.btnChooseHtml.Click += new System.EventHandler(this.btnChooseHtml_Click);
@@ -225,7 +225,7 @@
             this.btnResetHtml.Location = new System.Drawing.Point(611, 238);
             this.btnResetHtml.Name = "btnResetHtml";
             this.btnResetHtml.Size = new System.Drawing.Size(73, 26);
-            this.btnResetHtml.TabIndex = 13;
+            this.btnResetHtml.TabIndex = 15;
             this.btnResetHtml.Text = "Default";
             this.btnResetHtml.UseVisualStyleBackColor = true;
             this.btnResetHtml.Click += new System.EventHandler(this.btnResetHtml_Click);
@@ -236,7 +236,7 @@
             this.cbShowToolbar.Location = new System.Drawing.Point(138, 300);
             this.cbShowToolbar.Name = "cbShowToolbar";
             this.cbShowToolbar.Size = new System.Drawing.Size(198, 17);
-            this.cbShowToolbar.TabIndex = 15;
+            this.cbShowToolbar.TabIndex = 16;
             this.cbShowToolbar.Text = "Show Toolbar in Preview Window";
             this.cbShowToolbar.UseVisualStyleBackColor = true;
             this.cbShowToolbar.CheckedChanged += new System.EventHandler(this.cbShowToolbar_Changed);
@@ -248,7 +248,7 @@
             this.label4.Location = new System.Drawing.Point(12, 340);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(50, 13);
-            this.label4.TabIndex = 16;
+            this.label4.TabIndex = 17;
             this.label4.Text = "Markdown Extensions:\r\nLeave blank to parse\r\nall files";
             // 
             // tbFileExts
@@ -258,7 +258,7 @@
             this.tbFileExts.Location = new System.Drawing.Point(138, 350);
             this.tbFileExts.Name = "tbFileExts";
             this.tbFileExts.Size = new System.Drawing.Size(422, 21);
-            this.tbFileExts.TabIndex = 17;
+            this.tbFileExts.TabIndex = 18;
             this.tbFileExts.TextChanged += new System.EventHandler(this.tbFileExts_TextChanged);
             // 
             // btnResetExts
@@ -267,7 +267,7 @@
             this.btnResetExts.Location = new System.Drawing.Point(611, 348);
             this.btnResetExts.Name = "btnResetExts";
             this.btnResetExts.Size = new System.Drawing.Size(73, 26);
-            this.btnResetExts.TabIndex = 13;
+            this.btnResetExts.TabIndex = 19;
             this.btnResetExts.Text = "Default";
             this.btnResetExts.UseVisualStyleBackColor = true;
             this.btnResetExts.Click += new System.EventHandler(this.btnResetExts_Click);
@@ -280,7 +280,7 @@
             this.statusStrip1.Location = new System.Drawing.Point(0, 456);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(700, 22);
-            this.statusStrip1.TabIndex = 18;
+            this.statusStrip1.TabIndex = 20;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // sblInvalidHtmlPath
