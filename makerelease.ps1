@@ -1,6 +1,6 @@
 function makeReleaseZip($filename, $targetPlattform)
 {
-	$zipName = "Release\NppMarkdownPanel-" + (Get-Item $filename).VersionInfo.FileVersion + "-" + $targetPlattform + ".zip"
+	$zipName = "NppMarkdownPanel\bin\NppMarkdownPanel-" + (Get-Item $filename).VersionInfo.FileVersion + "-" + $targetPlattform + ".zip"
 	Compress-Archive -LiteralPath $filename, 'README.md', 'License.txt', "NppMarkdownPanel\style.css" -DestinationPath $zipName -Force
 }
 
