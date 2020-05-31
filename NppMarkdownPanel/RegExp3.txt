@@ -1,0 +1,9 @@
+	>>> Comment: {{ site.baseurl }} -> ..
+\{\{ site\.baseurl \}\}
+..
+	>>> ...{:style -> ...{style
+(\S\{):
+$1
+	>>> Jekyll front matter -> `$1$2$3` or ```\n$1$2$3\n``` (in repl.patt.`\r`,`\n`,`\t` can be used) 
+(?i)^(---)(\s+layout:[\s\S]+?)(---)
+```\n$1$2$3\n```
