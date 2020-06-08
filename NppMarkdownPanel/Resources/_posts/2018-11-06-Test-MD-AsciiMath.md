@@ -45,5 +45,5 @@ Async Mathjax Support at the end of the markdown file: <code>&#x7B;% include mat
   //skip <span> but not <span class="math">
   //https://docs.mathjax.org/en/v2.7-latest/options/preprocessors/asciimath2jax.html
 </script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=AM_SVG"></script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=AM_SVG"></script>
 {% endcomment %}
