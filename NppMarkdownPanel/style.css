@@ -101,6 +101,7 @@ h6 tt, h6 code {
 
 h1 {
   font-size: 28px;
+  border-bottom: double #cccccc;
   color: black;
 }
 
