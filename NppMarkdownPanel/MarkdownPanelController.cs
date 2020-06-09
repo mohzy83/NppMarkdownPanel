@@ -34,7 +34,8 @@ namespace NppMarkdownPanel
         private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
-        private string FileExtensions;
+        private string MkdnExtensions;
+        private string HtmlExtensions;
         private bool syncViewWithCaretPosition;
         private bool syncViewWithScrollPosition;
 
@@ -52,7 +53,7 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
-                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI && ValidateExtension())
+                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI && (ValidateMkdnExtension() || ValidateHtmlExtension()))
                 {
                     var firstVisible = scintillaGateway.GetFirstVisibleLine();
                     var buffer = scintillaGateway.LinesOnScreen()/2;
@@ -108,21 +109,28 @@ namespace NppMarkdownPanel
             }
         }
 
-        private bool ValidateExtension()
+        private bool ValidateMkdnExtension()
         {
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
 
-            if (FileExtensions == null || FileExtensions == "" ||
-                FileExtensions.ToLower().Contains(fileExtension.ToLower()))
-            {
+            if (MkdnExtensions.ToLower().Contains(fileExtension.ToLower()))
                 return true;
-            }
             else
-            {
                 return false;
-            }
+        }
+
+        private bool ValidateHtmlExtension()
+        {
+            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
+            var fileExtension = sbFileExtension.ToString();
+
+            if (HtmlExtensions.ToLower().Contains(fileExtension.ToLower()))
+                return true;
+            else
+                return false;
         }
 
         protected void UpdateEditorInformation()
@@ -148,14 +156,12 @@ namespace NppMarkdownPanel
             renderTimer.Stop();
             try
             {
-                if (ValidateExtension())
-                {
+                if (ValidateMkdnExtension())
                     markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
-                }
+                else if (ValidateHtmlExtension())
+                    markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
                 else
-                {
-                    markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {FileExtensions}", notepadPPGateway.GetCurrentFilePath());
-                }
+                    markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath());
             }
             catch 
             {
@@ -179,7 +185,8 @@ namespace NppMarkdownPanel
             syncViewWithScrollPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithScrollPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
-            FileExtensions = Win32.ReadIniValue("Options", "FileExtensions", iniFilePath, ".md,.mkdn,.mkd");
+            MkdnExtensions = Win32.ReadIniValue("Options", "MkdnExtensions", iniFilePath, ".md,.mkdn,.mkd");
+            HtmlExtensions = Win32.ReadIniValue("Options", "HtmlExtensions", iniFilePath, ".html,.htm");
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
@@ -194,14 +201,15 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, FileExtensions);
+            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, MkdnExtensions, HtmlExtensions);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
                 markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
                 markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
-                FileExtensions = settingsForm.FileExtensions;
+                MkdnExtensions = settingsForm.MkdnExtensions;
+                HtmlExtensions = settingsForm.HtmlExtensions;
                 SaveSettings();
                 //Update Preview
                 RenderMarkdown();
@@ -249,7 +257,8 @@ namespace NppMarkdownPanel
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
             Win32.WritePrivateProfileString("Options", "SyncViewWithScrollPosition", syncViewWithScrollPosition ? "1" : "0", iniFilePath);
-            Win32.WriteIniValue("Options", "FileExtensions", FileExtensions.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "MkdnExtensions", MkdnExtensions.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "HtmlExtensions", HtmlExtensions.ToString(), iniFilePath);
             SaveSettings();
         }
 

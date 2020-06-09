@@ -15,22 +15,25 @@ namespace NppMarkdownPanel.Forms
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
         public string HtmlFileName { get; set; }
-        public string FileExtensions { get; set; }
+        public string MkdnExtensions { get; set; }
+        public string HtmlExtensions { get; set; }
         public bool ShowToolbar { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string fileExtensions)
+        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string mkdnExtensions, string htmlExtensions)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
-            FileExtensions = fileExtensions;
+            MkdnExtensions = mkdnExtensions;
+            HtmlExtensions = htmlExtensions;
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
             tbCssFile.Text = cssFileName;
             tbHtmlFile.Text = htmlFileName;
-            tbFileExts.Text = fileExtensions;
+            tbMkdnExts.Text = mkdnExtensions;
+            tbHtmlExts.Text = htmlExtensions;
             cbShowToolbar.Checked = showToolbar;
         }
 
@@ -45,14 +48,24 @@ namespace NppMarkdownPanel.Forms
             CssFileName = tbCssFile.Text;
         }
 
-        private void tbFileExts_TextChanged(object sender, EventArgs e)
+        private void tbMkdnExts_TextChanged(object sender, EventArgs e)
         {
-            FileExtensions = tbFileExts.Text;
+            MkdnExtensions = tbMkdnExts.Text;
         }
 
-        private void btnResetExts_Click(object sender, EventArgs e)
+        private void btnResetMkdnExts_Click(object sender, EventArgs e)
         {
-            tbFileExts.Text = ".md,.mkdn,.mkd";
+            tbMkdnExts.Text = ".md,.mkdn,.mkd";
+        }
+
+        private void tbHtmlExts_TextChanged(object sender, EventArgs e)
+        {
+            HtmlExtensions = tbHtmlExts.Text;
+        }
+
+        private void btnResetHtmlExts_Click(object sender, EventArgs e)
+        {
+            tbHtmlExts.Text = ".html,.htm";
         }
 
         private void btnSave_Click(object sender, EventArgs e)

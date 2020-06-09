@@ -118,6 +118,46 @@ namespace NppMarkdownPanel.Forms
                 renderTask.Start();
             }
         }
+
+        public void RenderHtml(string currentText, string filepath)
+        {
+            if (renderTask == null || renderTask.IsCompleted)
+            {
+                SaveLastVerticalScrollPosition();
+                MakeAndDisplayScreenShot();
+
+                var context = TaskScheduler.FromCurrentSynchronizationContext();
+                renderTask = new Task<string>(() =>
+                {
+                    return currentText;
+                });
+                renderTask.ContinueWith((renderedText) =>
+                {
+                    htmlContent = renderedText.Result;
+                    if (!String.IsNullOrWhiteSpace(HtmlFileName))
+                    {
+                        bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
+                        if (valid)
+                        {
+                            HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
+                            try
+                            {
+                                File.WriteAllText(HtmlFileName, htmlContent);
+                            }
+                            catch (Exception)
+                            {
+                                // If it fails, just continue
+                            }
+                        }
+                    }
+
+                    webBrowserPreview.DocumentText = htmlContent;
+                    AdjustZoomLevel();
+                }, context);
+                renderTask.Start();
+            }
+        }
+
         /// <summary>
         /// Makes and displays a screenshot of the current browser content to prevent it from flickering 
         /// while loading updated content
