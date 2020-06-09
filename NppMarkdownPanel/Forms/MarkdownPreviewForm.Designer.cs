@@ -66,7 +66,7 @@ namespace NppMarkdownPanel.Forms
             // 
             // toolStripContainer1.ContentPanel
             // 
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip2);
+            // this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip2);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.pictureBoxScreenshot);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.webBrowserPreview);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 575);
@@ -157,6 +157,7 @@ namespace NppMarkdownPanel.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.ClientSize = new System.Drawing.Size(813, 602);
             this.Controls.Add(this.panelPreview);
+            this.Controls.Add(this.statusStrip2);
             this.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MarkdownPreviewForm";
@@ -174,6 +175,7 @@ namespace NppMarkdownPanel.Forms
             this.statusStrip2.ResumeLayout(false);
             this.statusStrip2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
