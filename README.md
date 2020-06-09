@@ -79,12 +79,17 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 ## Version History
 
-### VinsWorldcom change set 1 (Version 0.6.0.1)
+### VinsWorldcom (Version 0.6.2.1)
+- now previews / parses HTML files natively
+- fix statusbar overlay issue in preview panel
+
+### VinsWorldcom (Version 0.6.1.1)
 - rename plugin menu to "Markdown Panel"
+- add status bar to panel for mouse-over URL status
 - add file extensions to settings dialogue
 - sync view with vertical scroll option
-- bugfix:  now parses when document is in Scintilla second view)
-- bugfix:  automatically update view when typing in N++
+- bugfix: now parses when document is in Scintilla second view
+- bugfix: automatically update view when typing in N++
 
 ### UrsineRaven change set 1 (Version 0.5.0.1)
 - add ability to save the preview to HTML document
