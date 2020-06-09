@@ -175,7 +175,14 @@ namespace NppMarkdownPanel
 
         private void ScrollToElementAtLineNo(int lineNo)
         {
-            markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
+            if ( ValidateMkdnExtension() )
+                markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
+            else
+            {
+                var lastLine = scintillaGateway.GetLineCount();
+                double percent = (double)lineNo / lastLine;
+                markdownPreviewForm.ScrollToHtmlLineNo(percent);
+            }
         }
 
         public void InitCommandMenu()

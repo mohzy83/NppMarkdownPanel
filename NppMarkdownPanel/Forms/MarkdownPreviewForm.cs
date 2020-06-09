@@ -204,6 +204,16 @@ namespace NppMarkdownPanel.Forms
             pictureBoxScreenshot.Image = null;
         }
 
+        public void ScrollToHtmlLineNo(double percent)
+        {
+            Application.DoEvents();
+            if (webBrowserPreview.Document != null)
+            {
+                int position = (int)(webBrowserPreview.Document.Body.ScrollRectangle.Height * percent);
+                webBrowserPreview.Document.Window.ScrollTo(0, position);
+            }
+        }
+
         public void ScrollToElementWithLineNo(int lineNo)
         {
             Application.DoEvents();
