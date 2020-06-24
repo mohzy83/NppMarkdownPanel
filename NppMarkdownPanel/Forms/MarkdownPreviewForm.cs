@@ -313,7 +313,7 @@ namespace NppMarkdownPanel.Forms
                 {
                     if ((myStream = saveFileDialog.OpenFile()) != null)
                     {
-                        await myStream.WriteAsync(Encoding.ASCII.GetBytes(htmlContent), 0, htmlContent.Length);
+                        await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
                         myStream.Close();
                     }
                 }
