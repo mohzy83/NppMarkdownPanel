@@ -42,6 +42,8 @@ namespace NppMarkdownPanel.Forms
         private string htmlContent;
         private bool showToolbar;
 
+        private string currentFilePath;//notepadPPGateway.GetCurrentFilePath()
+
         public string CssFileName { get; set; }
 
         public string MarkdownStyleContent { get; set; } //(re)read it from CssFileName if null
@@ -72,6 +74,7 @@ namespace NppMarkdownPanel.Forms
 
         public void RenderMarkdown(string currentText, string filepath)
         {
+            currentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
                 SaveLastVerticalScrollPosition();
@@ -124,13 +127,23 @@ namespace NppMarkdownPanel.Forms
                     htmlContent = renderedText.Result;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
-                        bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
+                        var fullPathFName = HtmlFileName;
+                        bool valid = false;
+                        if (HtmlFileName == ".")
+                        {
+                            fullPathFName = currentFilePath + ".html";
+                            valid = true;
+                        }
+                        else
+                        {
+                            valid = Utils.ValidateFileSelection(HtmlFileName, out fullPathFName, out string error, "HTML Output");
+                            // the validation was run against this path, so we want to make sure the state of the preview matches that
+                        }
                         if (valid)
                         {
-                            HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
                             try
                             {
-                                File.WriteAllText(HtmlFileName, htmlContent);
+                                File.WriteAllText(fullPathFName, htmlContent);
                             }
                             catch (Exception)
                             {
@@ -306,16 +319,21 @@ namespace NppMarkdownPanel.Forms
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                Stream myStream;
+                //Stream myStream;
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
+                if (string.IsNullOrEmpty(saveFileDialog.FileName))
+                {
+                    saveFileDialog.FileName = Path.GetFileName(currentFilePath)+".html";
+                }
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if ((myStream = saveFileDialog.OpenFile()) != null)
-                    {
-                        await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
-                        myStream.Close();
-                    }
+                    File.WriteAllText(saveFileDialog.FileName, htmlContent);
+                    // if ((myStream = saveFileDialog.OpenFile()) != null)
+                    // {
+                    //     await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
+                    //     myStream.Close();  //? but last part of htmlContent is ignored ?
+                    // }
                 }
             }
         }

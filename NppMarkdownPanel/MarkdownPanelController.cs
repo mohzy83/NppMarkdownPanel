@@ -122,7 +122,7 @@ namespace NppMarkdownPanel
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             markdownPreviewForm.UseRegExp = Utils.ReadIniBool("Options", "UseRegExp", iniFilePath);
-            markdownPreviewForm.RegExpFileName = Win32.ReadIniValue("Options", "RegExpFileName", iniFilePath, "RegExp3.txt");
+            markdownPreviewForm.RegExpFileName = Win32.ReadIniValue("Options", "RegExpFileName", iniFilePath, MainResources.DefaultRegExpFile);
             markdownPreviewForm.RegExp3lines = null; //(re)read it in markdownPreviewForm
             PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);

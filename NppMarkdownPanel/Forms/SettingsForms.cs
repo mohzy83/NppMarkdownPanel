@@ -53,16 +53,19 @@ namespace NppMarkdownPanel.Forms
         {
             if (!String.IsNullOrEmpty(tbHtmlFile.Text) && String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
             {
-                bool validHtmlPath = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
-                if (!validHtmlPath)
-                    sblInvalidHtmlPath.Text = error;
-                else
-                    tbHtmlFile.Text = validPath;
-            }
-            
-            if (String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
-            {
-                this.DialogResult = DialogResult.OK;
+                if (tbHtmlFile.Text != ".")
+                {
+                    bool validHtmlPath = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
+                    if (!validHtmlPath)
+                        sblInvalidHtmlPath.Text = error;
+                    else
+                        tbHtmlFile.Text = validPath;
+                }
+
+                if (String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+                {
+                    this.DialogResult = DialogResult.OK;
+                }
             }
         }
 
@@ -87,31 +90,37 @@ namespace NppMarkdownPanel.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
-            tbCssFile.Text = "";
+            tbCssFile.Text = MainResources.DefaultCssFile;
         }
 
         #region Output HTML File
         private void tbHtmlFile_TextChanged(object sender, EventArgs e)
         {
-            if (!String.IsNullOrWhiteSpace(tbHtmlFile.Text))
+            if (tbHtmlFile.Text == ".")
             {
-                bool valid = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
-                if (valid)
+                HtmlFileName = tbHtmlFile.Text;
+            }
+            else { 
+                if (!String.IsNullOrWhiteSpace(tbHtmlFile.Text))
                 {
-                    HtmlFileName = validPath;
-                    if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
-                        sblInvalidHtmlPath.Text = String.Empty;
+                    bool valid = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
+                    if (valid)
+                    {
+                        HtmlFileName = validPath;
+                        if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+                            sblInvalidHtmlPath.Text = String.Empty;
+                    }
+                    else
+                    {
+                        sblInvalidHtmlPath.Text = error;
+                    }
                 }
                 else
                 {
-                    sblInvalidHtmlPath.Text = error;
+                    HtmlFileName = String.Empty;
+                    if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+                        sblInvalidHtmlPath.Text = String.Empty;
                 }
-            }
-            else
-            {
-                HtmlFileName = String.Empty;
-                if (!String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
-                    sblInvalidHtmlPath.Text = String.Empty;
             }
         }
 
@@ -164,7 +173,7 @@ namespace NppMarkdownPanel.Forms
 
         private void btnResetRegExp_Click(object sender, EventArgs e)
         {
-            tbRegExpFile.Text = "RegExp3.txt";
+            tbRegExpFile.Text = MainResources.DefaultRegExpFile;
         }
 
         private void btnChooseRegExp_Click(object sender, EventArgs e)
@@ -180,5 +189,6 @@ namespace NppMarkdownPanel.Forms
                 }
             }
         }
+
     }
 }

@@ -119,13 +119,12 @@
   </resheader>
   <data name="DefaultCssFile" xml:space="preserve">
     <value>style.css</value>
+    <comment>placed in Notepad++\plugins\NppMarkdownPanel\</comment>
   </data>
   <data name="AboutDialogText" xml:space="preserve">
     <value>NppMarkdownPanel for Notepad++
 
-Version 0.5.0
-
-Created by Mohzy 2019
+Version 0.5.+ Created by Mohzy 2019
 
 Github: https://github.com/mohzy83/NppMarkdownPanel
 
@@ -137,6 +136,14 @@ Using Markdown style github-markdown-css by sindresorhus - https://github.com/si
 
 Using portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/nea/MarkdownViewerPlusPlus
 
-Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark</value>
+Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark
+
+v.0.5.1.2 by  andrzejQ/NppMarkdownPanel
+forked from UrsineRaven/NppMarkdownPanel
+</value>
+  </data>
+  <data name="DefaultRegExpFile" xml:space="preserve">
+    <value>RegExp3.txt</value>
+    <comment>placed in Notepad++\plugins\NppMarkdownPanel\</comment>
   </data>
 </root>

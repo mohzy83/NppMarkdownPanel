@@ -117,7 +117,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 100);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 19);
+            this.label2.Size = new System.Drawing.Size(56, 17);
             this.label2.TabIndex = 3;
             this.label2.Text = "CSS File:";
             // 
@@ -127,7 +127,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCssFile.Location = new System.Drawing.Point(138, 97);
             this.tbCssFile.Name = "tbCssFile";
-            this.tbCssFile.Size = new System.Drawing.Size(422, 25);
+            this.tbCssFile.Size = new System.Drawing.Size(422, 24);
             this.tbCssFile.TabIndex = 4;
             this.tbCssFile.TextChanged += new System.EventHandler(this.tbCssFile_TextChanged);
             // 
@@ -136,7 +136,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 146);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(83, 19);
+            this.label3.Size = new System.Drawing.Size(78, 17);
             this.label3.TabIndex = 5;
             this.label3.Text = "Zoom Level:";
             // 
@@ -149,7 +149,7 @@
             this.trackBar1.Maximum = 200;
             this.trackBar1.Minimum = 90;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(512, 56);
+            this.trackBar1.Size = new System.Drawing.Size(512, 53);
             this.trackBar1.TabIndex = 6;
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -162,7 +162,7 @@
             this.lblZoomValue.AutoSize = true;
             this.lblZoomValue.Location = new System.Drawing.Point(648, 161);
             this.lblZoomValue.Name = "lblZoomValue";
-            this.lblZoomValue.Size = new System.Drawing.Size(36, 19);
+            this.lblZoomValue.Size = new System.Drawing.Size(33, 17);
             this.lblZoomValue.TabIndex = 7;
             this.lblZoomValue.Text = "90%";
             // 
@@ -216,7 +216,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbHtmlFile.Location = new System.Drawing.Point(138, 217);
             this.tbHtmlFile.Name = "tbHtmlFile";
-            this.tbHtmlFile.Size = new System.Drawing.Size(422, 25);
+            this.tbHtmlFile.Size = new System.Drawing.Size(422, 24);
             this.tbHtmlFile.TabIndex = 11;
             this.tbHtmlFile.TextChanged += new System.EventHandler(this.tbHtmlFile_TextChanged);
             this.tbHtmlFile.Leave += new System.EventHandler(this.tbHtmlFile_Leave);
@@ -224,18 +224,19 @@
             // lblHtmlFile
             // 
             this.lblHtmlFile.AutoSize = true;
-            this.lblHtmlFile.Location = new System.Drawing.Point(12, 207);
+            this.lblHtmlFile.Location = new System.Drawing.Point(12, 189);
             this.lblHtmlFile.Name = "lblHtmlFile";
-            this.lblHtmlFile.Size = new System.Drawing.Size(134, 57);
+            this.lblHtmlFile.Size = new System.Drawing.Size(125, 68);
             this.lblHtmlFile.TabIndex = 10;
-            this.lblHtmlFile.Text = "Automatically Save \r\nHTML from Current \r\nPreview to this File:";
+            this.lblHtmlFile.Text = "Automatically Save \r\nHTML from Current \r\nPreview to this File:\r\n(\".\" = auto-name)" +
+    "";
             // 
             // cbShowToolbar
             // 
             this.cbShowToolbar.AutoSize = true;
             this.cbShowToolbar.Location = new System.Drawing.Point(138, 277);
             this.cbShowToolbar.Name = "cbShowToolbar";
-            this.cbShowToolbar.Size = new System.Drawing.Size(233, 23);
+            this.cbShowToolbar.Size = new System.Drawing.Size(220, 21);
             this.cbShowToolbar.TabIndex = 15;
             this.cbShowToolbar.Text = "Show Toolbar in Preview Window";
             this.cbShowToolbar.UseVisualStyleBackColor = true;
@@ -266,7 +267,7 @@
             this.cbUseRegExp.AutoSize = true;
             this.cbUseRegExp.Location = new System.Drawing.Point(138, 330);
             this.cbUseRegExp.Name = "cbUseRegExp";
-            this.cbUseRegExp.Size = new System.Drawing.Size(47, 23);
+            this.cbUseRegExp.Size = new System.Drawing.Size(41, 21);
             this.cbUseRegExp.TabIndex = 21;
             this.cbUseRegExp.Text = "->";
             this.cbUseRegExp.UseVisualStyleBackColor = true;
@@ -303,7 +304,7 @@
             this.tbRegExpFile.Enabled = false;
             this.tbRegExpFile.Location = new System.Drawing.Point(189, 328);
             this.tbRegExpFile.Name = "tbRegExpFile";
-            this.tbRegExpFile.Size = new System.Drawing.Size(371, 25);
+            this.tbRegExpFile.Size = new System.Drawing.Size(371, 24);
             this.tbRegExpFile.TabIndex = 18;
             this.tbRegExpFile.TextChanged += new System.EventHandler(this.tbRegExpFile_TextChanged);
             // 
@@ -312,13 +313,13 @@
             this.lblRegExpFile.AutoSize = true;
             this.lblRegExpFile.Location = new System.Drawing.Point(12, 332);
             this.lblRegExpFile.Name = "lblRegExpFile";
-            this.lblRegExpFile.Size = new System.Drawing.Size(80, 19);
+            this.lblRegExpFile.Size = new System.Drawing.Size(78, 17);
             this.lblRegExpFile.TabIndex = 17;
             this.lblRegExpFile.Text = "Use RegExp";
             // 
             // SettingsForms
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 478);
             this.Controls.Add(this.statusStrip1);

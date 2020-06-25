@@ -7,12 +7,13 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.5.0** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.5.1.2** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
-(forked from UrsineRaven/<https://github.com/UrsineRaven/NppMarkdownPanel> - add support for saving to html)
+( forked from <https://github.com/UrsineRaven/NppMarkdownPanel> / forked from <https://github.com/mohzy83/NppMarkdownPanel> )
 
 ![MdPanelSettins](help/MdPanelSettins.png "Picture of the Save button on the preview panel toolbar")
+Auto-name - `.` - means current document full path name with additional ".html" extension.  
 Added possibility to multiply replase source Npp text with RegExp. See "Release...\RegExp3.txt" for some config. for Jekyll markdown corrections.
 
 "**RegExp3.txt**" should have multiply 3-lines: Comment (ignored), Pattern, ReplacementPattern for [RegExp](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference). In ReplacementPattern `\r`,`\n`,`\t` can be used. Example:
@@ -88,7 +89,7 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 ### Preview Window Toolbar
 
 * #### Save As... (![save-btn](help/save-btn.png "Picture of the Save button on the preview panel toolbar"))
-    Clicking this button allows you to save the rendered preview as an HTML document.
+    Clicking this button allows you to save the rendered preview as an HTML document. Default file name is current document name with ".html" extension.
 
 ### Synchronize viewer with caret position
 
@@ -97,6 +98,10 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### Version 0.5.1.2
+
+- auto-name for save-as HTML
 
 ### Version 0.5.0
 - change zoomlevel for the preview in settings dialog
