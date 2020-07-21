@@ -51,7 +51,11 @@ namespace NppMarkdownPanel.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(tbHtmlFile.Text) && String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
+            if (String.IsNullOrEmpty(tbHtmlFile.Text))
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+            else if (!String.IsNullOrEmpty(tbHtmlFile.Text) && String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
             {
                 if (tbHtmlFile.Text != ".")
                 {
