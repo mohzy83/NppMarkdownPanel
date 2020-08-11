@@ -7,10 +7,14 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.5.1.2** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.5.1.3** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
 ( forked from <https://github.com/UrsineRaven/NppMarkdownPanel> / forked from <https://github.com/mohzy83/NppMarkdownPanel> )
+
+Non-ascii chars can be used in *.md path and image names (IE/Edge bug with local file links). When `![alt]` starts with "url_" then unescape input ur `(...)`
+
+
 
 ![MdPanelSettins](help/MdPanelSettins.png "Picture of the Save button on the preview panel toolbar")
 Auto-name - `.` - means current document full path name with additional ".html" extension.  

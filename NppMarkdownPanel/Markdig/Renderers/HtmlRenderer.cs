@@ -11,6 +11,8 @@ using Markdig.Renderers.Html;
 using Markdig.Renderers.Html.Inlines;
 using Markdig.Syntax;
 
+using System.Text.RegularExpressions;
+
 namespace Markdig.Renderers
 {
     /// <summary>
@@ -196,15 +198,31 @@ namespace Markdig.Renderers
         /// Writes the URL escaped for HTML.
         /// </summary>
         /// <param name="content">The content.</param>
+        /// <param name="decodeURL">decode content - if file, UseNonAsciiNoEscape and relative path</param>
         /// <returns>This instance</returns>
-        public HtmlRenderer WriteEscapeUrl(string content)
+        public HtmlRenderer WriteEscapeUrl(string content, bool unescapeURL = false)
         {
             if (content == null)
                 return this;
 
             if (BaseUrl != null && !Uri.TryCreate(content, UriKind.Absolute, out Uri _))
             {
-                content = new Uri(BaseUrl, content).AbsoluteUri;
+                if (UseNonAsciiNoEscape && (BaseUrl.Scheme == "file"))
+                { //a bug under IE/Edge with local file links containing non US-ASCII chars
+                    if (unescapeURL)
+                    {
+                        content = Uri.UnescapeDataString(content);
+                    }
+                    if (!(content.Contains(":"))) //relative file path - add base url
+                    {
+                        var f = BaseUrl.ToString(); // "file:///....../£.../fname.md"
+                        content = Regex.Replace(f, @"[^/]+$", content);
+                    } //else - content is ready
+                }
+                else
+                {
+                    content = new Uri(BaseUrl, content).AbsoluteUri;
+                }
             }
 
             if (LinkRewriter != null)
