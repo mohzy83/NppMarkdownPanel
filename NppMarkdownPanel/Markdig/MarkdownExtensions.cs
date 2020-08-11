@@ -74,6 +74,7 @@ namespace Markdig
         public static MarkdownPipelineBuilder UseAdvancedExtensions(this MarkdownPipelineBuilder pipeline)
         {
             return pipeline
+                .UseNonAsciiNoEscape()
                 .UseAbbreviations()
                 .UseAutoIdentifiers()
                 .UseCitations()
