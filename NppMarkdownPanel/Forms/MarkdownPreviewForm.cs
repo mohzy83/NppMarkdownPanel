@@ -24,8 +24,8 @@ namespace NppMarkdownPanel.Forms
             <html>
                 <head>
                     <title>{0}</title>
-	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
-	                <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
+	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""/>
+	                <meta http-equiv=""content-type"" content=""text/html; charset=utf-8""/>
                     <style type=""text/css"">
                     {1}
                     </style>
@@ -33,7 +33,7 @@ namespace NppMarkdownPanel.Forms
                 <body style=""{2}"">
                 {3}
                 </body>
-            <html>
+            </html>
             ";
 
         private Task<string> renderTask;
