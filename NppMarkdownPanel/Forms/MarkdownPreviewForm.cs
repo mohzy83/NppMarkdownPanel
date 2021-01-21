@@ -41,6 +41,7 @@ namespace NppMarkdownPanel.Forms
         private int lastVerticalScroll = 0;
         private string htmlContent;
         private bool showToolbar;
+        private string currentFilePath;
 
         public string CssFileName { get; set; }
         public int ZoomLevel { get; set; }
@@ -64,6 +65,7 @@ namespace NppMarkdownPanel.Forms
 
         public void RenderMarkdown(string currentText, string filepath)
         {
+            currentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
                 SaveLastVerticalScrollPosition();
@@ -337,6 +339,8 @@ namespace NppMarkdownPanel.Forms
                 Stream myStream;
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(currentFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentFilePath);
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     if ((myStream = saveFileDialog.OpenFile()) != null)
