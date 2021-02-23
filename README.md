@@ -79,6 +79,8 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 ## Version History
 
+Refer to Git commit history for latest changes.
+
 ### VinsWorldcom (Version 0.6.2.1)
 - now previews / parses HTML files natively
 - fix statusbar overlay issue in preview panel
