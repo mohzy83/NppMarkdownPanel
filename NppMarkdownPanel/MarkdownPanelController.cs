@@ -40,9 +40,10 @@ namespace NppMarkdownPanel
         private bool syncViewWithCaretPosition;
         private bool syncViewWithScrollPosition;
 
-        private string[] filterExts = new string[10];
-        private string[] filterProgs = new string[10];
-        private string[] filterArgs = new string[10];
+        private const int FILTERS = 10;
+        private string[] filterExts = new string[FILTERS];
+        private string[] filterProgs = new string[FILTERS];
+        private string[] filterArgs = new string[FILTERS];
 
         public MarkdownPanelController()
         {
@@ -245,7 +246,7 @@ namespace NppMarkdownPanel
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
 
-            for ( int i = 0; i < 10; i++ )
+            for ( int i = 0; i < FILTERS; i++ )
             {
                 var section = $"Filter{i}";
                 filterExts[i]  = Win32.ReadIniValue(section, "Extensions", iniFilePath, "!!!");
