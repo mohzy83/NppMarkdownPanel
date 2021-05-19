@@ -105,9 +105,16 @@ namespace NppMarkdownPanel
                     // // Any modifications made ?
                     // if (isInsert || isDelete)
                     // {
+                    if ( ValidateMkdnExtension() || ValidateHtmlExtension() )
+                    {
                         lastTickCount = Environment.TickCount;
                         RenderMarkdown();
+                    }
                     // }
+                }
+                else if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
+                {
+                    RenderMarkdown();
                 }
             }
         }
