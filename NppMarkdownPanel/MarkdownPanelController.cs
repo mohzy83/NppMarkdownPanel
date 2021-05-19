@@ -175,12 +175,14 @@ namespace NppMarkdownPanel
                     markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
                 else if (ValidatePerlExtension())
                 {
+                    var filterProgram = "pod2html.bat";
+                    var filterArguments = "--css C:/usr/bin/npp64/plugins/NppMarkdownPanel/style.css";
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
                         {
-                            FileName = "pod2html.bat",
-                            Arguments = $"--css C:/usr/bin/npp64/plugins/NppMarkdownPanel/style.css {notepadPPGateway.GetCurrentFilePath()}",
+                            FileName = filterProgram,
+                            Arguments = $"{filterArguments} {notepadPPGateway.GetCurrentFilePath()}",
                             UseShellExecute = false,
                             RedirectStandardOutput = true,
                             CreateNoWindow = true
