@@ -40,6 +40,10 @@ namespace NppMarkdownPanel
         private bool syncViewWithCaretPosition;
         private bool syncViewWithScrollPosition;
 
+        private string filterExts;
+        private string filterProgs;
+        private string filterArgs;
+
         public MarkdownPanelController()
         {
             scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
@@ -143,13 +147,13 @@ namespace NppMarkdownPanel
                 return false;
         }
 
-        private bool ValidatePerlExtension()
+        private bool ValidateFilterExtension()
         {
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
 
-            if (".pl,.pm".Contains(fileExtension.ToLower()))
+            if (filterExts.Contains(fileExtension.ToLower()))
                 return true;
             else
                 return false;
@@ -182,10 +186,10 @@ namespace NppMarkdownPanel
                     markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
                 else if (ValidateHtmlExtension())
                     markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
-                else if (ValidatePerlExtension())
+                else if (ValidateFilterExtension())
                 {
-                    var filterProgram = "pod2html.bat";
-                    var filterArguments = "--css C:/usr/bin/npp64/plugins/NppMarkdownPanel/style.css";
+                    var filterProgram = filterProgs;
+                    var filterArguments = filterArgs;
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
@@ -197,7 +201,7 @@ namespace NppMarkdownPanel
                             CreateNoWindow = true
                         }
                     };
-     
+
                     process.Start();
                     string data = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
@@ -239,6 +243,18 @@ namespace NppMarkdownPanel
             HtmlExtensions = Win32.ReadIniValue("Options", "HtmlExtensions", iniFilePath, ".html,.htm");
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
+
+            var i = 0;
+            // for ( int i = 0; i <= 50; i++ )
+            // {
+            var section = $"Filter{i}";
+            filterExts  = Win32.ReadIniValue(section, "Extensions", iniFilePath, "!!!");
+            filterProgs = Win32.ReadIniValue(section, "Program", iniFilePath, "!!!");
+            filterArgs  = Win32.ReadIniValue(section, "Arguments", iniFilePath, "!!!");
+                // if ( filterExts[i].Contains("!!!") )
+                    // break;
+            // }
+
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
             PluginBase.SetCommand(2, "Synchronize on &vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
