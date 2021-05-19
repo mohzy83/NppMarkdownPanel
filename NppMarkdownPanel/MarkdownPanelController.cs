@@ -2,6 +2,7 @@
 using NppMarkdownPanel.Forms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -133,6 +134,18 @@ namespace NppMarkdownPanel
                 return false;
         }
 
+        private bool ValidatePerlExtension()
+        {
+            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
+            var fileExtension = sbFileExtension.ToString();
+
+            if (".pl,.pm".Contains(fileExtension.ToLower()))
+                return true;
+            else
+                return false;
+        }
+
         protected void UpdateEditorInformation()
         {
             scintillaGateway.SetScintillaHandle(PluginBase.GetCurrentScintilla());
@@ -160,6 +173,25 @@ namespace NppMarkdownPanel
                     markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
                 else if (ValidateHtmlExtension())
                     markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
+                else if (ValidatePerlExtension())
+                {
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = "pod2html.bat",
+                            Arguments = $"--css C:/usr/bin/npp64/plugins/NppMarkdownPanel/style.css {notepadPPGateway.GetCurrentFilePath()}",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+     
+                    process.Start();
+                    string data = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath());
+                }
                 else
                     markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath());
             }
