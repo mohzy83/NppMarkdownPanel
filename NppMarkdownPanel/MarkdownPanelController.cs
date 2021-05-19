@@ -40,9 +40,9 @@ namespace NppMarkdownPanel
         private bool syncViewWithCaretPosition;
         private bool syncViewWithScrollPosition;
 
-        private string filterExts;
-        private string filterProgs;
-        private string filterArgs;
+        private string[] filterExts = new string[10];
+        private string[] filterProgs = new string[10];
+        private string[] filterArgs = new string[10];
 
         public MarkdownPanelController()
         {
@@ -149,11 +149,12 @@ namespace NppMarkdownPanel
 
         private bool ValidateFilterExtension()
         {
+// TODO:20210519:MVINCENT: for loop here on FilterExts and change return to -1 on fail, index of filterExts on success
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
 
-            if (filterExts.Contains(fileExtension.ToLower()))
+            if (filterExts[0].Contains(fileExtension.ToLower()))
                 return true;
             else
                 return false;
@@ -188,8 +189,8 @@ namespace NppMarkdownPanel
                     markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
                 else if (ValidateFilterExtension())
                 {
-                    var filterProgram = filterProgs;
-                    var filterArguments = filterArgs;
+                    var filterProgram = filterProgs[0];
+                    var filterArguments = filterArgs[0];
                     var process = new Process
                     {
                         StartInfo = new ProcessStartInfo
@@ -244,16 +245,15 @@ namespace NppMarkdownPanel
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
 
-            var i = 0;
-            // for ( int i = 0; i <= 50; i++ )
-            // {
-            var section = $"Filter{i}";
-            filterExts  = Win32.ReadIniValue(section, "Extensions", iniFilePath, "!!!");
-            filterProgs = Win32.ReadIniValue(section, "Program", iniFilePath, "!!!");
-            filterArgs  = Win32.ReadIniValue(section, "Arguments", iniFilePath, "!!!");
-                // if ( filterExts[i].Contains("!!!") )
-                    // break;
-            // }
+            for ( int i = 0; i < 10; i++ )
+            {
+                var section = $"Filter{i}";
+                filterExts[i]  = Win32.ReadIniValue(section, "Extensions", iniFilePath, "!!!");
+                filterProgs[i] = Win32.ReadIniValue(section, "Program", iniFilePath, "!!!");
+                filterArgs[i]  = Win32.ReadIniValue(section, "Arguments", iniFilePath, "!!!");
+                if ( filterExts[i].Contains("!!!") )
+                    break;
+            }
 
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
