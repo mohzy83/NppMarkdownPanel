@@ -54,8 +54,11 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
-                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI && (ValidateMkdnExtension() || ValidateHtmlExtension()))
+                if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
+                    if ( ! (ValidateMkdnExtension() || ValidateHtmlExtension()) )
+                        return;
+
                     var firstVisible = scintillaGateway.GetFirstVisibleLine();
                     var buffer = scintillaGateway.LinesOnScreen()/2;
                     var lastLine = scintillaGateway.GetLineCount();
@@ -90,8 +93,7 @@ namespace NppMarkdownPanel
                         }
                     }
                 }
-                else
-                if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
+                else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     UpdateEditorInformation();
                     RenderMarkdown();
