@@ -130,6 +130,8 @@ namespace NppMarkdownPanel
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
+            if ( String.IsNullOrEmpty(fileExtension) )
+                return false;
 
             if (MkdnExtensions.ToLower().Contains(fileExtension.ToLower()))
                 return true;
@@ -142,6 +144,8 @@ namespace NppMarkdownPanel
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
+            if ( String.IsNullOrEmpty(fileExtension) )
+                return false;
 
             if (HtmlExtensions.ToLower().Contains(fileExtension.ToLower()))
                 return true;
@@ -154,6 +158,8 @@ namespace NppMarkdownPanel
             StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
             var fileExtension = sbFileExtension.ToString();
+            if ( String.IsNullOrEmpty(fileExtension) )
+                return -1;
 
             for ( int i = 0; i < filterFound; i++ )
             {
