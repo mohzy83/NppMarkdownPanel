@@ -202,7 +202,7 @@ namespace NppMarkdownPanel
                             StartInfo = new ProcessStartInfo
                             {
                                 FileName = filterProgram,
-                                Arguments = $"{filterArguments} {notepadPPGateway.GetCurrentFilePath()}",
+                                Arguments = $"{filterArguments} \"{notepadPPGateway.GetCurrentFilePath()}\"",
                                 UseShellExecute = false,
                                 RedirectStandardOutput = true,
                                 CreateNoWindow = true
