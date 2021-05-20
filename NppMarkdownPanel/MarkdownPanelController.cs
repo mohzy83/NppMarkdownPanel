@@ -270,10 +270,12 @@ namespace NppMarkdownPanel
             }
 
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(1, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
-            PluginBase.SetCommand(2, "Synchronize on &vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
-            PluginBase.SetCommand(3, "Edit &Settings", EditSettings);
-            PluginBase.SetCommand(4, "&About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
+            PluginBase.SetCommand(1, "---", null);
+            PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(3, "Synchronize on &vertical scroll", SyncViewWithScroll, syncViewWithScrollPosition);
+            PluginBase.SetCommand(4, "---", null);
+            PluginBase.SetCommand(5, "&Settings", EditSettings);
+            PluginBase.SetCommand(6, "&About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
 
             idMyDlg = 0;
         }
