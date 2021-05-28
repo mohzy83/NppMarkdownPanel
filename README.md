@@ -48,12 +48,17 @@ Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github
 Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)
 
 ## Prerequisites
+
 - .NET 4.5 or higher 
 
 ## Installation
+
 ### Installation over Notepad++ 
+
 The plugin can be installed over the integrated Notepad++ "Plugin Admin..".
+
 ### Manual Installation
+
 Create the folder "NppMarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
 
 It should look like this:
@@ -90,6 +95,8 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 
 * #### HTML Extensions
     A comma-separated list of file extensions to recognize as HTML (default = `.html,.htm`)
+    
+    **Note**:  Adding `.xml` to this list will "render" XML files in the viewer if they at least have a valid XML header `<?xml version="1.0"?>`.
 
 ### Preview Window Toolbar
 
