@@ -7,14 +7,33 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-My ([VinsWorldcom](https://github.com/VinsWorldcom/NppMarkdownPanel)) changes to [UrsineRaven's repo](https://github.com/UrsineRaven/NppMarkdownPanel) can be found in the [version history](#version-history) below.
-The current version with my modifications can be found [here](https://github.com/VinsWorldcom/NppMarkdownPanel/releases)
+My ([VinsWorldcom](https://github.com/VinsWorldcom/NppMarkdownPanel)) changes to [UrsineRaven's repo](https://github.com/UrsineRaven/NppMarkdownPanel) can be found [here](https://github.com/VinsWorldcom/NppMarkdownPanel/releases)
+
+The plugin renders Markdown as HTML and provides a viewer.  The plugin can also 
+render HTML documents.  Additionally, 10 filters can be created manually in the 
+configuration file to render documents to HTML for viewing.  For example:
+
+```
+[Filter0]
+Extensions=.pl,.pm
+Program=pod2html.bat
+Arguments=--css C:\notepad++\plugins\NppMarkdownPanel\style.css
+```
+
+will render Perl POD to HTML and display in the viewer panel.  There are some 
+limitations with filters.  The rendered views do not synchronize scrolling no 
+matter what the plugin menu setting is and they do not update "live" with typing, 
+only update after document save.
+
+<!--
 
 My ([UrsineRaven](https://github.com/UrsineRaven/NppMarkdownPanel)) changes to [mohzy83's repo](https://github.com/mohzy83/NppMarkdownPanel) can be found in the [version history](#version-history) below.
 The current version with my modifications (0.5.0.1) can be found [here](https://github.com/UrsineRaven/NppMarkdownPanel/releases)
 
 #### Mohzy83's current version:
 The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+
+-->
 
 ### Used libs and icons
 
@@ -29,12 +48,17 @@ Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github
 Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)
 
 ## Prerequisites
+
 - .NET 4.5 or higher 
 
 ## Installation
+
 ### Installation over Notepad++ 
+
 The plugin can be installed over the integrated Notepad++ "Plugin Admin..".
+
 ### Manual Installation
+
 Create the folder "NppMarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
 
 It should look like this:
@@ -66,65 +90,28 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 * #### Show Toolbar in Preview Window
     Checking this box will enable the toolbar in the preview window. By default, this is unchecked.
 
+* #### Markdown Extensions
+    A comma-separated list of file extensions to recognize as Markdown (default = `.md,.mkdn,.mkd`)
+
+* #### HTML Extensions
+    A comma-separated list of file extensions to recognize as HTML (default = `.html,.htm`)
+    
+    **Note**:  Adding `.xml` to this list will "render" XML files in the viewer if they at least have a valid XML header `<?xml version="1.0"?>`.
+
 ### Preview Window Toolbar
 
 * #### Save As... (![save-btn](help/save-btn.png "Picture of the Save button on the preview panel toolbar"))
     Clicking this button allows you to save the rendered preview as an HTML document.
 
-### Synchronize viewer with caret position
+### Synchronize with caret position
 
-Enabling this in the plugin's menu (Plugins -> NppMarkdownPanel) makes the preview panel stay in sync with the caret in the markdown document that is being edited.  
-This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for keeping two open editing panels scrolling together.
-
-
-## Version History
-
-Refer to Git commit history for latest changes.
-
-### VinsWorldcom (Version 0.6.2.1)
-- now previews / parses HTML files natively
-- fix statusbar overlay issue in preview panel
-
-### VinsWorldcom (Version 0.6.1.1)
-- rename plugin menu to "Markdown Panel"
-- add status bar to panel for mouse-over URL status
-- add file extensions to settings dialogue
-- sync view with vertical scroll option
-- bugfix: now parses when document is in Scintilla second view
-- bugfix: automatically update view when typing in N++
-
-### UrsineRaven change set 1 (Version 0.5.0.1)
-- add ability to save the preview to HTML document
-    - can automatically save every time it's rendered
-    - can show a toolbar on the preview panel to allow saving on button click
-- add settings to settings window to allow:
-    - selecting the file for automatic saving
-    - enabling/disabling the preview panel toolbar
-    - added some basic validation for some of the fields
-- updated README.md
-    - added a section describing the Settings options
-    - added my changes to version history
-
-### Version 0.5.0
-- change zoomlevel for the preview in settings dialog
-- change css file for the markdown style
-- the new settings are persistent
-- open settings dialog: Plugins-> NppMarkdownPanel -> Edit Settings
-![npp-settings](help/open-settings.png "open settings dialog")
-
-### Version 0.4.0
-- switched from CommonMark.Net to markdig rendering library
-
-### Version 0.3.0
-- synchronize viewer with caret position
-
-### Version 0.2.0
-- Initial release
-
-
-### Feature - Synchronize viewer with caret position
+Enabling this in the plugin's menu (Plugins -> Markdown Panel) makes the preview panel stay in sync with the caret in the markdown document that is being edited.  This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for keeping two open editing panels scrolling together.
 
 ![npp-sync-caret](help/sync_caret.gif "Synchronize viewer with caret position")
+
+### Synchronize on vertical scroll
+
+Enabling this in the plugin's menu (Plugins -> Markdown Panel) attempts to do a better job at synchronizing scrolling between the preview panel and the document that is being edited without the need for caret movement (in other words, just using scrollbars should sync too).
 
 
 ## License
