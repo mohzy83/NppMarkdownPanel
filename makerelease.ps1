@@ -4,5 +4,5 @@ function makeReleaseZip($filename, $targetPlattform)
 	Compress-Archive -LiteralPath $filename, 'README.md', 'License.txt', "NppMarkdownPanel\style.css" -DestinationPath $zipName -Force
 }
 
-makeReleaseZip "NppMarkdownPanel\bin\Release\NppMarkdownPanel.dll" "x86"
-makeReleaseZip "NppMarkdownPanel\bin\Release-x64\NppMarkdownPanel.dll" "x64"
+makeReleaseZip "NppMarkdownPanel\bin\Release\MarkdownPanel.dll" "x86"
+makeReleaseZip "NppMarkdownPanel\bin\Release-x64\MarkdownPanel.dll" "x64"

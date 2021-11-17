@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NppMarkdownPanel</RootNamespace>
-    <AssemblyName>NppMarkdownPanel</AssemblyName>
+    <AssemblyName>MarkdownPanel</AssemblyName>
     <OutputPath>bin\Debug\</OutputPath>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
