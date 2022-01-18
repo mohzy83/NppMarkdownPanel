@@ -121,7 +121,7 @@
     <value>style.css</value>
   </data>
   <data name="AboutDialogText" xml:space="preserve">
-    <value>NppMarkdownPanel for Notepad++
+    <value>MarkdownPanel for Notepad++
 
 Version 0.6.5.1
 
@@ -133,6 +133,10 @@ Github: https://github.com/UrsineRaven/NppMarkdownPanel
 
 Updated by VinsWorldcom 2020
 Github: https://github.com/VinsWorldcom/NppMarkdownPanel
+
+Updated by kilbyjmichael 2022
+Github: https://github.com/kilbyjmichael/NppMarkdownPanel
+Moved markdig to use nuget, package as one dll
 
 Using Markdig by xoofx - https://github.com/lunet-io/markdig
 

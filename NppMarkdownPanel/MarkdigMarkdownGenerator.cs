@@ -27,8 +27,8 @@ namespace NppMarkdownPanel
 
         public string ConvertToHtml(string markDownText, string filepath)
         {
-            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
-            pipeline.PreciseSourceLocation = true;
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UsePreciseSourceLocation().Build();
+            // pipeline.UsePreciseSourceLocation();
             try
             {
                 htmlRenderer.BaseUrl = new Uri(filepath);
