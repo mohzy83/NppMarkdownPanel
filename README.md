@@ -77,6 +77,8 @@ Thats all you need to do ;)
 
 To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settings
 
+![open-settings](help/open-settings.png)
+
 * #### CSS File
     This allows you to select a CSS file to use if you don't want the default style of the preview
 
