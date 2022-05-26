@@ -72,6 +72,10 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 ## Version History
 
+### Version 0.6.1 (released 2022-05-26)
+- fix embedded images
+- fix dark icon
+
 ### Version 0.6.0 (released 2022-05-26)
 
 - plugin headers for npp updated
