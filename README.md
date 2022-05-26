@@ -7,7 +7,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.6.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
@@ -71,6 +71,15 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### Version 0.6.0
+
+- plugin headers for npp updated
+- darkmode icon
+- fixed refresh bug for 64-bit version of plugin
+- new zoom level range from 40 % to 400%
+- save html
+- images for help file now included
 
 ### Version 0.5.0
 - change zoomlevel for the preview in settings dialog
