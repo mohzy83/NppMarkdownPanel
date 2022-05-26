@@ -415,6 +415,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\markdown-16x16-solid-dark.png" />
     <Content Include="Resources\md.ico" />
     <Content Include="style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

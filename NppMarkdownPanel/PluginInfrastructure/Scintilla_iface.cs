@@ -21,7 +21,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// environment specific window handle/pointer
         /// </summary>
-        public IntPtr hwndFrom; 
+        public IntPtr hwndFrom;
 
         /// <summary>
         /// CtrlID of the window issuing the notification
@@ -31,7 +31,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// The SCN_* notification Code
         /// </summary>
-        public uint Code;       
+        public uint Code;
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -160,12 +160,25 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SCWS_VISIBLEAFTERINDENT = 2,
 
+        SCWS_VISIBLEONLYININDENT = 3,
+
         /// Are white space characters currently visible?
         /// Returns one of SCWS_* constants.
         SCI_GETVIEWWS = 2020,
 
         /// Make white space characters invisible, always visible or visible outside indentation.
         SCI_SETVIEWWS = 2021,
+
+        SCTD_LONGARROW = 0,
+
+        SCTD_STRIKEOUT = 1,
+
+        /// Retrieve the current tab draw mode.
+        /// Returns one of SCTD_* constants.
+        SCI_GETTABDRAWMODE = 2698,
+
+        /// Set how tabs are drawn when visible.
+        SCI_SETTABDRAWMODE = 2699,
 
         /// Find the position from a point within the window.
         SCI_POSITIONFROMPOINT = 2022,
@@ -207,8 +220,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set the current end of line mode.
         SCI_SETEOLMODE = 2031,
 
-        /// Set the current styling position to pos and the styling mask to mask.
-        /// The styling mask can be used to protect some bits in each styling byte from modification.
+        /// Set the current styling position to start.
+        /// The unused parameter is no longer used and should be set to 0.
         SCI_STARTSTYLING = 2032,
 
         /// Change style from current styling position for length characters to a style
@@ -247,7 +260,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_IME_INLINE = 1,
 
-        /// Is the IME displayed in a winow or inline?
+        /// Is the IME displayed in a window or inline?
         SCI_GETIMEINTERACTION = 2678,
 
         /// Choose to display the the IME in a winow or inline.
@@ -318,6 +331,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SC_MARK_RGBAIMAGE = 30,
 
         SC_MARK_BOOKMARK = 31,
+
+        SC_MARK_VERTICALBOOKMARK = 32,
 
         SC_MARK_CHARACTER = 10000,
 
@@ -394,6 +409,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_MARGIN_RTEXT = 5,
 
+        SC_MARGIN_COLOUR = 6,
+
         /// Set a margin to be either numeric or symbolic.
         SCI_SETMARGINTYPEN = 2240,
 
@@ -424,6 +441,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve the cursor shown in a margin.
         SCI_GETMARGINCURSORN = 2249,
 
+        /// Set the background colour of a margin. Only visible for SC_MARGIN_COLOUR.
+        SCI_SETMARGINBACKN = 2250,
+
+        /// Retrieve the background colour of a margin
+        SCI_GETMARGINBACKN = 2251,
+
+        /// Allocate a non-standard number of margins.
+        SCI_SETMARGINS = 2252,
+
+        /// How many margins are there?.
+        SCI_GETMARGINS = 2253,
+
         STYLE_DEFAULT = 32,
 
         STYLE_LINENUMBER = 33,
@@ -437,6 +466,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         STYLE_INDENTGUIDE = 37,
 
         STYLE_CALLTIP = 38,
+
+        STYLE_FOLDDISPLAYTEXT = 39,
 
         STYLE_LASTPREDEFINED = 39,
 
@@ -463,6 +494,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SC_CHARSET_OEM = 255,
 
         SC_CHARSET_RUSSIAN = 204,
+
+        SC_CHARSET_OEM866 = 866,
 
         SC_CHARSET_CYRILLIC = 1251,
 
@@ -519,6 +552,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SC_CASE_UPPER = 1,
 
         SC_CASE_LOWER = 2,
+
+        SC_CASE_CAMEL = 3,
 
         /// Get the foreground colour of a style.
         SCI_STYLEGETFORE = 2481,
@@ -612,10 +647,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set the foreground colour of the caret.
         SCI_SETCARETFORE = 2069,
 
-        /// When key+modifier combination km is pressed perform msg.
+        /// When key+modifier combination keyDefinition is pressed perform sciCommand.
         SCI_ASSIGNCMDKEY = 2070,
 
-        /// When key+modifier combination km is pressed do nothing.
+        /// When key+modifier combination keyDefinition is pressed do nothing.
         SCI_CLEARCMDKEY = 2071,
 
         /// Drop all key mappings.
@@ -640,6 +675,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get the set of characters making up words for when moving or selecting by word.
         /// Returns the number of characters
         SCI_GETWORDCHARS = 2646,
+
+        /// Set the number of characters to have directly indexed categories
+        SCI_SETCHARACTERCATEGORYOPTIMIZATION = 2720,
+
+        /// Get the number of characters to have directly indexed categories
+        SCI_GETCHARACTERCATEGORYOPTIMIZATION = 2721,
 
         /// Start a sequence of actions that is undone and redone as a unit.
         /// May be nested.
@@ -684,21 +725,29 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         INDIC_TEXTFORE = 17,
 
+        INDIC_POINT = 18,
+
+        INDIC_POINTCHARACTER = 19,
+
+        INDIC_GRADIENT = 20,
+
+        INDIC_GRADIENTCENTRE = 21,
+
+        INDIC_CONTAINER = 8,
+
         INDIC_IME = 32,
 
         INDIC_IME_MAX = 35,
 
         INDIC_MAX = 35,
 
-        INDIC_CONTAINER = 8,
+        INDICATOR_CONTAINER = 8,
 
-        INDIC0_MASK = 0x20,
+        INDICATOR_IME = 32,
 
-        INDIC1_MASK = 0x40,
+        INDICATOR_IME_MAX = 35,
 
-        INDIC2_MASK = 0x80,
-
-        INDICS_MASK = 0xE0,
+        INDICATOR_MAX = 35,
 
         /// Set an indicator to plain, squiggle or TT.
         SCI_INDICSETSTYLE = 2080,
@@ -754,14 +803,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get the size of the dots used to mark space characters.
         SCI_GETWHITESPACESIZE = 2087,
 
-        /// Divide each styling byte into lexical class bits (default: 5) and indicator
-        /// bits (default: 3). If a lexer requires more than 32 lexical states, then this
-        /// is used to expand the possible states.
-        SCI_SETSTYLEBITS = 2090,
-
-        /// Retrieve number of bits in style bytes used to hold the lexical state.
-        SCI_GETSTYLEBITS = 2091,
-
         /// Used to hold extra styling information for each line.
         SCI_SETLINESTATE = 2092,
 
@@ -783,12 +824,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Set the colour of the background of the line containing the caret.
         SCI_SETCARETLINEBACK = 2098,
 
+        /// Retrieve the caret line frame width.
+        /// Width = 0 means this option is disabled.
+        SCI_GETCARETLINEFRAME = 2704,
+
+        /// Display the caret line framed.
+        /// Set width != 0 to enable this option and width = 0 to disable it.
+        SCI_SETCARETLINEFRAME = 2705,
+
         /// Set a style to be changeable or not (read only).
         /// Experimental feature, currently buggy.
         SCI_STYLESETCHANGEABLE = 2099,
 
         /// Display a auto-completion list.
-        /// The lenEntered parameter indicates how many characters before
+        /// The lengthEntered parameter indicates how many characters before
         /// the caret should be used to provide context.
         SCI_AUTOCSHOW = 2100,
 
@@ -912,6 +961,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Count characters between two positions.
         SCI_COUNTCHARACTERS = 2633,
 
+        /// Count code units between two positions.
+        SCI_COUNTCODEUNITS = 2715,
+
         /// Show or hide the horizontal scroll bar.
         SCI_SETHSCROLLBAR = 2130,
 
@@ -960,7 +1012,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the position at the start of the selection.
         SCI_GETSELECTIONSTART = 2143,
 
-        /// Sets the position that ends the selection - this becomes the currentPosition.
+        /// Sets the position that ends the selection - this becomes the caret.
         SCI_SETSELECTIONEND = 2144,
 
         /// Returns the position at the end of the selection.
@@ -985,11 +1037,15 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SC_PRINT_COLOURONWHITEDEFAULTBG = 4,
 
+        SC_PRINT_SCREENCOLOURS = 5,
+
         /// Modify colours when printing for clearer printed text.
         SCI_SETPRINTCOLOURMODE = 2148,
 
         /// Returns the print colour mode.
         SCI_GETPRINTCOLOURMODE = 2149,
+
+        SCFIND_NONE = 0x0,
 
         SCFIND_WHOLEWORD = 0x2,
 
@@ -1046,7 +1102,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Return the length of the text.
         SCI_GETTEXTRANGE = 2162,
 
-        /// Draw the selection in normal style or with selection highlighted.
+        /// Draw the selection either highlighted or in normal (non-highlighted) style.
         SCI_HIDESELECTION = 2163,
 
         /// Retrieve the x value of the point in the window where a position is displayed.
@@ -1155,6 +1211,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve the text in the target.
         SCI_GETTARGETTEXT = 2687,
 
+        /// Make the target range start and end be the same as the selection range start and end.
+        SCI_TARGETFROMSELECTION = 2287,
+
+        /// Sets the target to the whole document.
+        SCI_TARGETWHOLEDOCUMENT = 2690,
+
         /// Replace the target text with the argument text.
         /// Text is counted so it can contain NULs.
         /// Returns the length of the replacement text.
@@ -1170,7 +1232,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Search for a counted string in the target and set the target to the found
         /// range. Text is counted so it can contain NULs.
-        /// Returns length of range or -1 for failure in which case target is not moved.
+        /// Returns start of found range or -1 for failure in which case target is not moved.
         SCI_SEARCHINTARGET = 2197,
 
         /// Set the search flags used by SearchInTarget.
@@ -1264,6 +1326,27 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Switch a header line between expanded and contracted.
         SCI_TOGGLEFOLD = 2231,
 
+        /// Switch a header line between expanded and contracted and show some text after the line.
+        SCI_TOGGLEFOLDSHOWTEXT = 2700,
+
+        SC_FOLDDISPLAYTEXT_HIDDEN = 0,
+
+        SC_FOLDDISPLAYTEXT_STANDARD = 1,
+
+        SC_FOLDDISPLAYTEXT_BOXED = 2,
+
+        /// Set the style of fold display text.
+        SCI_FOLDDISPLAYTEXTSETSTYLE = 2701,
+
+        /// Get the style of fold display text.
+        SCI_FOLDDISPLAYTEXTGETSTYLE = 2707,
+
+        /// Set the default fold display text.
+        SCI_SETDEFAULTFOLDDISPLAYTEXT = 2722,
+
+        /// Get the default fold display text.
+        SCI_GETDEFAULTFOLDDISPLAYTEXT = 2723,
+
         SC_FOLDACTION_CONTRACT = 0,
 
         SC_FOLDACTION_EXPAND = 1,
@@ -1342,6 +1425,23 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get position of end of word.
         SCI_WORDENDPOSITION = 2267,
 
+        /// Is the range start..end considered a word?
+        SCI_ISRANGEWORD = 2691,
+
+        SC_IDLESTYLING_NONE = 0,
+
+        SC_IDLESTYLING_TOVISIBLE = 1,
+
+        SC_IDLESTYLING_AFTERVISIBLE = 2,
+
+        SC_IDLESTYLING_ALL = 3,
+
+        /// Sets limits to idle styling.
+        SCI_SETIDLESTYLING = 2692,
+
+        /// Retrieve the limits to idle styling.
+        SCI_GETIDLESTYLING = 2693,
+
         SC_WRAP_NONE = 0,
 
         SC_WRAP_WORD = 1,
@@ -1393,6 +1493,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SC_WRAPINDENT_SAME = 1,
 
         SC_WRAPINDENT_INDENT = 2,
+
+        SC_WRAPINDENT_DEEPINDENT = 3,
 
         /// Sets how wrapped sublines are placed. Default is fixed.
         SCI_SETWRAPINDENTMODE = 2472,
@@ -1452,13 +1554,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Append a string to the end of the document without changing the selection.
         SCI_APPENDTEXT = 2282,
 
-        /// Is drawing done in two phases with backgrounds drawn before foregrounds?
-        SCI_GETTWOPHASEDRAW = 2283,
-
-        /// In twoPhaseDraw mode, drawing is performed in two phases, first the background
-        /// and then the foreground. This avoids chopping off characters that overlap the next run.
-        SCI_SETTWOPHASEDRAW = 2284,
-
         SC_PHASES_ONE = 0,
 
         SC_PHASES_TWO = 1,
@@ -1500,15 +1595,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Change the effect of pasting when there are multiple selections.
         SCI_SETMULTIPASTE = 2614,
 
-        /// Retrieve the effect of pasting when there are multiple selections..
+        /// Retrieve the effect of pasting when there are multiple selections.
         SCI_GETMULTIPASTE = 2615,
 
         /// Retrieve the value of a tag from a regular expression search.
         /// Result is NUL-terminated.
         SCI_GETTAG = 2616,
-
-        /// Make the target range start and end be the same as the selection range start and end.
-        SCI_TARGETFROMSELECTION = 2287,
 
         /// Join the lines in the target.
         SCI_LINESJOIN = 2288,
@@ -1517,11 +1609,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// where possible.
         SCI_LINESSPLIT = 2289,
 
-        /// Set the colours used as a chequerboard pattern in the fold margin
+        /// Set one of the colours used as a chequerboard pattern in the fold margin
         SCI_SETFOLDMARGINCOLOUR = 2290,
 
-        /// Set the colours used as a chequerboard pattern in the fold margin
+        /// Set the other colour used as a chequerboard pattern in the fold margin
         SCI_SETFOLDMARGINHICOLOUR = 2291,
+
+        SC_ACCESSIBILITY_DISABLED = 0,
+
+        SC_ACCESSIBILITY_ENABLED = 1,
+
+        /// Enable or disable accessibility.
+        SCI_SETACCESSIBILITY = 2702,
+
+        /// Report accessibility status.
+        SCI_GETACCESSIBILITY = 2703,
 
         /// Move caret down one line.
         SCI_LINEDOWN = 2300,
@@ -1648,6 +1750,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Switch the current line with the previous.
         SCI_LINETRANSPOSE = 2339,
 
+        /// Reverse order of selected lines.
+        SCI_LINEREVERSE = 2354,
+
         /// Duplicate the current line.
         SCI_LINEDUPLICATE = 2404,
 
@@ -1681,46 +1786,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// caret position.
         SCI_LINEENDDISPLAYEXTEND = 2348,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like Home but when word-wrap is enabled goes first to start of display line
+        /// HomeDisplay, then to start of document line Home.
         SCI_HOMEWRAP = 2349,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like HomeExtend but when word-wrap is enabled extends first to start of display line
+        /// HomeDisplayExtend, then to start of document line HomeExtend.
         SCI_HOMEWRAPEXTEND = 2450,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like LineEnd but when word-wrap is enabled goes first to end of display line
+        /// LineEndDisplay, then to start of document line LineEnd.
         SCI_LINEENDWRAP = 2451,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like LineEndExtend but when word-wrap is enabled extends first to end of display line
+        /// LineEndDisplayExtend, then to start of document line LineEndExtend.
         SCI_LINEENDWRAPEXTEND = 2452,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like VCHome but when word-wrap is enabled goes first to start of display line
+        /// VCHomeDisplay, then behaves like VCHome.
         SCI_VCHOMEWRAP = 2453,
 
-        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
-        /// except they behave differently when word-wrap is enabled:
-        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
-        /// The difference is that, the cursor is already at the point, it goes on to the start
-        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
+        /// Like VCHomeExtend but when word-wrap is enabled extends first to start of display line
+        /// VCHomeDisplayExtend, then behaves like VCHomeExtend.
         SCI_VCHOMEWRAPEXTEND = 2454,
 
         /// Copy the line containing the caret.
@@ -1745,6 +1832,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         SCI_BRACEBADLIGHTINDICATOR = 2499,
 
         /// Find the position of a matching brace or INVALID_POSITION if no match.
+        /// The maxReStyle must be 0 for now. It may be defined in a future release.
         SCI_BRACEMATCH = 2353,
 
         /// Are the end of line characters visible?
@@ -1768,6 +1856,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         EDGE_BACKGROUND = 2,
 
+        EDGE_MULTILINE = 3,
+
         /// Retrieve the column number which text should be kept within.
         SCI_GETEDGECOLUMN = 2360,
 
@@ -1778,7 +1868,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve the edge highlight mode.
         SCI_GETEDGEMODE = 2362,
 
-        /// The edge may be displayed by a line (EDGE_LINE) or by highlighting text that
+        /// The edge may be displayed by a line (EDGE_LINE/EDGE_MULTILINE) or by highlighting text that
         /// goes beyond it (EDGE_BACKGROUND) or not displayed at all (EDGE_NONE).
         SCI_SETEDGEMODE = 2363,
 
@@ -1787,6 +1877,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Change the colour used in edge indication.
         SCI_SETEDGECOLOUR = 2365,
+
+        /// Add a new vertical edge to the view.
+        SCI_MULTIEDGEADDLINE = 2694,
+
+        /// Clear all vertical edges.
+        SCI_MULTIEDGECLEARALL = 2695,
 
         /// Sets the current caret position to be the search anchor.
         SCI_SEARCHANCHOR = 2366,
@@ -1802,8 +1898,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieves the number of lines completely visible.
         SCI_LINESONSCREEN = 2370,
 
+        SC_POPUP_NEVER = 0,
+
+        SC_POPUP_ALL = 1,
+
+        SC_POPUP_TEXT = 2,
+
         /// Set whether a pop up menu is displayed automatically when the user presses
-        /// the wrong mouse button.
+        /// the wrong mouse button on certain areas.
         SCI_USEPOPUP = 2371,
 
         /// Is the selection rectangular? The alternative is the more common stream selection.
@@ -1816,6 +1918,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Retrieve the zoom level.
         SCI_GETZOOM = 2374,
 
+        SC_DOCUMENTOPTION_DEFAULT = 0,
+
+        SC_DOCUMENTOPTION_STYLES_NONE = 0x1,
+
+        SC_DOCUMENTOPTION_TEXT_LARGE = 0x100,
+
         /// Create a new document object.
         /// Starts with reference count of 1 and not selected into editor.
         SCI_CREATEDOCUMENT = 2375,
@@ -1826,8 +1934,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Release a reference to the document, deleting document if it fades to black.
         SCI_RELEASEDOCUMENT = 2377,
 
+        /// Get which document options are set.
+        SCI_GETDOCUMENTOPTIONS = 2379,
+
         /// Get which document modification events are sent to the container.
         SCI_GETMODEVENTMASK = 2378,
+
+        /// Set whether command events are sent to the container.
+        SCI_SETCOMMANDEVENTS = 2717,
+
+        /// Get whether command events are sent to the container.
+        SCI_GETCOMMANDEVENTS = 2718,
 
         /// Change internal focus flag.
         SCI_SETFOCUS = 2380,
@@ -1856,6 +1973,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Get whether mouse gets captured.
         SCI_GETMOUSEDOWNCAPTURES = 2385,
+
+        /// Set whether the mouse wheel can be active outside the window.
+        SCI_SETMOUSEWHEELCAPTURES = 2696,
+
+        /// Get whether mouse wheel can be active outside the window.
+        SCI_GETMOUSEWHEELCAPTURES = 2697,
 
         SC_CURSORNORMAL = 0xFFFFFFFF,
 
@@ -1906,10 +2029,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Delete forwards from the current position to the end of the line.
         SCI_DELLINERIGHT = 2396,
 
-        /// Get and Set the xOffset (ie, horizontal scroll position).
+        /// Set the xOffset (ie, horizontal scroll position).
         SCI_SETXOFFSET = 2397,
 
-        /// Get and Set the xOffset (ie, horizontal scroll position).
+        /// Get the xOffset (ie, horizontal scroll position).
         SCI_GETXOFFSET = 2398,
 
         /// Set the last x chosen value to be the caret x position.
@@ -1964,16 +2087,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get the HotspotSingleLine property
         SCI_GETHOTSPOTSINGLELINE = 2497,
 
-        /// Move caret between paragraphs (delimited by empty lines).
+        /// Move caret down one paragraph (delimited by empty lines).
         SCI_PARADOWN = 2413,
 
-        /// Move caret between paragraphs (delimited by empty lines).
+        /// Extend selection down one paragraph (delimited by empty lines).
         SCI_PARADOWNEXTEND = 2414,
 
-        /// Move caret between paragraphs (delimited by empty lines).
+        /// Move caret up one paragraph (delimited by empty lines).
         SCI_PARAUP = 2415,
 
-        /// Move caret between paragraphs (delimited by empty lines).
+        /// Extend selection up one paragraph (delimited by empty lines).
         SCI_PARAUPEXTEND = 2416,
 
         /// Given a valid document position, return the previous position taking code
@@ -1987,6 +2110,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Given a valid document position, return a position that differs in a number
         /// of characters. Returned value is always between 0 and last position in document.
         SCI_POSITIONRELATIVE = 2670,
+
+        /// Given a valid document position, return a position that differs in a number
+        /// of UTF-16 code units. Returned value is always between 0 and last position in document.
+        /// The result may point half way (2 bytes) inside a non-BMP character.
+        SCI_POSITIONRELATIVECODEUNITS = 2716,
 
         /// Copy a range of text to the clipboard. Positions are clipped into the document.
         SCI_COPYRANGE = 2419,
@@ -2008,6 +2136,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Get the mode of the current selection.
         SCI_GETSELECTIONMODE = 2423,
+
+        /// Get whether or not regular caret moves will extend or reduce the selection.
+        SCI_GETMOVEEXTENDSSELECTION = 2706,
 
         /// Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line).
         SCI_GETLINESELSTARTPOSITION = 2424,
@@ -2110,7 +2241,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Change the effect of autocompleting when there are multiple selections.
         SCI_AUTOCSETMULTI = 2636,
 
-        /// Retrieve the effect of autocompleting when there are multiple selections..
+        /// Retrieve the effect of autocompleting when there are multiple selections.
         SCI_AUTOCGETMULTI = 2637,
 
         SC_ORDER_PRESORTED = 0,
@@ -2187,6 +2318,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         CARETSTYLE_BLOCK = 2,
 
+        CARETSTYLE_OVERSTRIKE_BAR = 0,
+
+        CARETSTYLE_OVERSTRIKE_BLOCK = 0x10,
+
+        CARETSTYLE_INS_MASK = 0xF,
+
+        CARETSTYLE_BLOCK_AFTER = 0x100,
+
         /// Set the style of the caret to be drawn.
         SCI_SETCARETSTYLE = 2512,
 
@@ -2211,10 +2350,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Turn a indicator off over a range.
         SCI_INDICATORCLEARRANGE = 2505,
 
-        /// Are any indicators present at position?
+        /// Are any indicators present at pos?
         SCI_INDICATORALLONFOR = 2506,
 
-        /// What value does a particular indicator have at at a position?
+        /// What value does a particular indicator have at a position?
         SCI_INDICATORVALUEAT = 2507,
 
         /// Where does a particular indicator start?
@@ -2238,7 +2377,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Return a read-only pointer to a range of characters in the document.
         /// May move the gap so that the range is contiguous, but will only move up
-        /// to rangeLength bytes.
+        /// to lengthRange bytes.
         SCI_GETRANGEPOINTER = 2643,
 
         /// Return a position which, to avoid performance costs, should not be within
@@ -2359,6 +2498,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Allocate some extended (>255) style numbers and return the start of the range
         SCI_ALLOCATEEXTENDEDSTYLES = 2553,
 
+        UNDO_NONE = 0,
+
         UNDO_MAY_COALESCE = 1,
 
         /// Add a container action to the undo stack
@@ -2425,28 +2566,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Which selection is the main selection
         SCI_GETMAINSELECTION = 2575,
 
-        /// Which selection is the main selection
+        /// Set the caret position of the nth selection.
         SCI_SETSELECTIONNCARET = 2576,
 
-        /// Which selection is the main selection
+        /// Return the caret position of the nth selection.
         SCI_GETSELECTIONNCARET = 2577,
 
-        /// Which selection is the main selection
+        /// Set the anchor position of the nth selection.
         SCI_SETSELECTIONNANCHOR = 2578,
 
-        /// Which selection is the main selection
+        /// Return the anchor position of the nth selection.
         SCI_GETSELECTIONNANCHOR = 2579,
 
-        /// Which selection is the main selection
+        /// Set the virtual space of the caret of the nth selection.
         SCI_SETSELECTIONNCARETVIRTUALSPACE = 2580,
 
-        /// Which selection is the main selection
+        /// Return the virtual space of the caret of the nth selection.
         SCI_GETSELECTIONNCARETVIRTUALSPACE = 2581,
 
-        /// Which selection is the main selection
+        /// Set the virtual space of the anchor of the nth selection.
         SCI_SETSELECTIONNANCHORVIRTUALSPACE = 2582,
 
-        /// Which selection is the main selection
+        /// Return the virtual space of the anchor of the nth selection.
         SCI_GETSELECTIONNANCHORVIRTUALSPACE = 2583,
 
         /// Sets the position that starts the selection - this becomes the anchor.
@@ -2461,28 +2602,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns the position at the end of the selection.
         SCI_GETSELECTIONNEND = 2587,
 
-        /// Returns the position at the end of the selection.
+        /// Set the caret position of the rectangular selection.
         SCI_SETRECTANGULARSELECTIONCARET = 2588,
 
-        /// Returns the position at the end of the selection.
+        /// Return the caret position of the rectangular selection.
         SCI_GETRECTANGULARSELECTIONCARET = 2589,
 
-        /// Returns the position at the end of the selection.
+        /// Set the anchor position of the rectangular selection.
         SCI_SETRECTANGULARSELECTIONANCHOR = 2590,
 
-        /// Returns the position at the end of the selection.
+        /// Return the anchor position of the rectangular selection.
         SCI_GETRECTANGULARSELECTIONANCHOR = 2591,
 
-        /// Returns the position at the end of the selection.
+        /// Set the virtual space of the caret of the rectangular selection.
         SCI_SETRECTANGULARSELECTIONCARETVIRTUALSPACE = 2592,
 
-        /// Returns the position at the end of the selection.
+        /// Return the virtual space of the caret of the rectangular selection.
         SCI_GETRECTANGULARSELECTIONCARETVIRTUALSPACE = 2593,
 
-        /// Returns the position at the end of the selection.
+        /// Set the virtual space of the anchor of the rectangular selection.
         SCI_SETRECTANGULARSELECTIONANCHORVIRTUALSPACE = 2594,
 
-        /// Returns the position at the end of the selection.
+        /// Return the virtual space of the anchor of the rectangular selection.
         SCI_GETRECTANGULARSELECTIONANCHORVIRTUALSPACE = 2595,
 
         SCVS_NONE = 0,
@@ -2491,13 +2632,15 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SCVS_USERACCESSIBLE = 2,
 
-        /// Returns the position at the end of the selection.
+        SCVS_NOWRAPLINESTART = 4,
+
+        /// Set options for virtual space behaviour.
         SCI_SETVIRTUALSPACEOPTIONS = 2596,
 
-        /// Returns the position at the end of the selection.
+        /// Return options for virtual space behaviour.
         SCI_GETVIRTUALSPACEOPTIONS = 2597,
 
-        /// On GTK+, allow selecting the modifier key to use for mouse-based
+        /// On GTK, allow selecting the modifier key to use for mouse-based
         /// rectangular selection. Often the window manager requires Alt+Mouse Drag
         /// for moving windows.
         /// Valid values are SCMOD_CTRL(default), SCMOD_ALT, or SCMOD_SUPER.
@@ -2532,6 +2675,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Swap that caret and anchor of the main selection.
         SCI_SWAPMAINANCHORCARET = 2607,
 
+        /// Add the next occurrence of the main selection to the set of selections as main.
+        /// If the current selection is empty then select word around caret.
+        SCI_MULTIPLESELECTADDNEXT = 2688,
+
+        /// Add each occurrence of the main selection in the target to the set of selections.
+        /// If the current selection is empty then select word around caret.
+        SCI_MULTIPLESELECTADDEACH = 2689,
+
         /// Indicate that the internal state of a lexer has changed over a range and therefore
         /// there may be a need to redraw.
         SCI_CHANGELEXERSTATE = 2617,
@@ -2549,7 +2700,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Move the selected lines down one line, shifting the line below before the selection
         SCI_MOVESELECTEDLINESDOWN = 2621,
 
-        /// Set the identifier reported as IdFrom in notification messages.
+        /// Set the identifier reported as idFrom in notification messages.
         SCI_SETIDENTIFIER = 2622,
 
         /// Get the identifier.
@@ -2682,9 +2833,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// interpreted as an int AFTER any "$()" variable replacement.
         SCI_GETPROPERTYINT = 4010,
 
-        /// Retrieve the number of bits the current lexer needs for styling.
-        SCI_GETSTYLEBITSNEEDED = 4011,
-
         /// Retrieve the name of the lexer.
         /// Return the length of the text.
         /// Result is NUL-terminated.
@@ -2746,6 +2894,23 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Get the set of base styles that can be extended with sub styles
         /// Result is NUL-terminated.
         SCI_GETSUBSTYLEBASES = 4026,
+
+        /// Retrieve the number of named styles for the lexer.
+        SCI_GETNAMEDSTYLES = 4029,
+
+        /// Retrieve the name of a style.
+        /// Result is NUL-terminated.
+        SCI_NAMEOFSTYLE = 4030,
+
+        /// Retrieve a ' ' separated list of style tags like "literal quoted string".
+        /// Result is NUL-terminated.
+        SCI_TAGSOFSTYLE = 4031,
+
+        /// Retrieve a description of a style.
+        /// Result is NUL-terminated.
+        SCI_DESCRIPTIONOFSTYLE = 4032,
+
+        SC_MOD_NONE = 0x0,
 
         SC_MOD_INSERTTEXT = 0x1,
 
@@ -2859,6 +3024,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         SCMOD_META = 16,
 
+        SC_AC_FILLUP = 1,
+
+        SC_AC_DOUBLECLICK = 2,
+
+        SC_AC_TAB = 3,
+
+        SC_AC_NEWLINE = 4,
+
+        SC_AC_COMMAND = 5,
+
+        SC_CHARACTERSOURCE_DIRECT_INPUT = 0,
+
+        SC_CHARACTERSOURCE_TENTATIVE_INPUT = 1,
+
+        SC_CHARACTERSOURCE_IME_RESULT = 2,
+
         /// Events
         SCN_STYLENEEDED = 2000,
 
@@ -2874,87 +3055,130 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Events
         SCN_MODIFYATTEMPTRO = 2004,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_KEY = 2005,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_DOUBLECLICK = 2006,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_UPDATEUI = 2007,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_MODIFIED = 2008,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_MACRORECORD = 2009,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_MARGINCLICK = 2010,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_NEEDSHOWN = 2011,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_PAINTED = 2013,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_USERLISTSELECTION = 2014,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_URIDROPPED = 2015,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_DWELLSTART = 2016,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_DWELLEND = 2017,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_ZOOM = 2018,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_HOTSPOTCLICK = 2019,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_HOTSPOTDOUBLECLICK = 2020,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_CALLTIPCLICK = 2021,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_AUTOCSELECTION = 2022,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_INDICATORCLICK = 2023,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_INDICATORRELEASE = 2024,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_AUTOCCANCELLED = 2025,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_AUTOCCHARDELETED = 2026,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_HOTSPOTRELEASECLICK = 2027,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_FOCUSIN = 2028,
 
-        /// GTK+ Specific to work around focus and accelerator problems:
+        /// GTK Specific to work around focus and accelerator problems:
         SCN_FOCUSOUT = 2029,
 
-        SC_CP_DBCS = 1,
+        /// GTK Specific to work around focus and accelerator problems:
+        SCN_AUTOCCOMPLETED = 2030,
 
-        /// Deprecated in 2.30
-        /// In palette mode?
-        SCI_GETUSEPALETTE = 2139,
+        /// GTK Specific to work around focus and accelerator problems:
+        SCN_MARGINRIGHTCLICK = 2031,
 
-        /// In palette mode, Scintilla uses the environment's palette calls to display
-        /// more colours. This may lead to ugly displays.
-        SCI_SETUSEPALETTE = 2039,
+        /// GTK Specific to work around focus and accelerator problems:
+        SCN_AUTOCSELECTIONCHANGE = 2032,
+
+        SC_BIDIRECTIONAL_DISABLED = 0,
+
+        SC_BIDIRECTIONAL_L2R = 1,
+
+        SC_BIDIRECTIONAL_R2L = 2,
+
+        /// Retrieve bidirectional text display state.
+        SCI_GETBIDIRECTIONAL = 2708,
+
+        /// Set bidirectional text display state.
+        SCI_SETBIDIRECTIONAL = 2709,
+
+        SC_LINECHARACTERINDEX_NONE = 0,
+
+        SC_LINECHARACTERINDEX_UTF32 = 1,
+
+        SC_LINECHARACTERINDEX_UTF16 = 2,
+
+        /// Retrieve line character index state.
+        SCI_GETLINECHARACTERINDEX = 2710,
+
+        /// Request line character index be created or its use count increased.
+        SCI_ALLOCATELINECHARACTERINDEX = 2711,
+
+        /// Decrease use count of line character index and remove if 0.
+        SCI_RELEASELINECHARACTERINDEX = 2712,
+
+        /// Retrieve the document line containing a position measured in index units.
+        SCI_LINEFROMINDEXPOSITION = 2713,
+
+        /// Retrieve the position measured in index units at the start of a document line.
+        SCI_INDEXPOSITIONFROMLINE = 2714,
+
+        /// Divide each styling byte into lexical class bits (default: 5) and indicator
+        /// bits (default: 3). If a lexer requires more than 32 lexical states, then this
+        /// is used to expand the possible states.
+        SCI_SETSTYLEBITS = 2090,
+
+        /// Retrieve number of bits in style bytes used to hold the lexical state.
+        SCI_GETSTYLEBITS = 2091,
+
+        /// Retrieve the number of bits the current lexer needs for styling.
+        SCI_GETSTYLEBITSNEEDED = 4011,
 
         /// Deprecated in 3.5.5
         /// Always interpret keyboard input as Unicode
@@ -2962,6 +3186,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// Are keys always interpreted as Unicode?
         SCI_GETKEYSUNICODE = 2522,
+
+        /// Is drawing done in two phases with backgrounds drawn before foregrounds?
+        SCI_GETTWOPHASEDRAW = 2283,
+
+        /// In twoPhaseDraw mode, drawing is performed in two phases, first the background
+        /// and then the foreground. This avoids chopping off characters that overlap the next run.
+        SCI_SETTWOPHASEDRAW = 2284,
+
+        INDIC0_MASK = 0x20,
+
+        INDIC1_MASK = 0x40,
+
+        INDIC2_MASK = 0x80,
+
+        INDICS_MASK = 0xE0,
 
         /* --Autogenerated -- end of section automatically generated from Scintilla.iface */
 

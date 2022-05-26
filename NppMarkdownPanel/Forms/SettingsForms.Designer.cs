@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForms));
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -48,10 +47,11 @@
             this.cbShowToolbar = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.sblInvalidHtmlPath = new System.Windows.Forms.ToolStripStatusLabel();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -72,18 +72,9 @@
             this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(40, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(149, 15);
+            this.label1.Size = new System.Drawing.Size(187, 20);
             this.label1.TabIndex = 1;
             this.label1.Text = "Markdown Panel Settings";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::NppMarkdownPanel.Properties.Resources.markdown_16x16_solid;
-            this.pictureBox1.Location = new System.Drawing.Point(10, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(24, 20);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // btnSave
             // 
@@ -112,7 +103,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(12, 100);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 13);
+            this.label2.Size = new System.Drawing.Size(59, 19);
             this.label2.TabIndex = 3;
             this.label2.Text = "CSS File:";
             // 
@@ -122,7 +113,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbCssFile.Location = new System.Drawing.Point(138, 97);
             this.tbCssFile.Name = "tbCssFile";
-            this.tbCssFile.Size = new System.Drawing.Size(422, 21);
+            this.tbCssFile.Size = new System.Drawing.Size(422, 25);
             this.tbCssFile.TabIndex = 4;
             this.tbCssFile.TextChanged += new System.EventHandler(this.tbCssFile_TextChanged);
             // 
@@ -131,7 +122,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(12, 161);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
+            this.label3.Size = new System.Drawing.Size(83, 19);
             this.label3.TabIndex = 5;
             this.label3.Text = "Zoom Level:";
             // 
@@ -141,10 +132,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 1;
             this.trackBar1.Location = new System.Drawing.Point(130, 161);
-            this.trackBar1.Maximum = 200;
-            this.trackBar1.Minimum = 90;
+            this.trackBar1.Maximum = 400;
+            this.trackBar1.Minimum = 40;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(512, 45);
+            this.trackBar1.Size = new System.Drawing.Size(512, 56);
             this.trackBar1.TabIndex = 6;
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -157,7 +148,7 @@
             this.lblZoomValue.AutoSize = true;
             this.lblZoomValue.Location = new System.Drawing.Point(648, 176);
             this.lblZoomValue.Name = "lblZoomValue";
-            this.lblZoomValue.Size = new System.Drawing.Size(28, 13);
+            this.lblZoomValue.Size = new System.Drawing.Size(36, 19);
             this.lblZoomValue.TabIndex = 7;
             this.lblZoomValue.Text = "90%";
             // 
@@ -211,7 +202,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbHtmlFile.Location = new System.Drawing.Point(138, 240);
             this.tbHtmlFile.Name = "tbHtmlFile";
-            this.tbHtmlFile.Size = new System.Drawing.Size(422, 21);
+            this.tbHtmlFile.Size = new System.Drawing.Size(422, 25);
             this.tbHtmlFile.TabIndex = 11;
             this.tbHtmlFile.TextChanged += new System.EventHandler(this.tbHtmlFile_TextChanged);
             this.tbHtmlFile.Leave += new System.EventHandler(this.tbHtmlFile_Leave);
@@ -221,7 +212,7 @@
             this.lblHtmlFile.AutoSize = true;
             this.lblHtmlFile.Location = new System.Drawing.Point(12, 230);
             this.lblHtmlFile.Name = "lblHtmlFile";
-            this.lblHtmlFile.Size = new System.Drawing.Size(107, 39);
+            this.lblHtmlFile.Size = new System.Drawing.Size(134, 57);
             this.lblHtmlFile.TabIndex = 10;
             this.lblHtmlFile.Text = "Automatically Save \r\nHTML from Current \r\nPreview to this File:";
             // 
@@ -230,7 +221,7 @@
             this.cbShowToolbar.AutoSize = true;
             this.cbShowToolbar.Location = new System.Drawing.Point(138, 300);
             this.cbShowToolbar.Name = "cbShowToolbar";
-            this.cbShowToolbar.Size = new System.Drawing.Size(198, 17);
+            this.cbShowToolbar.Size = new System.Drawing.Size(233, 23);
             this.cbShowToolbar.TabIndex = 15;
             this.cbShowToolbar.Text = "Show Toolbar in Preview Window";
             this.cbShowToolbar.UseVisualStyleBackColor = true;
@@ -238,6 +229,7 @@
             // 
             // statusStrip1
             // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sblInvalidHtmlPath});
             this.statusStrip1.Location = new System.Drawing.Point(0, 456);
@@ -252,12 +244,21 @@
             this.sblInvalidHtmlPath.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.sblInvalidHtmlPath.ForeColor = System.Drawing.Color.Red;
             this.sblInvalidHtmlPath.Name = "sblInvalidHtmlPath";
-            this.sblInvalidHtmlPath.Size = new System.Drawing.Size(654, 17);
+            this.sblInvalidHtmlPath.Size = new System.Drawing.Size(685, 16);
             this.sblInvalidHtmlPath.Spring = true;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::NppMarkdownPanel.Properties.Resources.markdown_16x16_solid;
+            this.pictureBox1.Location = new System.Drawing.Point(10, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(24, 20);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
             // 
             // SettingsForms
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 478);
             this.Controls.Add(this.statusStrip1);
@@ -284,10 +285,10 @@
             this.Text = "Settings";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

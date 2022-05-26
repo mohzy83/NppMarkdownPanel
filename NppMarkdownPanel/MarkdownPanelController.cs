@@ -52,9 +52,9 @@ namespace NppMarkdownPanel
             {
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
-                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
+                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
                     {
-                        lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
+                        lastCaretPosition = scintillaGateway.GetCurrentPos();
                         ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
                     }
                 }
@@ -65,10 +65,10 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
-                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
+                    /*bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
+                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;*/
                     // Any modifications made ?
-                    if (isInsert || isDelete)
+                    if (true)
                     {
                         lastTickCount = Environment.TickCount;
                         RenderMarkdown();
@@ -164,6 +164,7 @@ namespace NppMarkdownPanel
         {
             toolbarIcons tbIcons = new toolbarIcons();
             tbIcons.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
+            tbIcons.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid_dark.GetHbitmap();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
