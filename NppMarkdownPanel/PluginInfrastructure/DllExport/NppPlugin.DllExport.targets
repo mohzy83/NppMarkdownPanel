@@ -30,17 +30,15 @@
 		On 32 bit windows usually C:\Program Files\
 		On 64 bit windows usually C:\Program Files (x86)\
 		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) -->
-    <MakeDir Directories="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\') AND !Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'" />
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" 
-        Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'"
-        ContinueOnError="false" />
-    <MakeDir Directories="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(ProgramW6432)\Notepad++\plugins\') AND !Exists('$(ProgramW6432)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x64'" />
+        DestinationFolder="$(MSBuildProgramFiles32)\Notepad++\plugins\" 
+        Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\') AND '$(Platform)'=='x86'"
+        ContinueOnError="false" /> 
     <Copy 
         SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\" 
-        Condition="Exists('$(ProgramW6432)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x64'"
+        DestinationFolder="$(ProgramW6432)\Notepad++\plugins\" 
+        Condition="Exists('$(ProgramW6432)\Notepad++\plugins\') AND '$(Platform)'=='x64'"
         ContinueOnError="false" />
   </Target>
 </Project>

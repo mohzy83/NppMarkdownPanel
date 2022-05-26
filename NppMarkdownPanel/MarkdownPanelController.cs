@@ -52,9 +52,9 @@ namespace NppMarkdownPanel
             {
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
-                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
+                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
                     {
-                        lastCaretPosition = scintillaGateway.GetCurrentPos();
+                        lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
                         ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
                     }
                 }
@@ -162,13 +162,24 @@ namespace NppMarkdownPanel
 
         public void SetToolBarIcon()
         {
-            toolbarIcons tbIcons = new toolbarIcons();
-            tbIcons.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
-            tbIcons.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid_dark.GetHbitmap();
-            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
-            Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+            toolbarIconsOld tbIconsOld = new toolbarIconsOld();
+            tbIconsOld.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
+            tbIconsOld.hToolbarIcon = Properties.Resources.markdown_16x16_solid_dark.GetHicon();
+            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIconsOld));
+            Marshal.StructureToPtr(tbIconsOld, pTbIcons, false);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON_DEPRECATED, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
+
+            // if npp version >= 8 then use new NPPM_ADDTOOLBARICON_FORDARKMODE
+            /*    toolbarIconsNew tbIconsNew = new toolbarIconsNew();
+                tbIconsNew.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
+                tbIconsNew.hToolbarIcon = Properties.Resources.markdown_16x16_solid.GetHicon();
+                tbIconsNew.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid.GetHicon();
+                //    tbIconsOld.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid_dark.GetHbitmap();
+                IntPtr pTbIconsNew = Marshal.AllocHGlobal(Marshal.SizeOf(tbIconsNew));
+                Marshal.StructureToPtr(tbIconsNew, pTbIconsNew, false);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON_FORDARKMODE, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIconsNew);
+                Marshal.FreeHGlobal(pTbIconsNew);*/
         }
 
         public void PluginCleanUp()

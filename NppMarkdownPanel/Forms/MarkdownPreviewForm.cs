@@ -36,7 +36,7 @@ namespace NppMarkdownPanel.Forms
             <html>
             ";
 
-        private Task<string> renderTask;
+        private Task<Tuple<string, string>> renderTask;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
         private string htmlContent;
@@ -62,6 +62,31 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
+        private Tuple<string,string> RenderHtmlInternal(string currentText, string filepath)
+        {
+            var result = markdownGenerator.ConvertToHtml(currentText, filepath);
+            var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
+            var defaultBodyStyle = "";
+
+            // Path of plugin directory
+            var markdownStyleContent = "";
+
+            var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+
+            if (File.Exists(CssFileName))
+            {
+                markdownStyleContent = File.ReadAllText(CssFileName);
+            }
+            else
+            {
+                markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+            }
+
+            var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
+            var markdownHtml2 = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultWithRelativeImages);
+            return new Tuple<string, string>(markdownHtml, markdownHtml2);
+        }
+
         public void RenderMarkdown(string currentText, string filepath)
         {
             if (renderTask == null || renderTask.IsCompleted)
@@ -70,31 +95,11 @@ namespace NppMarkdownPanel.Forms
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
-                renderTask = new Task<string>(() =>
-                {
-                    var result = markdownGenerator.ConvertToHtml(currentText, filepath);
-                    var defaultBodyStyle = "";
-
-                    // Path of plugin directory
-                    var markdownStyleContent = "";
-
-                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-
-                    if (File.Exists(CssFileName))
-                    {
-                        markdownStyleContent = File.ReadAllText(CssFileName);
-                    }
-                    else
-                    {
-                        markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
-                    }
-
-                    var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
-                    return markdownHtml;
-                });
+                renderTask = new Task<Tuple<string, string>>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    htmlContent = renderedText.Result;
+                    webBrowserPreview.DocumentText = renderedText.Result.Item1;
+                    htmlContent = renderedText.Result.Item2;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
                         bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -111,8 +116,6 @@ namespace NppMarkdownPanel.Forms
                             }
                         }
                     }
-
-                    webBrowserPreview.DocumentText = htmlContent;
                     AdjustZoomLevel();
                 }, context);
                 renderTask.Start();

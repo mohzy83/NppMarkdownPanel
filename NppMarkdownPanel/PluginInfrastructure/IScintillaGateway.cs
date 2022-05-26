@@ -40,7 +40,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe void AddStyledText(int length, Cells c);
 
         /// <summary>Insert string at a position. (Scintilla feature 2003)</summary>
-        unsafe void InsertText(int pos, string text);
+        unsafe void InsertText(Position pos, string text);
 
         /// <summary>Change the text that is being inserted in response to SC_MOD_INSERTCHECK (Scintilla feature 2672)</summary>
         unsafe void ChangeInsertion(int length, string text);
@@ -49,7 +49,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void ClearAll();
 
         /// <summary>Delete a range of text in the document. (Scintilla feature 2645)</summary>
-        void DeleteRange(int start, int lengthDelete);
+        void DeleteRange(Position pos, int deleteLength);
 
         /// <summary>Set all style bytes to 0, remove all folding information. (Scintilla feature 2005)</summary>
         void ClearDocumentStyle();
@@ -58,16 +58,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetLength();
 
         /// <summary>Returns the character byte at the position. (Scintilla feature 2007)</summary>
-        int GetCharAt(int pos);
+        int GetCharAt(Position pos);
 
         /// <summary>Returns the position of the caret. (Scintilla feature 2008)</summary>
-        int GetCurrentPos();
+        Position GetCurrentPos();
 
         /// <summary>Returns the position of the opposite end of the selection to the caret. (Scintilla feature 2009)</summary>
-        int GetAnchor();
+        Position GetAnchor();
 
         /// <summary>Returns the style byte at the position. (Scintilla feature 2010)</summary>
-        int GetStyleAt(int pos);
+        int GetStyleAt(Position pos);
 
         /// <summary>Redoes the next action on the undo history. (Scintilla feature 2011)</summary>
         void Redo();
@@ -100,10 +100,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool CanRedo();
 
         /// <summary>Retrieve the line number at which a particular marker is located. (Scintilla feature 2017)</summary>
-        int MarkerLineFromHandle(int markerHandle);
+        int MarkerLineFromHandle(int handle);
 
         /// <summary>Delete a marker. (Scintilla feature 2018)</summary>
-        void MarkerDeleteHandle(int markerHandle);
+        void MarkerDeleteHandle(int handle);
 
         /// <summary>Is undo history being collected? (Scintilla feature 2019)</summary>
         bool GetUndoCollection();
@@ -113,43 +113,33 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Returns one of SCWS_* constants.
         /// (Scintilla feature 2020)
         /// </summary>
-        WhiteSpace GetViewWS();
+        int GetViewWS();
 
         /// <summary>Make white space characters invisible, always visible or visible outside indentation. (Scintilla feature 2021)</summary>
-        void SetViewWS(WhiteSpace viewWS);
-
-        /// <summary>
-        /// Retrieve the current tab draw mode.
-        /// Returns one of SCTD_* constants.
-        /// (Scintilla feature 2698)
-        /// </summary>
-        TabDrawMode GetTabDrawMode();
-
-        /// <summary>Set how tabs are drawn when visible. (Scintilla feature 2699)</summary>
-        void SetTabDrawMode(TabDrawMode tabDrawMode);
+        void SetViewWS(int viewWS);
 
         /// <summary>Find the position from a point within the window. (Scintilla feature 2022)</summary>
-        int PositionFromPoint(int x, int y);
+        Position PositionFromPoint(int x, int y);
 
         /// <summary>
         /// Find the position from a point within the window but return
         /// INVALID_POSITION if not close to text.
         /// (Scintilla feature 2023)
         /// </summary>
-        int PositionFromPointClose(int x, int y);
+        Position PositionFromPointClose(int x, int y);
 
         /// <summary>Set caret to start of a line and ensure it is visible. (Scintilla feature 2024)</summary>
         void GotoLine(int line);
 
         /// <summary>Set caret to a position and ensure it is visible. (Scintilla feature 2025)</summary>
-        void GotoPos(int caret);
+        void GotoPos(Position pos);
 
         /// <summary>
         /// Set the selection anchor to a position. The anchor is the opposite
         /// end of the selection from the caret.
         /// (Scintilla feature 2026)
         /// </summary>
-        void SetAnchor(int anchor);
+        void SetAnchor(Position posAnchor);
 
         /// <summary>
         /// Retrieve the text of the line containing the caret.
@@ -160,23 +150,23 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe string GetCurLine(int length);
 
         /// <summary>Retrieve the position of the last correctly styled character. (Scintilla feature 2028)</summary>
-        int GetEndStyled();
+        Position GetEndStyled();
 
         /// <summary>Convert all line endings in the document to one mode. (Scintilla feature 2029)</summary>
-        void ConvertEOLs(EndOfLine eolMode);
+        void ConvertEOLs(int eolMode);
 
         /// <summary>Retrieve the current end of line mode - one of CRLF, CR, or LF. (Scintilla feature 2030)</summary>
-        EndOfLine GetEOLMode();
+        int GetEOLMode();
 
         /// <summary>Set the current end of line mode. (Scintilla feature 2031)</summary>
-        void SetEOLMode(EndOfLine eolMode);
+        void SetEOLMode(int eolMode);
 
         /// <summary>
-        /// Set the current styling position to start.
-        /// The unused parameter is no longer used and should be set to 0.
+        /// Set the current styling position to pos and the styling mask to mask.
+        /// The styling mask can be used to protect some bits in each styling byte from modification.
         /// (Scintilla feature 2032)
         /// </summary>
-        void StartStyling(int start, int unused);
+        void StartStyling(Position pos, int mask);
 
         /// <summary>
         /// Change style from current styling position for length characters to a style
@@ -217,14 +207,14 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         void SetCodePage(int codePage);
 
-        /// <summary>Is the IME displayed in a window or inline? (Scintilla feature 2678)</summary>
-        IMEInteraction GetIMEInteraction();
+        /// <summary>Is the IME displayed in a winow or inline? (Scintilla feature 2678)</summary>
+        int GetIMEInteraction();
 
         /// <summary>Choose to display the the IME in a winow or inline. (Scintilla feature 2679)</summary>
-        void SetIMEInteraction(IMEInteraction imeInteraction);
+        void SetIMEInteraction(int imeInteraction);
 
         /// <summary>Set the symbol used for a particular marker number. (Scintilla feature 2040)</summary>
-        void MarkerDefine(int markerNumber, MarkerSymbol markerSymbol);
+        void MarkerDefine(int markerNumber, int markerSymbol);
 
         /// <summary>Set the foreground colour used for a particular marker number. (Scintilla feature 2041)</summary>
         void MarkerSetFore(int markerNumber, Colour fore);
@@ -264,16 +254,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe void MarkerDefinePixmap(int markerNumber, string pixmap);
 
         /// <summary>Add a set of markers to a line. (Scintilla feature 2466)</summary>
-        void MarkerAddSet(int line, int markerSet);
+        void MarkerAddSet(int line, int set);
 
         /// <summary>Set the alpha used for a marker that is drawn in the text area, not the margin. (Scintilla feature 2476)</summary>
-        void MarkerSetAlpha(int markerNumber, Alpha alpha);
+        void MarkerSetAlpha(int markerNumber, int alpha);
 
         /// <summary>Set a margin to be either numeric or symbolic. (Scintilla feature 2240)</summary>
-        void SetMarginTypeN(int margin, MarginType marginType);
+        void SetMarginTypeN(int margin, int marginType);
 
         /// <summary>Retrieve the type of a margin. (Scintilla feature 2241)</summary>
-        MarginType GetMarginTypeN(int margin);
+        int GetMarginTypeN(int margin);
 
         /// <summary>Set the width of a margin to a width expressed in pixels. (Scintilla feature 2242)</summary>
         void SetMarginWidthN(int margin, int pixelWidth);
@@ -294,22 +284,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetMarginSensitiveN(int margin);
 
         /// <summary>Set the cursor shown when the mouse is inside a margin. (Scintilla feature 2248)</summary>
-        void SetMarginCursorN(int margin, CursorShape cursor);
+        void SetMarginCursorN(int margin, int cursor);
 
         /// <summary>Retrieve the cursor shown in a margin. (Scintilla feature 2249)</summary>
-        CursorShape GetMarginCursorN(int margin);
-
-        /// <summary>Set the background colour of a margin. Only visible for SC_MARGIN_COLOUR. (Scintilla feature 2250)</summary>
-        void SetMarginBackN(int margin, Colour back);
-
-        /// <summary>Retrieve the background colour of a margin (Scintilla feature 2251)</summary>
-        Colour GetMarginBackN(int margin);
-
-        /// <summary>Allocate a non-standard number of margins. (Scintilla feature 2252)</summary>
-        void SetMargins(int margins);
-
-        /// <summary>How many margins are there?. (Scintilla feature 2253)</summary>
-        int GetMargins();
+        int GetMarginCursorN(int margin);
 
         /// <summary>Clear all the styles and make equivalent to the global default style. (Scintilla feature 2050)</summary>
         void StyleClearAll();
@@ -333,7 +311,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe void StyleSetFont(int style, string fontName);
 
         /// <summary>Set a style to have its end of line filled or not. (Scintilla feature 2057)</summary>
-        void StyleSetEOLFilled(int style, bool eolFilled);
+        void StyleSetEOLFilled(int style, bool filled);
 
         /// <summary>Reset the default style to its state at startup (Scintilla feature 2058)</summary>
         void StyleResetDefault();
@@ -371,10 +349,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool StyleGetUnderline(int style);
 
         /// <summary>Get is a style mixed case, or to force upper or lower case. (Scintilla feature 2489)</summary>
-        CaseVisible StyleGetCase(int style);
+        int StyleGetCase(int style);
 
         /// <summary>Get the character get of the font in a style. (Scintilla feature 2490)</summary>
-        CharacterSet StyleGetCharacterSet(int style);
+        int StyleGetCharacterSet(int style);
 
         /// <summary>Get is a style visible or not. (Scintilla feature 2491)</summary>
         bool StyleGetVisible(int style);
@@ -390,22 +368,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool StyleGetHotSpot(int style);
 
         /// <summary>Set a style to be mixed case, or to force upper or lower case. (Scintilla feature 2060)</summary>
-        void StyleSetCase(int style, CaseVisible caseVisible);
+        void StyleSetCase(int style, int caseForce);
 
         /// <summary>Set the size of characters of a style. Size is in points multiplied by 100. (Scintilla feature 2061)</summary>
-        void StyleSetSizeFractional(int style, int sizeHundredthPoints);
+        void StyleSetSizeFractional(int style, int caseForce);
 
         /// <summary>Get the size of characters of a style in points multiplied by 100 (Scintilla feature 2062)</summary>
         int StyleGetSizeFractional(int style);
 
         /// <summary>Set the weight of characters of a style. (Scintilla feature 2063)</summary>
-        void StyleSetWeight(int style, FontWeight weight);
+        void StyleSetWeight(int style, int weight);
 
         /// <summary>Get the weight of characters of a style. (Scintilla feature 2064)</summary>
-        FontWeight StyleGetWeight(int style);
+        int StyleGetWeight(int style);
 
         /// <summary>Set the character set of the font in a style. (Scintilla feature 2066)</summary>
-        void StyleSetCharacterSet(int style, CharacterSet characterSet);
+        void StyleSetCharacterSet(int style, int characterSet);
 
         /// <summary>Set a style to be a hotspot or not. (Scintilla feature 2409)</summary>
         void StyleSetHotSpot(int style, bool hotspot);
@@ -417,10 +395,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SetSelBack(bool useSetting, Colour back);
 
         /// <summary>Get the alpha of the selection. (Scintilla feature 2477)</summary>
-        Alpha GetSelAlpha();
+        int GetSelAlpha();
 
         /// <summary>Set the alpha of the selection. (Scintilla feature 2478)</summary>
-        void SetSelAlpha(Alpha alpha);
+        void SetSelAlpha(int alpha);
 
         /// <summary>Is the selection end of line filled? (Scintilla feature 2479)</summary>
         bool GetSelEOLFilled();
@@ -431,11 +409,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Set the foreground colour of the caret. (Scintilla feature 2069)</summary>
         void SetCaretFore(Colour fore);
 
-        /// <summary>When key+modifier combination keyDefinition is pressed perform sciCommand. (Scintilla feature 2070)</summary>
-        void AssignCmdKey(KeyModifier keyDefinition, int sciCommand);
+        /// <summary>When key+modifier combination km is pressed perform msg. (Scintilla feature 2070)</summary>
+        void AssignCmdKey(KeyModifier km, int msg);
 
-        /// <summary>When key+modifier combination keyDefinition is pressed do nothing. (Scintilla feature 2071)</summary>
-        void ClearCmdKey(KeyModifier keyDefinition);
+        /// <summary>When key+modifier combination km is pressed do nothing. (Scintilla feature 2071)</summary>
+        void ClearCmdKey(KeyModifier km);
 
         /// <summary>Drop all key mappings. (Scintilla feature 2072)</summary>
         void ClearAllCmdKeys();
@@ -466,12 +444,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         unsafe string GetWordChars();
 
-        /// <summary>Set the number of characters to have directly indexed categories (Scintilla feature 2720)</summary>
-        void SetCharacterCategoryOptimization(int countCharacters);
-
-        /// <summary>Get the number of characters to have directly indexed categories (Scintilla feature 2721)</summary>
-        int GetCharacterCategoryOptimization();
-
         /// <summary>
         /// Start a sequence of actions that is undone and redone as a unit.
         /// May be nested.
@@ -483,40 +455,40 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void EndUndoAction();
 
         /// <summary>Set an indicator to plain, squiggle or TT. (Scintilla feature 2080)</summary>
-        void IndicSetStyle(int indicator, IndicatorStyle indicatorStyle);
+        void IndicSetStyle(int indic, int style);
 
         /// <summary>Retrieve the style of an indicator. (Scintilla feature 2081)</summary>
-        IndicatorStyle IndicGetStyle(int indicator);
+        int IndicGetStyle(int indic);
 
         /// <summary>Set the foreground colour of an indicator. (Scintilla feature 2082)</summary>
-        void IndicSetFore(int indicator, Colour fore);
+        void IndicSetFore(int indic, Colour fore);
 
         /// <summary>Retrieve the foreground colour of an indicator. (Scintilla feature 2083)</summary>
-        Colour IndicGetFore(int indicator);
+        Colour IndicGetFore(int indic);
 
         /// <summary>Set an indicator to draw under text or over(default). (Scintilla feature 2510)</summary>
-        void IndicSetUnder(int indicator, bool under);
+        void IndicSetUnder(int indic, bool under);
 
         /// <summary>Retrieve whether indicator drawn under or over text. (Scintilla feature 2511)</summary>
-        bool IndicGetUnder(int indicator);
+        bool IndicGetUnder(int indic);
 
         /// <summary>Set a hover indicator to plain, squiggle or TT. (Scintilla feature 2680)</summary>
-        void IndicSetHoverStyle(int indicator, IndicatorStyle indicatorStyle);
+        void IndicSetHoverStyle(int indic, int style);
 
         /// <summary>Retrieve the hover style of an indicator. (Scintilla feature 2681)</summary>
-        IndicatorStyle IndicGetHoverStyle(int indicator);
+        int IndicGetHoverStyle(int indic);
 
         /// <summary>Set the foreground hover colour of an indicator. (Scintilla feature 2682)</summary>
-        void IndicSetHoverFore(int indicator, Colour fore);
+        void IndicSetHoverFore(int indic, Colour fore);
 
         /// <summary>Retrieve the foreground hover colour of an indicator. (Scintilla feature 2683)</summary>
-        Colour IndicGetHoverFore(int indicator);
+        Colour IndicGetHoverFore(int indic);
 
         /// <summary>Set the attributes of an indicator. (Scintilla feature 2684)</summary>
-        void IndicSetFlags(int indicator, IndicFlag flags);
+        void IndicSetFlags(int indic, int flags);
 
         /// <summary>Retrieve the attributes of an indicator. (Scintilla feature 2685)</summary>
-        IndicFlag IndicGetFlags(int indicator);
+        int IndicGetFlags(int indic);
 
         /// <summary>Set the foreground colour of all whitespace and whether to use this setting. (Scintilla feature 2084)</summary>
         void SetWhitespaceFore(bool useSetting, Colour fore);
@@ -529,6 +501,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>Get the size of the dots used to mark space characters. (Scintilla feature 2087)</summary>
         int GetWhitespaceSize();
+
+        /// <summary>
+        /// Divide each styling byte into lexical class bits (default: 5) and indicator
+        /// bits (default: 3). If a lexer requires more than 32 lexical states, then this
+        /// is used to expand the possible states.
+        /// (Scintilla feature 2090)
+        /// </summary>
+        void SetStyleBits(int bits);
+
+        /// <summary>Retrieve number of bits in style bytes used to hold the lexical state. (Scintilla feature 2091)</summary>
+        int GetStyleBits();
 
         /// <summary>Used to hold extra styling information for each line. (Scintilla feature 2092)</summary>
         void SetLineState(int line, int state);
@@ -552,20 +535,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SetCaretLineBack(Colour back);
 
         /// <summary>
-        /// Retrieve the caret line frame width.
-        /// Width = 0 means this option is disabled.
-        /// (Scintilla feature 2704)
-        /// </summary>
-        int GetCaretLineFrame();
-
-        /// <summary>
-        /// Display the caret line framed.
-        /// Set width != 0 to enable this option and width = 0 to disable it.
-        /// (Scintilla feature 2705)
-        /// </summary>
-        void SetCaretLineFrame(int width);
-
-        /// <summary>
         /// Set a style to be changeable or not (read only).
         /// Experimental feature, currently buggy.
         /// (Scintilla feature 2099)
@@ -574,11 +543,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>
         /// Display a auto-completion list.
-        /// The lengthEntered parameter indicates how many characters before
+        /// The lenEntered parameter indicates how many characters before
         /// the caret should be used to provide context.
         /// (Scintilla feature 2100)
         /// </summary>
-        unsafe void AutoCShow(int lengthEntered, string itemList);
+        unsafe void AutoCShow(int lenEntered, string itemList);
 
         /// <summary>Remove the auto-completion list from the screen. (Scintilla feature 2101)</summary>
         void AutoCCancel();
@@ -587,7 +556,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool AutoCActive();
 
         /// <summary>Retrieve the position of the caret when the auto-completion list was displayed. (Scintilla feature 2103)</summary>
-        int AutoCPosStart();
+        Position AutoCPosStart();
 
         /// <summary>User has selected an item so remove the list and insert the selection. (Scintilla feature 2104)</summary>
         void AutoCComplete();
@@ -606,7 +575,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int AutoCGetSeparator();
 
         /// <summary>Select the item in the auto-completion list that starts with a string. (Scintilla feature 2108)</summary>
-        unsafe void AutoCSelect(string select);
+        unsafe void AutoCSelect(string text);
 
         /// <summary>
         /// Should the auto-completion list be cancelled if the user backspaces to a
@@ -713,34 +682,31 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetUseTabs();
 
         /// <summary>Change the indentation of a line to a number of columns. (Scintilla feature 2126)</summary>
-        void SetLineIndentation(int line, int indentation);
+        void SetLineIndentation(int line, int indentSize);
 
         /// <summary>Retrieve the number of columns that a line is indented. (Scintilla feature 2127)</summary>
         int GetLineIndentation(int line);
 
         /// <summary>Retrieve the position before the first non indentation character on a line. (Scintilla feature 2128)</summary>
-        int GetLineIndentPosition(int line);
+        Position GetLineIndentPosition(int line);
 
         /// <summary>Retrieve the column number of a position, taking tab width into account. (Scintilla feature 2129)</summary>
-        int GetColumn(int pos);
+        int GetColumn(Position pos);
 
         /// <summary>Count characters between two positions. (Scintilla feature 2633)</summary>
-        int CountCharacters(int start, int end);
-
-        /// <summary>Count code units between two positions. (Scintilla feature 2715)</summary>
-        int CountCodeUnits(int start, int end);
+        int CountCharacters(int startPos, int endPos);
 
         /// <summary>Show or hide the horizontal scroll bar. (Scintilla feature 2130)</summary>
-        void SetHScrollBar(bool visible);
+        void SetHScrollBar(bool show);
 
         /// <summary>Is the horizontal scroll bar visible? (Scintilla feature 2131)</summary>
         bool GetHScrollBar();
 
         /// <summary>Show or hide indentation guides. (Scintilla feature 2132)</summary>
-        void SetIndentationGuides(IndentView indentView);
+        void SetIndentationGuides(int indentView);
 
         /// <summary>Are the indentation guides visible? (Scintilla feature 2133)</summary>
-        IndentView GetIndentationGuides();
+        int GetIndentationGuides();
 
         /// <summary>
         /// Set the highlighted indentation guide column.
@@ -753,7 +719,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetHighlightGuide();
 
         /// <summary>Get the position after the last visible characters on a line. (Scintilla feature 2136)</summary>
-        int GetLineEndPosition(int line);
+        Position GetLineEndPosition(int line);
 
         /// <summary>Get the code page used to interpret the bytes of the document as characters. (Scintilla feature 2137)</summary>
         int GetCodePage();
@@ -765,22 +731,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetReadOnly();
 
         /// <summary>Sets the position of the caret. (Scintilla feature 2141)</summary>
-        void SetCurrentPos(int caret);
+        void SetCurrentPos(Position pos);
 
         /// <summary>Sets the position that starts the selection - this becomes the anchor. (Scintilla feature 2142)</summary>
-        void SetSelectionStart(int anchor);
+        void SetSelectionStart(Position pos);
 
         /// <summary>Returns the position at the start of the selection. (Scintilla feature 2143)</summary>
-        int GetSelectionStart();
+        Position GetSelectionStart();
 
-        /// <summary>Sets the position that ends the selection - this becomes the caret. (Scintilla feature 2144)</summary>
-        void SetSelectionEnd(int caret);
+        /// <summary>Sets the position that ends the selection - this becomes the currentPosition. (Scintilla feature 2144)</summary>
+        void SetSelectionEnd(Position pos);
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2145)</summary>
-        int GetSelectionEnd();
+        Position GetSelectionEnd();
 
         /// <summary>Set caret to a position, while removing any existing selection. (Scintilla feature 2556)</summary>
-        void SetEmptySelection(int caret);
+        void SetEmptySelection(Position pos);
 
         /// <summary>Sets the print magnification added to the point size of each style for printing. (Scintilla feature 2146)</summary>
         void SetPrintMagnification(int magnification);
@@ -789,13 +755,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetPrintMagnification();
 
         /// <summary>Modify colours when printing for clearer printed text. (Scintilla feature 2148)</summary>
-        void SetPrintColourMode(PrintOption mode);
+        void SetPrintColourMode(int mode);
 
         /// <summary>Returns the print colour mode. (Scintilla feature 2149)</summary>
-        PrintOption GetPrintColourMode();
+        int GetPrintColourMode();
 
         /// <summary>Find some text in the document. (Scintilla feature 2150)</summary>
-        int FindText(FindOption searchFlags, TextToFind ft);
+        Position FindText(int flags, TextToFind ft);
 
         /// <summary>Retrieve the display line at the top of the display. (Scintilla feature 2152)</summary>
         int GetFirstVisibleLine();
@@ -826,7 +792,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetModify();
 
         /// <summary>Select a range of text. (Scintilla feature 2160)</summary>
-        void SetSel(int anchor, int caret);
+        void SetSel(Position start, Position end);
 
         /// <summary>
         /// Retrieve the selected text.
@@ -843,20 +809,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         int GetTextRange(TextRange tr);
 
-        /// <summary>Draw the selection either highlighted or in normal (non-highlighted) style. (Scintilla feature 2163)</summary>
-        void HideSelection(bool hide);
+        /// <summary>Draw the selection in normal style or with selection highlighted. (Scintilla feature 2163)</summary>
+        void HideSelection(bool normal);
 
         /// <summary>Retrieve the x value of the point in the window where a position is displayed. (Scintilla feature 2164)</summary>
-        int PointXFromPosition(int pos);
+        int PointXFromPosition(Position pos);
 
         /// <summary>Retrieve the y value of the point in the window where a position is displayed. (Scintilla feature 2165)</summary>
-        int PointYFromPosition(int pos);
+        int PointYFromPosition(Position pos);
 
         /// <summary>Retrieve the line containing a position. (Scintilla feature 2166)</summary>
-        int LineFromPosition(int pos);
+        int LineFromPosition(Position pos);
 
         /// <summary>Retrieve the position at the start of a line. (Scintilla feature 2167)</summary>
-        int PositionFromLine(int line);
+        Position PositionFromLine(int line);
 
         /// <summary>Scroll horizontally and vertically. (Scintilla feature 2168)</summary>
         void LineScroll(int columns, int lines);
@@ -870,7 +836,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// This may be used to make a search match visible.
         /// (Scintilla feature 2569)
         /// </summary>
-        void ScrollRange(int secondary, int primary);
+        void ScrollRange(Position secondary, Position primary);
 
         /// <summary>Replace the selected text with the argument text. (Scintilla feature 2170)</summary>
         unsafe void ReplaceSel(string text);
@@ -930,7 +896,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         IntPtr GetDirectPointer();
 
         /// <summary>Set to overtype (true) or insert mode. (Scintilla feature 2186)</summary>
-        void SetOvertype(bool overType);
+        void SetOvertype(bool overtype);
 
         /// <summary>Returns true if overtype mode is active otherwise false is returned. (Scintilla feature 2187)</summary>
         bool GetOvertype();
@@ -946,32 +912,26 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// document without affecting the scroll position.
         /// (Scintilla feature 2190)
         /// </summary>
-        void SetTargetStart(int start);
+        void SetTargetStart(Position pos);
 
         /// <summary>Get the position that starts the target. (Scintilla feature 2191)</summary>
-        int GetTargetStart();
+        Position GetTargetStart();
 
         /// <summary>
         /// Sets the position that ends the target which is used for updating the
         /// document without affecting the scroll position.
         /// (Scintilla feature 2192)
         /// </summary>
-        void SetTargetEnd(int end);
+        void SetTargetEnd(Position pos);
 
         /// <summary>Get the position that ends the target. (Scintilla feature 2193)</summary>
-        int GetTargetEnd();
+        Position GetTargetEnd();
 
         /// <summary>Sets both the start and end of the target in one call. (Scintilla feature 2686)</summary>
-        void SetTargetRange(int start, int end);
+        void SetTargetRange(Position start, Position end);
 
         /// <summary>Retrieve the text in the target. (Scintilla feature 2687)</summary>
         unsafe string GetTargetText();
-
-        /// <summary>Make the target range start and end be the same as the selection range start and end. (Scintilla feature 2287)</summary>
-        void TargetFromSelection();
-
-        /// <summary>Sets the target to the whole document. (Scintilla feature 2690)</summary>
-        void TargetWholeDocument();
 
         /// <summary>
         /// Replace the target text with the argument text.
@@ -995,19 +955,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// Search for a counted string in the target and set the target to the found
         /// range. Text is counted so it can contain NULs.
-        /// Returns start of found range or -1 for failure in which case target is not moved.
+        /// Returns length of range or -1 for failure in which case target is not moved.
         /// (Scintilla feature 2197)
         /// </summary>
         unsafe int SearchInTarget(int length, string text);
 
         /// <summary>Set the search flags used by SearchInTarget. (Scintilla feature 2198)</summary>
-        void SetSearchFlags(FindOption searchFlags);
+        void SetSearchFlags(int flags);
 
         /// <summary>Get the search flags used by SearchInTarget. (Scintilla feature 2199)</summary>
-        FindOption GetSearchFlags();
+        int GetSearchFlags();
 
         /// <summary>Show a call tip containing a definition near position pos. (Scintilla feature 2200)</summary>
-        unsafe void CallTipShow(int pos, string definition);
+        unsafe void CallTipShow(Position pos, string definition);
 
         /// <summary>Remove the call tip from the screen. (Scintilla feature 2201)</summary>
         void CallTipCancel();
@@ -1016,13 +976,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool CallTipActive();
 
         /// <summary>Retrieve the position where the caret was before displaying the call tip. (Scintilla feature 2203)</summary>
-        int CallTipPosStart();
+        Position CallTipPosStart();
 
         /// <summary>Set the start position in order to change when backspacing removes the calltip. (Scintilla feature 2214)</summary>
         void CallTipSetPosStart(int posStart);
 
         /// <summary>Highlight a segment of the definition. (Scintilla feature 2204)</summary>
-        void CallTipSetHlt(int highlightStart, int highlightEnd);
+        void CallTipSetHlt(int start, int end);
 
         /// <summary>Set the background colour for the call tip. (Scintilla feature 2205)</summary>
         void CallTipSetBack(Colour back);
@@ -1040,13 +1000,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void CallTipSetPosition(bool above);
 
         /// <summary>Find the display line of a document line taking hidden lines into account. (Scintilla feature 2220)</summary>
-        int VisibleFromDocLine(int docLine);
+        int VisibleFromDocLine(int line);
 
         /// <summary>Find the document line of a display line taking hidden lines into account. (Scintilla feature 2221)</summary>
-        int DocLineFromVisible(int displayLine);
+        int DocLineFromVisible(int lineDisplay);
 
         /// <summary>The number of display lines needed to wrap a document line (Scintilla feature 2235)</summary>
-        int WrapCount(int docLine);
+        int WrapCount(int line);
 
         /// <summary>
         /// Set the fold level of a line.
@@ -1054,13 +1014,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// line is a header and whether it is effectively white space.
         /// (Scintilla feature 2222)
         /// </summary>
-        void SetFoldLevel(int line, FoldLevel level);
+        void SetFoldLevel(int line, int level);
 
         /// <summary>Retrieve the fold level of a line. (Scintilla feature 2223)</summary>
-        FoldLevel GetFoldLevel(int line);
+        int GetFoldLevel(int line);
 
         /// <summary>Find the last child line of a header line. (Scintilla feature 2224)</summary>
-        int GetLastChild(int line, FoldLevel level);
+        int GetLastChild(int line, int level);
 
         /// <summary>Find the parent line of a child line. (Scintilla feature 2225)</summary>
         int GetFoldParent(int line);
@@ -1086,44 +1046,29 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Switch a header line between expanded and contracted. (Scintilla feature 2231)</summary>
         void ToggleFold(int line);
 
-        /// <summary>Switch a header line between expanded and contracted and show some text after the line. (Scintilla feature 2700)</summary>
-        unsafe void ToggleFoldShowText(int line, string text);
-
-        /// <summary>Set the style of fold display text. (Scintilla feature 2701)</summary>
-        void FoldDisplayTextSetStyle(FoldDisplayTextStyle style);
-
-        /// <summary>Get the style of fold display text. (Scintilla feature 2707)</summary>
-        FoldDisplayTextStyle FoldDisplayTextGetStyle();
-
-        /// <summary>Set the default fold display text. (Scintilla feature 2722)</summary>
-        unsafe void SetDefaultFoldDisplayText(string text);
-
-        /// <summary>Get the default fold display text. (Scintilla feature 2723)</summary>
-        unsafe string GetDefaultFoldDisplayText();
-
         /// <summary>Expand or contract a fold header. (Scintilla feature 2237)</summary>
-        void FoldLine(int line, FoldAction action);
+        void FoldLine(int line, int action);
 
         /// <summary>Expand or contract a fold header and its children. (Scintilla feature 2238)</summary>
-        void FoldChildren(int line, FoldAction action);
+        void FoldChildren(int line, int action);
 
         /// <summary>Expand a fold header and all children. Use the level argument instead of the line's current level. (Scintilla feature 2239)</summary>
-        void ExpandChildren(int line, FoldLevel level);
+        void ExpandChildren(int line, int level);
 
         /// <summary>Expand or contract all fold headers. (Scintilla feature 2662)</summary>
-        void FoldAll(FoldAction action);
+        void FoldAll(int action);
 
         /// <summary>Ensure a particular line is visible by expanding any header line hiding it. (Scintilla feature 2232)</summary>
         void EnsureVisible(int line);
 
         /// <summary>Set automatic folding behaviours. (Scintilla feature 2663)</summary>
-        void SetAutomaticFold(AutomaticFold automaticFold);
+        void SetAutomaticFold(int automaticFold);
 
         /// <summary>Get automatic folding behaviours. (Scintilla feature 2664)</summary>
-        AutomaticFold GetAutomaticFold();
+        int GetAutomaticFold();
 
         /// <summary>Set some style options for folding. (Scintilla feature 2233)</summary>
-        void SetFoldFlags(FoldFlag flags);
+        void SetFoldFlags(int flags);
 
         /// <summary>
         /// Ensure a particular line is visible by expanding any header line hiding it.
@@ -1151,37 +1096,28 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetMouseDwellTime();
 
         /// <summary>Get position of start of word. (Scintilla feature 2266)</summary>
-        int WordStartPosition(int pos, bool onlyWordCharacters);
+        int WordStartPosition(Position pos, bool onlyWordCharacters);
 
         /// <summary>Get position of end of word. (Scintilla feature 2267)</summary>
-        int WordEndPosition(int pos, bool onlyWordCharacters);
-
-        /// <summary>Is the range start..end considered a word? (Scintilla feature 2691)</summary>
-        bool IsRangeWord(int start, int end);
-
-        /// <summary>Sets limits to idle styling. (Scintilla feature 2692)</summary>
-        void SetIdleStyling(IdleStyling idleStyling);
-
-        /// <summary>Retrieve the limits to idle styling. (Scintilla feature 2693)</summary>
-        IdleStyling GetIdleStyling();
+        int WordEndPosition(Position pos, bool onlyWordCharacters);
 
         /// <summary>Sets whether text is word wrapped. (Scintilla feature 2268)</summary>
-        void SetWrapMode(Wrap wrapMode);
+        void SetWrapMode(int mode);
 
         /// <summary>Retrieve whether text is word wrapped. (Scintilla feature 2269)</summary>
-        Wrap GetWrapMode();
+        int GetWrapMode();
 
         /// <summary>Set the display mode of visual flags for wrapped lines. (Scintilla feature 2460)</summary>
-        void SetWrapVisualFlags(WrapVisualFlag wrapVisualFlags);
+        void SetWrapVisualFlags(int wrapVisualFlags);
 
         /// <summary>Retrive the display mode of visual flags for wrapped lines. (Scintilla feature 2461)</summary>
-        WrapVisualFlag GetWrapVisualFlags();
+        int GetWrapVisualFlags();
 
         /// <summary>Set the location of visual flags for wrapped lines. (Scintilla feature 2462)</summary>
-        void SetWrapVisualFlagsLocation(WrapVisualLocation wrapVisualFlagsLocation);
+        void SetWrapVisualFlagsLocation(int wrapVisualFlagsLocation);
 
         /// <summary>Retrive the location of visual flags for wrapped lines. (Scintilla feature 2463)</summary>
-        WrapVisualLocation GetWrapVisualFlagsLocation();
+        int GetWrapVisualFlagsLocation();
 
         /// <summary>Set the start indent for wrapped lines. (Scintilla feature 2464)</summary>
         void SetWrapStartIndent(int indent);
@@ -1190,16 +1126,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetWrapStartIndent();
 
         /// <summary>Sets how wrapped sublines are placed. Default is fixed. (Scintilla feature 2472)</summary>
-        void SetWrapIndentMode(WrapIndentMode wrapIndentMode);
+        void SetWrapIndentMode(int mode);
 
         /// <summary>Retrieve how wrapped sublines are placed. Default is fixed. (Scintilla feature 2473)</summary>
-        WrapIndentMode GetWrapIndentMode();
+        int GetWrapIndentMode();
 
         /// <summary>Sets the degree of caching of layout information. (Scintilla feature 2272)</summary>
-        void SetLayoutCache(LineCache cacheMode);
+        void SetLayoutCache(int mode);
 
         /// <summary>Retrieve the degree of caching of layout information. (Scintilla feature 2273)</summary>
-        LineCache GetLayoutCache();
+        int GetLayoutCache();
 
         /// <summary>Sets the document width assumed for scrolling. (Scintilla feature 2274)</summary>
         void SetScrollWidth(int pixelWidth);
@@ -1240,7 +1176,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int TextHeight(int line);
 
         /// <summary>Show or hide the vertical scroll bar. (Scintilla feature 2280)</summary>
-        void SetVScrollBar(bool visible);
+        void SetVScrollBar(bool show);
 
         /// <summary>Is the vertical scroll bar visible? (Scintilla feature 2281)</summary>
         bool GetVScrollBar();
@@ -1248,8 +1184,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Append a string to the end of the document without changing the selection. (Scintilla feature 2282)</summary>
         unsafe void AppendText(int length, string text);
 
+        /// <summary>Is drawing done in two phases with backgrounds drawn before foregrounds? (Scintilla feature 2283)</summary>
+        bool GetTwoPhaseDraw();
+
+        /// <summary>
+        /// In twoPhaseDraw mode, drawing is performed in two phases, first the background
+        /// and then the foreground. This avoids chopping off characters that overlap the next run.
+        /// (Scintilla feature 2284)
+        /// </summary>
+        void SetTwoPhaseDraw(bool twoPhase);
+
         /// <summary>How many phases is drawing done in? (Scintilla feature 2673)</summary>
-        PhasesDraw GetPhasesDraw();
+        int GetPhasesDraw();
 
         /// <summary>
         /// In one phase draw, text is drawn in a series of rectangular blocks with no overlap.
@@ -1258,22 +1204,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// to overlap from one line to the next.
         /// (Scintilla feature 2674)
         /// </summary>
-        void SetPhasesDraw(PhasesDraw phases);
+        void SetPhasesDraw(int phases);
 
         /// <summary>Choose the quality level for text from the FontQuality enumeration. (Scintilla feature 2611)</summary>
-        void SetFontQuality(FontQuality fontQuality);
+        void SetFontQuality(int fontQuality);
 
         /// <summary>Retrieve the quality level for text. (Scintilla feature 2612)</summary>
-        FontQuality GetFontQuality();
+        int GetFontQuality();
 
         /// <summary>Scroll so that a display line is at the top of the display. (Scintilla feature 2613)</summary>
-        void SetFirstVisibleLine(int displayLine);
+        void SetFirstVisibleLine(int lineDisplay);
 
         /// <summary>Change the effect of pasting when there are multiple selections. (Scintilla feature 2614)</summary>
-        void SetMultiPaste(MultiPaste multiPaste);
+        void SetMultiPaste(int multiPaste);
 
-        /// <summary>Retrieve the effect of pasting when there are multiple selections. (Scintilla feature 2615)</summary>
-        MultiPaste GetMultiPaste();
+        /// <summary>Retrieve the effect of pasting when there are multiple selections.. (Scintilla feature 2615)</summary>
+        int GetMultiPaste();
 
         /// <summary>
         /// Retrieve the value of a tag from a regular expression search.
@@ -1281,6 +1227,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// (Scintilla feature 2616)
         /// </summary>
         unsafe string GetTag(int tagNumber);
+
+        /// <summary>Make the target range start and end be the same as the selection range start and end. (Scintilla feature 2287)</summary>
+        void TargetFromSelection();
 
         /// <summary>Join the lines in the target. (Scintilla feature 2288)</summary>
         void LinesJoin();
@@ -1292,17 +1241,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         void LinesSplit(int pixelWidth);
 
-        /// <summary>Set one of the colours used as a chequerboard pattern in the fold margin (Scintilla feature 2290)</summary>
+        /// <summary>Set the colours used as a chequerboard pattern in the fold margin (Scintilla feature 2290)</summary>
         void SetFoldMarginColour(bool useSetting, Colour back);
 
-        /// <summary>Set the other colour used as a chequerboard pattern in the fold margin (Scintilla feature 2291)</summary>
+        /// <summary>Set the colours used as a chequerboard pattern in the fold margin (Scintilla feature 2291)</summary>
         void SetFoldMarginHiColour(bool useSetting, Colour fore);
-
-        /// <summary>Enable or disable accessibility. (Scintilla feature 2702)</summary>
-        void SetAccessibility(Accessibility accessibility);
-
-        /// <summary>Report accessibility status. (Scintilla feature 2703)</summary>
-        Accessibility GetAccessibility();
 
         /// <summary>Move caret down one line. (Scintilla feature 2300)</summary>
         void LineDown();
@@ -1435,9 +1378,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Switch the current line with the previous. (Scintilla feature 2339)</summary>
         void LineTranspose();
 
-        /// <summary>Reverse order of selected lines. (Scintilla feature 2354)</summary>
-        void LineReverse();
-
         /// <summary>Duplicate the current line. (Scintilla feature 2404)</summary>
         void LineDuplicate();
 
@@ -1481,43 +1421,61 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void LineEndDisplayExtend();
 
         /// <summary>
-        /// Like Home but when word-wrap is enabled goes first to start of display line
-        /// HomeDisplay, then to start of document line Home.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2349)
         /// </summary>
         void HomeWrap();
 
         /// <summary>
-        /// Like HomeExtend but when word-wrap is enabled extends first to start of display line
-        /// HomeDisplayExtend, then to start of document line HomeExtend.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2450)
         /// </summary>
         void HomeWrapExtend();
 
         /// <summary>
-        /// Like LineEnd but when word-wrap is enabled goes first to end of display line
-        /// LineEndDisplay, then to start of document line LineEnd.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2451)
         /// </summary>
         void LineEndWrap();
 
         /// <summary>
-        /// Like LineEndExtend but when word-wrap is enabled extends first to end of display line
-        /// LineEndDisplayExtend, then to start of document line LineEndExtend.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2452)
         /// </summary>
         void LineEndWrapExtend();
 
         /// <summary>
-        /// Like VCHome but when word-wrap is enabled goes first to start of display line
-        /// VCHomeDisplay, then behaves like VCHome.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2453)
         /// </summary>
         void VCHomeWrap();
 
         /// <summary>
-        /// Like VCHomeExtend but when word-wrap is enabled extends first to start of display line
-        /// VCHomeDisplayExtend, then behaves like VCHomeExtend.
+        /// These are like their namesakes Home(Extend)?, LineEnd(Extend)?, VCHome(Extend)?
+        /// except they behave differently when word-wrap is enabled:
+        /// They go first to the start / end of the display line, like (Home|LineEnd)Display
+        /// The difference is that, the cursor is already at the point, it goes on to the start
+        /// or end of the document line, as appropriate for (Home|LineEnd|VCHome)(Extend)?.
         /// (Scintilla feature 2454)
         /// </summary>
         void VCHomeWrapExtend();
@@ -1532,23 +1490,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int LineLength(int line);
 
         /// <summary>Highlight the characters at two positions. (Scintilla feature 2351)</summary>
-        void BraceHighlight(int posA, int posB);
+        void BraceHighlight(Position pos1, Position pos2);
 
         /// <summary>Use specified indicator to highlight matching braces instead of changing their style. (Scintilla feature 2498)</summary>
-        void BraceHighlightIndicator(bool useSetting, int indicator);
+        void BraceHighlightIndicator(bool useBraceHighlightIndicator, int indicator);
 
         /// <summary>Highlight the character at a position indicating there is no matching brace. (Scintilla feature 2352)</summary>
-        void BraceBadLight(int pos);
+        void BraceBadLight(Position pos);
 
         /// <summary>Use specified indicator to highlight non matching brace instead of changing its style. (Scintilla feature 2499)</summary>
-        void BraceBadLightIndicator(bool useSetting, int indicator);
+        void BraceBadLightIndicator(bool useBraceBadLightIndicator, int indicator);
 
-        /// <summary>
-        /// Find the position of a matching brace or INVALID_POSITION if no match.
-        /// The maxReStyle must be 0 for now. It may be defined in a future release.
-        /// (Scintilla feature 2353)
-        /// </summary>
-        int BraceMatch(int pos, int maxReStyle);
+        /// <summary>Find the position of a matching brace or INVALID_POSITION if no match. (Scintilla feature 2353)</summary>
+        Position BraceMatch(Position pos);
 
         /// <summary>Are the end of line characters visible? (Scintilla feature 2355)</summary>
         bool GetViewEOL();
@@ -1560,10 +1514,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         IntPtr GetDocPointer();
 
         /// <summary>Change the document object used. (Scintilla feature 2358)</summary>
-        void SetDocPointer(IntPtr doc);
+        void SetDocPointer(IntPtr pointer);
 
         /// <summary>Set which document modification events are sent to the container. (Scintilla feature 2359)</summary>
-        void SetModEventMask(ModificationFlags eventMask);
+        void SetModEventMask(int mask);
 
         /// <summary>Retrieve the column number which text should be kept within. (Scintilla feature 2360)</summary>
         int GetEdgeColumn();
@@ -1576,26 +1530,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SetEdgeColumn(int column);
 
         /// <summary>Retrieve the edge highlight mode. (Scintilla feature 2362)</summary>
-        EdgeVisualStyle GetEdgeMode();
+        int GetEdgeMode();
 
         /// <summary>
-        /// The edge may be displayed by a line (EDGE_LINE/EDGE_MULTILINE) or by highlighting text that
+        /// The edge may be displayed by a line (EDGE_LINE) or by highlighting text that
         /// goes beyond it (EDGE_BACKGROUND) or not displayed at all (EDGE_NONE).
         /// (Scintilla feature 2363)
         /// </summary>
-        void SetEdgeMode(EdgeVisualStyle edgeMode);
+        void SetEdgeMode(int mode);
 
         /// <summary>Retrieve the colour used in edge indication. (Scintilla feature 2364)</summary>
         Colour GetEdgeColour();
 
         /// <summary>Change the colour used in edge indication. (Scintilla feature 2365)</summary>
         void SetEdgeColour(Colour edgeColour);
-
-        /// <summary>Add a new vertical edge to the view. (Scintilla feature 2694)</summary>
-        void MultiEdgeAddLine(int column, Colour edgeColour);
-
-        /// <summary>Clear all vertical edges. (Scintilla feature 2695)</summary>
-        void MultiEdgeClearAll();
 
         /// <summary>Sets the current caret position to be the search anchor. (Scintilla feature 2366)</summary>
         void SearchAnchor();
@@ -1605,24 +1553,24 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Does not ensure the selection is visible.
         /// (Scintilla feature 2367)
         /// </summary>
-        unsafe int SearchNext(FindOption searchFlags, string text);
+        unsafe int SearchNext(int flags, string text);
 
         /// <summary>
         /// Find some text starting at the search anchor and moving backwards.
         /// Does not ensure the selection is visible.
         /// (Scintilla feature 2368)
         /// </summary>
-        unsafe int SearchPrev(FindOption searchFlags, string text);
+        unsafe int SearchPrev(int flags, string text);
 
         /// <summary>Retrieves the number of lines completely visible. (Scintilla feature 2370)</summary>
         int LinesOnScreen();
 
         /// <summary>
         /// Set whether a pop up menu is displayed automatically when the user presses
-        /// the wrong mouse button on certain areas.
+        /// the wrong mouse button.
         /// (Scintilla feature 2371)
         /// </summary>
-        void UsePopUp(PopUp popUpMode);
+        void UsePopUp(bool allowPopUp);
 
         /// <summary>Is the selection rectangular? The alternative is the more common stream selection. (Scintilla feature 2372)</summary>
         bool SelectionIsRectangle();
@@ -1632,7 +1580,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// It may be positive to magnify or negative to reduce.
         /// (Scintilla feature 2373)
         /// </summary>
-        void SetZoom(int zoomInPoints);
+        void SetZoom(int zoom);
 
         /// <summary>Retrieve the zoom level. (Scintilla feature 2374)</summary>
         int GetZoom();
@@ -1642,25 +1590,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// Starts with reference count of 1 and not selected into editor.
         /// (Scintilla feature 2375)
         /// </summary>
-        IntPtr CreateDocument(int bytes, DocumentOption documentOptions);
+        int CreateDocument();
 
         /// <summary>Extend life of document. (Scintilla feature 2376)</summary>
-        void AddRefDocument(IntPtr doc);
+        void AddRefDocument(int doc);
 
         /// <summary>Release a reference to the document, deleting document if it fades to black. (Scintilla feature 2377)</summary>
-        void ReleaseDocument(IntPtr doc);
-
-        /// <summary>Get which document options are set. (Scintilla feature 2379)</summary>
-        DocumentOption GetDocumentOptions();
+        void ReleaseDocument(int doc);
 
         /// <summary>Get which document modification events are sent to the container. (Scintilla feature 2378)</summary>
-        ModificationFlags GetModEventMask();
-
-        /// <summary>Set whether command events are sent to the container. (Scintilla feature 2717)</summary>
-        void SetCommandEvents(bool commandEvents);
-
-        /// <summary>Get whether command events are sent to the container. (Scintilla feature 2718)</summary>
-        bool GetCommandEvents();
+        int GetModEventMask();
 
         /// <summary>Change internal focus flag. (Scintilla feature 2380)</summary>
         void SetFocus(bool focus);
@@ -1669,10 +1608,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetFocus();
 
         /// <summary>Change error status - 0 = OK. (Scintilla feature 2382)</summary>
-        void SetStatus(Status status);
+        void SetStatus(int statusCode);
 
         /// <summary>Get error status. (Scintilla feature 2383)</summary>
-        Status GetStatus();
+        int GetStatus();
 
         /// <summary>Set whether the mouse is captured when its button is pressed. (Scintilla feature 2384)</summary>
         void SetMouseDownCaptures(bool captures);
@@ -1680,17 +1619,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Get whether mouse gets captured. (Scintilla feature 2385)</summary>
         bool GetMouseDownCaptures();
 
-        /// <summary>Set whether the mouse wheel can be active outside the window. (Scintilla feature 2696)</summary>
-        void SetMouseWheelCaptures(bool captures);
-
-        /// <summary>Get whether mouse wheel can be active outside the window. (Scintilla feature 2697)</summary>
-        bool GetMouseWheelCaptures();
-
         /// <summary>Sets the cursor to one of the SC_CURSOR* values. (Scintilla feature 2386)</summary>
-        void SetCursor(CursorShape cursorType);
+        void SetCursor(int cursorType);
 
         /// <summary>Get cursor type. (Scintilla feature 2387)</summary>
-        CursorShape GetCursor();
+        int GetCursor();
 
         /// <summary>
         /// Change the way control characters are displayed:
@@ -1727,7 +1660,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// is to be moved to by Find, FindNext, GotoLine, etc.
         /// (Scintilla feature 2394)
         /// </summary>
-        void SetVisiblePolicy(VisiblePolicy visiblePolicy, int visibleSlop);
+        void SetVisiblePolicy(int visiblePolicy, int visibleSlop);
 
         /// <summary>Delete back from the current position to the start of the line. (Scintilla feature 2395)</summary>
         void DelLineLeft();
@@ -1735,10 +1668,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Delete forwards from the current position to the end of the line. (Scintilla feature 2396)</summary>
         void DelLineRight();
 
-        /// <summary>Set the xOffset (ie, horizontal scroll position). (Scintilla feature 2397)</summary>
-        void SetXOffset(int xOffset);
+        /// <summary>Get and Set the xOffset (ie, horizontal scroll position). (Scintilla feature 2397)</summary>
+        void SetXOffset(int newOffset);
 
-        /// <summary>Get the xOffset (ie, horizontal scroll position). (Scintilla feature 2398)</summary>
+        /// <summary>Get and Set the xOffset (ie, horizontal scroll position). (Scintilla feature 2398)</summary>
         int GetXOffset();
 
         /// <summary>Set the last x chosen value to be the caret x position. (Scintilla feature 2399)</summary>
@@ -1752,20 +1685,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// The exclusion zone is given in pixels.
         /// (Scintilla feature 2402)
         /// </summary>
-        void SetXCaretPolicy(CaretPolicy caretPolicy, int caretSlop);
+        void SetXCaretPolicy(int caretPolicy, int caretSlop);
 
         /// <summary>
         /// Set the way the line the caret is on is kept visible.
         /// The exclusion zone is given in lines.
         /// (Scintilla feature 2403)
         /// </summary>
-        void SetYCaretPolicy(CaretPolicy caretPolicy, int caretSlop);
+        void SetYCaretPolicy(int caretPolicy, int caretSlop);
 
         /// <summary>Set printing to line wrapped (SC_WRAP_WORD) or not line wrapped (SC_WRAP_NONE). (Scintilla feature 2406)</summary>
-        void SetPrintWrapMode(Wrap wrapMode);
+        void SetPrintWrapMode(int mode);
 
         /// <summary>Is printing line wrapped? (Scintilla feature 2407)</summary>
-        Wrap GetPrintWrapMode();
+        int GetPrintWrapMode();
 
         /// <summary>Set a fore colour for active hotspots. (Scintilla feature 2410)</summary>
         void SetHotspotActiveFore(bool useSetting, Colour fore);
@@ -1791,16 +1724,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Get the HotspotSingleLine property (Scintilla feature 2497)</summary>
         bool GetHotspotSingleLine();
 
-        /// <summary>Move caret down one paragraph (delimited by empty lines). (Scintilla feature 2413)</summary>
+        /// <summary>Move caret between paragraphs (delimited by empty lines). (Scintilla feature 2413)</summary>
         void ParaDown();
 
-        /// <summary>Extend selection down one paragraph (delimited by empty lines). (Scintilla feature 2414)</summary>
+        /// <summary>Move caret between paragraphs (delimited by empty lines). (Scintilla feature 2414)</summary>
         void ParaDownExtend();
 
-        /// <summary>Move caret up one paragraph (delimited by empty lines). (Scintilla feature 2415)</summary>
+        /// <summary>Move caret between paragraphs (delimited by empty lines). (Scintilla feature 2415)</summary>
         void ParaUp();
 
-        /// <summary>Extend selection up one paragraph (delimited by empty lines). (Scintilla feature 2416)</summary>
+        /// <summary>Move caret between paragraphs (delimited by empty lines). (Scintilla feature 2416)</summary>
         void ParaUpExtend();
 
         /// <summary>
@@ -1808,32 +1741,24 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// page into account. Returns 0 if passed 0.
         /// (Scintilla feature 2417)
         /// </summary>
-        int PositionBefore(int pos);
+        Position PositionBefore(Position pos);
 
         /// <summary>
         /// Given a valid document position, return the next position taking code
         /// page into account. Maximum value returned is the last position in the document.
         /// (Scintilla feature 2418)
         /// </summary>
-        int PositionAfter(int pos);
+        Position PositionAfter(Position pos);
 
         /// <summary>
         /// Given a valid document position, return a position that differs in a number
         /// of characters. Returned value is always between 0 and last position in document.
         /// (Scintilla feature 2670)
         /// </summary>
-        int PositionRelative(int pos, int relative);
-
-        /// <summary>
-        /// Given a valid document position, return a position that differs in a number
-        /// of UTF-16 code units. Returned value is always between 0 and last position in document.
-        /// The result may point half way (2 bytes) inside a non-BMP character.
-        /// (Scintilla feature 2716)
-        /// </summary>
-        int PositionRelativeCodeUnits(int pos, int relative);
+        Position PositionRelative(Position pos, int relative);
 
         /// <summary>Copy a range of text to the clipboard. Positions are clipped into the document. (Scintilla feature 2419)</summary>
-        void CopyRange(int start, int end);
+        void CopyRange(Position start, Position end);
 
         /// <summary>Copy argument text to the clipboard. (Scintilla feature 2420)</summary>
         unsafe void CopyText(int length, string text);
@@ -1843,19 +1768,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// by lines (SC_SEL_LINES).
         /// (Scintilla feature 2422)
         /// </summary>
-        void SetSelectionMode(SelectionMode selectionMode);
+        void SetSelectionMode(int mode);
 
         /// <summary>Get the mode of the current selection. (Scintilla feature 2423)</summary>
-        SelectionMode GetSelectionMode();
-
-        /// <summary>Get whether or not regular caret moves will extend or reduce the selection. (Scintilla feature 2706)</summary>
-        bool GetMoveExtendsSelection();
+        int GetSelectionMode();
 
         /// <summary>Retrieve the position of the start of the selection at the given line (INVALID_POSITION if no selection on this line). (Scintilla feature 2424)</summary>
-        int GetLineSelStartPosition(int line);
+        Position GetLineSelStartPosition(int line);
 
         /// <summary>Retrieve the position of the end of the selection at the given line (INVALID_POSITION if no selection on this line). (Scintilla feature 2425)</summary>
-        int GetLineSelEndPosition(int line);
+        Position GetLineSelEndPosition(int line);
 
         /// <summary>Move caret down one line, extending rectangular selection to new caret position. (Scintilla feature 2426)</summary>
         void LineDownRectExtend();
@@ -1948,22 +1870,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe string AutoCGetCurrentText();
 
         /// <summary>Set auto-completion case insensitive behaviour to either prefer case-sensitive matches or have no preference. (Scintilla feature 2634)</summary>
-        void AutoCSetCaseInsensitiveBehaviour(CaseInsensitiveBehaviour behaviour);
+        void AutoCSetCaseInsensitiveBehaviour(int behaviour);
 
         /// <summary>Get auto-completion case insensitive behaviour. (Scintilla feature 2635)</summary>
-        CaseInsensitiveBehaviour AutoCGetCaseInsensitiveBehaviour();
+        int AutoCGetCaseInsensitiveBehaviour();
 
         /// <summary>Change the effect of autocompleting when there are multiple selections. (Scintilla feature 2636)</summary>
-        void AutoCSetMulti(MultiAutoComplete multi);
+        void AutoCSetMulti(int multi);
 
-        /// <summary>Retrieve the effect of autocompleting when there are multiple selections. (Scintilla feature 2637)</summary>
-        MultiAutoComplete AutoCGetMulti();
+        /// <summary>Retrieve the effect of autocompleting when there are multiple selections.. (Scintilla feature 2637)</summary>
+        int AutoCGetMulti();
 
         /// <summary>Set the way autocompletion lists are ordered. (Scintilla feature 2660)</summary>
-        void AutoCSetOrder(Ordering order);
+        void AutoCSetOrder(int order);
 
         /// <summary>Get the way autocompletion lists are ordered. (Scintilla feature 2661)</summary>
-        Ordering AutoCGetOrder();
+        int AutoCGetOrder();
 
         /// <summary>Enlarge the document to a particular size of text bytes. (Scintilla feature 2446)</summary>
         void Allocate(int bytes);
@@ -1998,10 +1920,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int FindColumn(int line, int column);
 
         /// <summary>Can the caret preferred x position only be changed by explicit movement commands? (Scintilla feature 2457)</summary>
-        CaretSticky GetCaretSticky();
+        int GetCaretSticky();
 
         /// <summary>Stop the caret preferred x position changing when the user types. (Scintilla feature 2458)</summary>
-        void SetCaretSticky(CaretSticky useCaretStickyBehaviour);
+        void SetCaretSticky(int useCaretStickyBehaviour);
 
         /// <summary>Switch between sticky and non-sticky: meant to be bound to a key. (Scintilla feature 2459)</summary>
         void ToggleCaretSticky();
@@ -2016,16 +1938,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SelectionDuplicate();
 
         /// <summary>Set background alpha of the caret line. (Scintilla feature 2470)</summary>
-        void SetCaretLineBackAlpha(Alpha alpha);
+        void SetCaretLineBackAlpha(int alpha);
 
         /// <summary>Get the background alpha of the caret line. (Scintilla feature 2471)</summary>
-        Alpha GetCaretLineBackAlpha();
+        int GetCaretLineBackAlpha();
 
         /// <summary>Set the style of the caret to be drawn. (Scintilla feature 2512)</summary>
-        void SetCaretStyle(CaretStyle caretStyle);
+        void SetCaretStyle(int caretStyle);
 
         /// <summary>Returns the current style of the caret. (Scintilla feature 2513)</summary>
-        CaretStyle GetCaretStyle();
+        int GetCaretStyle();
 
         /// <summary>Set the indicator used for IndicatorFillRange and IndicatorClearRange (Scintilla feature 2500)</summary>
         void SetIndicatorCurrent(int indicator);
@@ -2040,22 +1962,22 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetIndicatorValue();
 
         /// <summary>Turn a indicator on over a range. (Scintilla feature 2504)</summary>
-        void IndicatorFillRange(int start, int lengthFill);
+        void IndicatorFillRange(int position, int fillLength);
 
         /// <summary>Turn a indicator off over a range. (Scintilla feature 2505)</summary>
-        void IndicatorClearRange(int start, int lengthClear);
+        void IndicatorClearRange(int position, int clearLength);
 
-        /// <summary>Are any indicators present at pos? (Scintilla feature 2506)</summary>
-        int IndicatorAllOnFor(int pos);
+        /// <summary>Are any indicators present at position? (Scintilla feature 2506)</summary>
+        int IndicatorAllOnFor(int position);
 
-        /// <summary>What value does a particular indicator have at a position? (Scintilla feature 2507)</summary>
-        int IndicatorValueAt(int indicator, int pos);
+        /// <summary>What value does a particular indicator have at at a position? (Scintilla feature 2507)</summary>
+        int IndicatorValueAt(int indicator, int position);
 
         /// <summary>Where does a particular indicator start? (Scintilla feature 2508)</summary>
-        int IndicatorStart(int indicator, int pos);
+        int IndicatorStart(int indicator, int position);
 
         /// <summary>Where does a particular indicator end? (Scintilla feature 2509)</summary>
-        int IndicatorEnd(int indicator, int pos);
+        int IndicatorEnd(int indicator, int position);
 
         /// <summary>Set number of entries in position cache (Scintilla feature 2514)</summary>
         void SetPositionCache(int size);
@@ -2076,29 +1998,29 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         /// Return a read-only pointer to a range of characters in the document.
         /// May move the gap so that the range is contiguous, but will only move up
-        /// to lengthRange bytes.
+        /// to rangeLength bytes.
         /// (Scintilla feature 2643)
         /// </summary>
-        IntPtr GetRangePointer(int start, int lengthRange);
+        IntPtr GetRangePointer(int position, int rangeLength);
 
         /// <summary>
         /// Return a position which, to avoid performance costs, should not be within
         /// the range of a call to GetRangePointer.
         /// (Scintilla feature 2644)
         /// </summary>
-        int GetGapPosition();
+        Position GetGapPosition();
 
         /// <summary>Set the alpha fill colour of the given indicator. (Scintilla feature 2523)</summary>
-        void IndicSetAlpha(int indicator, Alpha alpha);
+        void IndicSetAlpha(int indicator, int alpha);
 
         /// <summary>Get the alpha fill colour of the given indicator. (Scintilla feature 2524)</summary>
-        Alpha IndicGetAlpha(int indicator);
+        int IndicGetAlpha(int indicator);
 
         /// <summary>Set the alpha outline colour of the given indicator. (Scintilla feature 2558)</summary>
-        void IndicSetOutlineAlpha(int indicator, Alpha alpha);
+        void IndicSetOutlineAlpha(int indicator, int alpha);
 
         /// <summary>Get the alpha outline colour of the given indicator. (Scintilla feature 2559)</summary>
-        Alpha IndicGetOutlineAlpha(int indicator);
+        int IndicGetOutlineAlpha(int indicator);
 
         /// <summary>Set extra ascent for each line (Scintilla feature 2525)</summary>
         void SetExtraAscent(int extraAscent);
@@ -2143,10 +2065,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int MarginGetStyleOffset();
 
         /// <summary>Set the margin options. (Scintilla feature 2539)</summary>
-        void SetMarginOptions(MarginOption marginOptions);
+        void SetMarginOptions(int marginOptions);
 
         /// <summary>Get the margin options. (Scintilla feature 2557)</summary>
-        MarginOption GetMarginOptions();
+        int GetMarginOptions();
 
         /// <summary>Set the annotation text for a line (Scintilla feature 2540)</summary>
         unsafe void AnnotationSetText(int line, string text);
@@ -2173,10 +2095,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void AnnotationClearAll();
 
         /// <summary>Set the visibility for the annotations for a view (Scintilla feature 2548)</summary>
-        void AnnotationSetVisible(AnnotationVisible visible);
+        void AnnotationSetVisible(int visible);
 
         /// <summary>Get the visibility for the annotations for a view (Scintilla feature 2549)</summary>
-        AnnotationVisible AnnotationGetVisible();
+        int AnnotationGetVisible();
 
         /// <summary>Get the start of the range of style numbers used for annotations (Scintilla feature 2550)</summary>
         void AnnotationSetStyleOffset(int style);
@@ -2191,17 +2113,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int AllocateExtendedStyles(int numberStyles);
 
         /// <summary>Add a container action to the undo stack (Scintilla feature 2560)</summary>
-        void AddUndoAction(int token, UndoFlags flags);
+        void AddUndoAction(int token, int flags);
 
         /// <summary>Find the position of a character from a point within the window. (Scintilla feature 2561)</summary>
-        int CharPositionFromPoint(int x, int y);
+        Position CharPositionFromPoint(int x, int y);
 
         /// <summary>
         /// Find the position of a character from a point within the window.
         /// Return INVALID_POSITION if not close to text.
         /// (Scintilla feature 2562)
         /// </summary>
-        int CharPositionFromPointClose(int x, int y);
+        Position CharPositionFromPointClose(int x, int y);
 
         /// <summary>Set whether switching to rectangular mode while selecting with the mouse is allowed. (Scintilla feature 2668)</summary>
         void SetMouseSelectionRectangularSwitch(bool mouseSelectionRectangularSwitch);
@@ -2228,7 +2150,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         bool GetAdditionalCaretsBlink();
 
         /// <summary>Set whether additional carets are visible (Scintilla feature 2608)</summary>
-        void SetAdditionalCaretsVisible(bool additionalCaretsVisible);
+        void SetAdditionalCaretsVisible(bool additionalCaretsBlink);
 
         /// <summary>Whether additional carets are visible (Scintilla feature 2609)</summary>
         bool GetAdditionalCaretsVisible();
@@ -2243,10 +2165,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void ClearSelections();
 
         /// <summary>Set a simple selection (Scintilla feature 2572)</summary>
-        void SetSelection(int caret, int anchor);
+        int SetSelection(int caret, int anchor);
 
         /// <summary>Add a selection (Scintilla feature 2573)</summary>
-        void AddSelection(int caret, int anchor);
+        int AddSelection(int caret, int anchor);
 
         /// <summary>Drop one selection (Scintilla feature 2671)</summary>
         void DropSelectionN(int selection);
@@ -2257,74 +2179,74 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Which selection is the main selection (Scintilla feature 2575)</summary>
         int GetMainSelection();
 
-        /// <summary>Set the caret position of the nth selection. (Scintilla feature 2576)</summary>
-        void SetSelectionNCaret(int selection, int caret);
+        /// <summary>Which selection is the main selection (Scintilla feature 2576)</summary>
+        void SetSelectionNCaret(int selection, Position pos);
 
-        /// <summary>Return the caret position of the nth selection. (Scintilla feature 2577)</summary>
-        int GetSelectionNCaret(int selection);
+        /// <summary>Which selection is the main selection (Scintilla feature 2577)</summary>
+        Position GetSelectionNCaret(int selection);
 
-        /// <summary>Set the anchor position of the nth selection. (Scintilla feature 2578)</summary>
-        void SetSelectionNAnchor(int selection, int anchor);
+        /// <summary>Which selection is the main selection (Scintilla feature 2578)</summary>
+        void SetSelectionNAnchor(int selection, Position posAnchor);
 
-        /// <summary>Return the anchor position of the nth selection. (Scintilla feature 2579)</summary>
-        int GetSelectionNAnchor(int selection);
+        /// <summary>Which selection is the main selection (Scintilla feature 2579)</summary>
+        Position GetSelectionNAnchor(int selection);
 
-        /// <summary>Set the virtual space of the caret of the nth selection. (Scintilla feature 2580)</summary>
+        /// <summary>Which selection is the main selection (Scintilla feature 2580)</summary>
         void SetSelectionNCaretVirtualSpace(int selection, int space);
 
-        /// <summary>Return the virtual space of the caret of the nth selection. (Scintilla feature 2581)</summary>
+        /// <summary>Which selection is the main selection (Scintilla feature 2581)</summary>
         int GetSelectionNCaretVirtualSpace(int selection);
 
-        /// <summary>Set the virtual space of the anchor of the nth selection. (Scintilla feature 2582)</summary>
+        /// <summary>Which selection is the main selection (Scintilla feature 2582)</summary>
         void SetSelectionNAnchorVirtualSpace(int selection, int space);
 
-        /// <summary>Return the virtual space of the anchor of the nth selection. (Scintilla feature 2583)</summary>
+        /// <summary>Which selection is the main selection (Scintilla feature 2583)</summary>
         int GetSelectionNAnchorVirtualSpace(int selection);
 
         /// <summary>Sets the position that starts the selection - this becomes the anchor. (Scintilla feature 2584)</summary>
-        void SetSelectionNStart(int selection, int anchor);
+        void SetSelectionNStart(int selection, Position pos);
 
         /// <summary>Returns the position at the start of the selection. (Scintilla feature 2585)</summary>
-        int GetSelectionNStart(int selection);
+        Position GetSelectionNStart(int selection);
 
         /// <summary>Sets the position that ends the selection - this becomes the currentPosition. (Scintilla feature 2586)</summary>
-        void SetSelectionNEnd(int selection, int caret);
+        void SetSelectionNEnd(int selection, Position pos);
 
         /// <summary>Returns the position at the end of the selection. (Scintilla feature 2587)</summary>
-        int GetSelectionNEnd(int selection);
+        Position GetSelectionNEnd(int selection);
 
-        /// <summary>Set the caret position of the rectangular selection. (Scintilla feature 2588)</summary>
-        void SetRectangularSelectionCaret(int caret);
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2588)</summary>
+        void SetRectangularSelectionCaret(Position pos);
 
-        /// <summary>Return the caret position of the rectangular selection. (Scintilla feature 2589)</summary>
-        int GetRectangularSelectionCaret();
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2589)</summary>
+        Position GetRectangularSelectionCaret();
 
-        /// <summary>Set the anchor position of the rectangular selection. (Scintilla feature 2590)</summary>
-        void SetRectangularSelectionAnchor(int anchor);
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2590)</summary>
+        void SetRectangularSelectionAnchor(Position posAnchor);
 
-        /// <summary>Return the anchor position of the rectangular selection. (Scintilla feature 2591)</summary>
-        int GetRectangularSelectionAnchor();
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2591)</summary>
+        Position GetRectangularSelectionAnchor();
 
-        /// <summary>Set the virtual space of the caret of the rectangular selection. (Scintilla feature 2592)</summary>
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2592)</summary>
         void SetRectangularSelectionCaretVirtualSpace(int space);
 
-        /// <summary>Return the virtual space of the caret of the rectangular selection. (Scintilla feature 2593)</summary>
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2593)</summary>
         int GetRectangularSelectionCaretVirtualSpace();
 
-        /// <summary>Set the virtual space of the anchor of the rectangular selection. (Scintilla feature 2594)</summary>
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2594)</summary>
         void SetRectangularSelectionAnchorVirtualSpace(int space);
 
-        /// <summary>Return the virtual space of the anchor of the rectangular selection. (Scintilla feature 2595)</summary>
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2595)</summary>
         int GetRectangularSelectionAnchorVirtualSpace();
 
-        /// <summary>Set options for virtual space behaviour. (Scintilla feature 2596)</summary>
-        void SetVirtualSpaceOptions(VirtualSpace virtualSpaceOptions);
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2596)</summary>
+        void SetVirtualSpaceOptions(int virtualSpaceOptions);
 
-        /// <summary>Return options for virtual space behaviour. (Scintilla feature 2597)</summary>
-        VirtualSpace GetVirtualSpaceOptions();
+        /// <summary>Returns the position at the end of the selection. (Scintilla feature 2597)</summary>
+        int GetVirtualSpaceOptions();
 
         /// <summary>
-        /// On GTK, allow selecting the modifier key to use for mouse-based
+        /// On GTK+, allow selecting the modifier key to use for mouse-based
         /// rectangular selection. Often the window manager requires Alt+Mouse Drag
         /// for moving windows.
         /// Valid values are SCMOD_CTRL(default), SCMOD_ALT, or SCMOD_SUPER.
@@ -2350,10 +2272,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SetAdditionalSelBack(Colour back);
 
         /// <summary>Set the alpha of the selection. (Scintilla feature 2602)</summary>
-        void SetAdditionalSelAlpha(Alpha alpha);
+        void SetAdditionalSelAlpha(int alpha);
 
         /// <summary>Get the alpha of the selection. (Scintilla feature 2603)</summary>
-        Alpha GetAdditionalSelAlpha();
+        int GetAdditionalSelAlpha();
 
         /// <summary>Set the foreground colour of additional carets. (Scintilla feature 2604)</summary>
         void SetAdditionalCaretFore(Colour fore);
@@ -2368,25 +2290,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SwapMainAnchorCaret();
 
         /// <summary>
-        /// Add the next occurrence of the main selection to the set of selections as main.
-        /// If the current selection is empty then select word around caret.
-        /// (Scintilla feature 2688)
-        /// </summary>
-        void MultipleSelectAddNext();
-
-        /// <summary>
-        /// Add each occurrence of the main selection in the target to the set of selections.
-        /// If the current selection is empty then select word around caret.
-        /// (Scintilla feature 2689)
-        /// </summary>
-        void MultipleSelectAddEach();
-
-        /// <summary>
         /// Indicate that the internal state of a lexer has changed over a range and therefore
         /// there may be a need to redraw.
         /// (Scintilla feature 2617)
         /// </summary>
-        int ChangeLexerState(int start, int end);
+        int ChangeLexerState(Position start, Position end);
 
         /// <summary>
         /// Find the next line at or after lineStart that is a contracted fold header line.
@@ -2404,7 +2312,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>Move the selected lines down one line, shifting the line below before the selection (Scintilla feature 2621)</summary>
         void MoveSelectedLinesDown();
 
-        /// <summary>Set the identifier reported as idFrom in notification messages. (Scintilla feature 2622)</summary>
+        /// <summary>Set the identifier reported as IdFrom in notification messages. (Scintilla feature 2622)</summary>
         void SetIdentifier(int identifier);
 
         /// <summary>Get the identifier. (Scintilla feature 2623)</summary>
@@ -2440,19 +2348,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void ScrollToEnd();
 
         /// <summary>Set the technology used. (Scintilla feature 2630)</summary>
-        void SetTechnology(Technology technology);
+        void SetTechnology(int technology);
 
         /// <summary>Get the tech. (Scintilla feature 2631)</summary>
-        Technology GetTechnology();
+        int GetTechnology();
 
         /// <summary>Create an ILoader*. (Scintilla feature 2632)</summary>
-        IntPtr CreateLoader(int bytes, DocumentOption documentOptions);
+        int CreateLoader(int bytes);
 
         /// <summary>On OS X, show a find indicator. (Scintilla feature 2640)</summary>
-        void FindIndicatorShow(int start, int end);
+        void FindIndicatorShow(Position start, Position end);
 
         /// <summary>On OS X, flash a find indicator, then fade out. (Scintilla feature 2641)</summary>
-        void FindIndicatorFlash(int start, int end);
+        void FindIndicatorFlash(Position start, Position end);
 
         /// <summary>On OS X, hide the find indicator. (Scintilla feature 2642)</summary>
         void FindIndicatorHide();
@@ -2474,13 +2382,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         void SetCaretLineVisibleAlways(bool alwaysVisible);
 
         /// <summary>Set the line end types that the application wants to use. May not be used if incompatible with lexer or encoding. (Scintilla feature 2656)</summary>
-        void SetLineEndTypesAllowed(LineEndType lineEndBitSet);
+        void SetLineEndTypesAllowed(int lineEndBitSet);
 
         /// <summary>Get the line end types currently allowed. (Scintilla feature 2657)</summary>
-        LineEndType GetLineEndTypesAllowed();
+        int GetLineEndTypesAllowed();
 
         /// <summary>Get the line end types currently recognised. May be a subset of the allowed types due to lexer limitation. (Scintilla feature 2658)</summary>
-        LineEndType GetLineEndTypesActive();
+        int GetLineEndTypesActive();
 
         /// <summary>Set the way a character is drawn. (Scintilla feature 2665)</summary>
         unsafe void SetRepresentation(string encodedCharacter, string representation);
@@ -2508,13 +2416,13 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         int GetLexer();
 
         /// <summary>Colourise a segment of the document using the current lexing language. (Scintilla feature 4003)</summary>
-        void Colourise(int start, int end);
+        void Colourise(Position start, Position end);
 
         /// <summary>Set up a value that may be used by a lexer for some optional feature. (Scintilla feature 4004)</summary>
         unsafe void SetProperty(string key, string value);
 
         /// <summary>Set up the key words used by the lexer. (Scintilla feature 4005)</summary>
-        unsafe void SetKeyWords(int keyWordSet, string keyWords);
+        unsafe void SetKeyWords(int keywordSet, string keyWords);
 
         /// <summary>Set the lexing language of the document based on string name. (Scintilla feature 4006)</summary>
         unsafe void SetLexerLanguage(string language);
@@ -2542,7 +2450,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// interpreted as an int AFTER any "$()" variable replacement.
         /// (Scintilla feature 4010)
         /// </summary>
-        unsafe int GetPropertyInt(string key, int defaultValue);
+        unsafe int GetPropertyInt(string key);
+
+        /// <summary>Retrieve the number of bits the current lexer needs for styling. (Scintilla feature 4011)</summary>
+        int GetStyleBitsNeeded();
 
         /// <summary>
         /// Retrieve the name of the lexer.
@@ -2553,7 +2464,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe string GetLexerLanguage();
 
         /// <summary>For private communication between an application and a known lexer. (Scintilla feature 4013)</summary>
-        IntPtr PrivateLexerCall(int operation, IntPtr pointer);
+        int PrivateLexerCall(int operation, int pointer);
 
         /// <summary>
         /// Retrieve a '\n' separated list of properties understood by the current lexer.
@@ -2563,7 +2474,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         unsafe string PropertyNames();
 
         /// <summary>Retrieve the type of a property. (Scintilla feature 4015)</summary>
-        unsafe TypeProperty PropertyType(string name);
+        unsafe int PropertyType(string name);
 
         /// <summary>
         /// Describe a property.
@@ -2621,64 +2532,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         unsafe string GetSubStyleBases();
 
-        /// <summary>Retrieve the number of named styles for the lexer. (Scintilla feature 4029)</summary>
-        int GetNamedStyles();
+        /// <summary>
+        /// Deprecated in 2.30
+        /// In palette mode?
+        /// (Scintilla feature 2139)
+        /// </summary>
+        bool GetUsePalette();
 
         /// <summary>
-        /// Retrieve the name of a style.
-        /// Result is NUL-terminated.
-        /// (Scintilla feature 4030)
+        /// In palette mode, Scintilla uses the environment's palette calls to display
+        /// more colours. This may lead to ugly displays.
+        /// (Scintilla feature 2039)
         /// </summary>
-        unsafe string NameOfStyle(int style);
-
-        /// <summary>
-        /// Retrieve a ' ' separated list of style tags like "literal quoted string".
-        /// Result is NUL-terminated.
-        /// (Scintilla feature 4031)
-        /// </summary>
-        unsafe string TagsOfStyle(int style);
-
-        /// <summary>
-        /// Retrieve a description of a style.
-        /// Result is NUL-terminated.
-        /// (Scintilla feature 4032)
-        /// </summary>
-        unsafe string DescriptionOfStyle(int style);
-
-        /// <summary>Retrieve bidirectional text display state. (Scintilla feature 2708)</summary>
-        Bidirectional GetBidirectional();
-
-        /// <summary>Set bidirectional text display state. (Scintilla feature 2709)</summary>
-        void SetBidirectional(Bidirectional bidirectional);
-
-        /// <summary>Retrieve line character index state. (Scintilla feature 2710)</summary>
-        LineCharacterIndexType GetLineCharacterIndex();
-
-        /// <summary>Request line character index be created or its use count increased. (Scintilla feature 2711)</summary>
-        void AllocateLineCharacterIndex(LineCharacterIndexType lineCharacterIndex);
-
-        /// <summary>Decrease use count of line character index and remove if 0. (Scintilla feature 2712)</summary>
-        void ReleaseLineCharacterIndex(LineCharacterIndexType lineCharacterIndex);
-
-        /// <summary>Retrieve the document line containing a position measured in index units. (Scintilla feature 2713)</summary>
-        int LineFromIndexPosition(int pos, LineCharacterIndexType lineCharacterIndex);
-
-        /// <summary>Retrieve the position measured in index units at the start of a document line. (Scintilla feature 2714)</summary>
-        int IndexPositionFromLine(int line, LineCharacterIndexType lineCharacterIndex);
-
-        /// <summary>
-        /// Divide each styling byte into lexical class bits (default: 5) and indicator
-        /// bits (default: 3). If a lexer requires more than 32 lexical states, then this
-        /// is used to expand the possible states.
-        /// (Scintilla feature 2090)
-        /// </summary>
-        void SetStyleBits(int bits);
-
-        /// <summary>Retrieve number of bits in style bytes used to hold the lexical state. (Scintilla feature 2091)</summary>
-        int GetStyleBits();
-
-        /// <summary>Retrieve the number of bits the current lexer needs for styling. (Scintilla feature 4011)</summary>
-        int GetStyleBitsNeeded();
+        void SetUsePalette(bool usePalette);
 
         /// <summary>
         /// Deprecated in 3.5.5
@@ -2689,16 +2555,6 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>Are keys always interpreted as Unicode? (Scintilla feature 2522)</summary>
         bool GetKeysUnicode();
-
-        /// <summary>Is drawing done in two phases with backgrounds drawn before foregrounds? (Scintilla feature 2283)</summary>
-        bool GetTwoPhaseDraw();
-
-        /// <summary>
-        /// In twoPhaseDraw mode, drawing is performed in two phases, first the background
-        /// and then the foreground. This avoids chopping off characters that overlap the next run.
-        /// (Scintilla feature 2284)
-        /// </summary>
-        void SetTwoPhaseDraw(bool twoPhase);
 
         /* --Autogenerated -- end of section automatically generated from Scintilla.iface */
     }
