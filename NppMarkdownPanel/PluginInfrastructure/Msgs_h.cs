@@ -191,7 +191,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETENABLETHEMETEXTUREFUNC = Constants.NPPMSG + 45,
 
         /// <summary>
-        ///void NPPM_GETPLUGINSCONFIGDIR(int strLen, TCHAR *str)
+        ///INT NPPM_GETPLUGINSCONFIGDIR(int strLen, TCHAR *str)
+        /// Get user's plugin config directory path. It's useful if plugins want to save/load parameters for the current user
+        /// Returns the number of TCHAR copied/to copy.
+        /// Users should call it with "str" be NULL to get the required number of TCHAR (not including the terminating nul character),
+        /// allocate "str" buffer with the return value + 1, then call it again to get the path.
         /// </summary>
         NPPM_GETPLUGINSCONFIGDIR = Constants.NPPMSG + 46,
 
@@ -239,7 +243,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_ISTABBARHIDDEN = Constants.NPPMSG + 52,
 
         /// <summary>
-        /// INT NPPM_GETPOSFROMBUFFERID(INT bufferID, INT priorityView)
+        /// INT NPPM_GETPOSFROMBUFFERID(UINT_PTR bufferID, INT priorityView)
         /// Return VIEW|INDEX from a buffer ID. -1 if the bufferID non existing
         /// if priorityView set to SUB_VIEW, then SUB_VIEW will be search firstly
         ///
@@ -251,11 +255,11 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETPOSFROMBUFFERID = Constants.NPPMSG + 57,
 
         /// <summary>
-        /// INT NPPM_GETFULLPATHFROMBUFFERID(INT bufferID, TCHAR *fullFilePath)
+        /// INT NPPM_GETFULLPATHFROMBUFFERID(UINT_PTR bufferID, TCHAR *fullFilePath)
         /// Get full path file name from a bufferID.
         /// Return -1 if the bufferID non existing, otherwise the number of TCHAR copied/to copy
         /// User should call it with fullFilePath be NULL to get the number of TCHAR (not including the nul character),
-        /// allocate fullFilePath with the return values + 1, then call it again to get  full path file name
+        /// allocate fullFilePath with the return values + 1, then call it again to get full path file name
         /// </summary>
         NPPM_GETFULLPATHFROMBUFFERID = Constants.NPPMSG + 58,
 
@@ -274,7 +278,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETCURRENTBUFFERID = Constants.NPPMSG + 60,
 
         /// <summary>
-        /// VOID NPPM_RELOADBUFFERID(0, 0)
+        /// VOID NPPM_RELOADBUFFERID(UINT_PTR bufferID, BOOL alert)
         /// Reloads Buffer
         /// wParam: Buffer to reload
         /// lParam: 0 if no alert, else alert
@@ -282,7 +286,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_RELOADBUFFERID = Constants.NPPMSG + 61,
 
         /// <summary>
-        /// INT NPPM_GETBUFFERLANGTYPE(INT bufferID, 0)
+        /// INT NPPM_GETBUFFERLANGTYPE(UINT_PTR bufferID, 0)
         /// wParam: BufferID to get LangType from
         /// lParam: 0
         /// Returns as int, see LangType. -1 on error
@@ -290,7 +294,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETBUFFERLANGTYPE = Constants.NPPMSG + 64,
 
         /// <summary>
-        /// BOOL NPPM_SETBUFFERLANGTYPE(INT bufferID, INT langType)
+        /// BOOL NPPM_SETBUFFERLANGTYPE(UINT_PTR bufferID, INT langType)
         /// wParam: BufferID to set LangType of
         /// lParam: LangType
         /// Returns TRUE on success, FALSE otherwise
@@ -300,7 +304,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_SETBUFFERLANGTYPE = Constants.NPPMSG + 65,
 
         /// <summary>
-        /// INT NPPM_GETBUFFERENCODING(INT bufferID, 0)
+        /// INT NPPM_GETBUFFERENCODING(UINT_PTR bufferID, 0)
         /// wParam: BufferID to get encoding from
         /// lParam: 0
         /// returns as int, see UniMode. -1 on error
@@ -308,7 +312,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETBUFFERENCODING = Constants.NPPMSG + 66,
 
         /// <summary>
-        /// BOOL NPPM_SETBUFFERENCODING(INT bufferID, INT encoding)
+        /// BOOL NPPM_SETBUFFERENCODING(UINT_PTR bufferID, INT encoding)
         /// wParam: BufferID to set encoding of
         /// lParam: encoding
         /// Returns TRUE on success, FALSE otherwise
@@ -318,39 +322,21 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_SETBUFFERENCODING = Constants.NPPMSG + 67,
 
         /// <summary>
-        /// INT NPPM_GETBUFFERFORMAT(INT bufferID, 0)
-        /// wParam: BufferID to get format from
+        /// INT NPPM_GETBUFFERFORMAT(UINT_PTR bufferID, 0)
+        /// wParam: BufferID to get EolType format from
         /// lParam: 0
-        /// returns as int, see formatType. -1 on error
+        /// returns as int, see EolType format. -1 on error
         /// </summary>
         NPPM_GETBUFFERFORMAT = Constants.NPPMSG + 68,
 
         /// <summary>
-        /// BOOL NPPM_SETBUFFERFORMAT(INT bufferID, INT format)
-        /// wParam: BufferID to set format of
+        /// BOOL NPPM_SETBUFFERFORMAT(UINT_PTR bufferID, INT format)
+        /// wParam: BufferID to set EolType format of
         /// lParam: format
         /// Returns TRUE on success, FALSE otherwise
-        /// use int, see formatType
+        /// use int, see EolType format
         /// </summary>
         NPPM_SETBUFFERFORMAT = Constants.NPPMSG + 69,
-
-        /// <summary>
-        /// BOOL NPPM_ADDREBAR(0, REBARBANDINFO *)
-        /// Returns assigned ID in wID value of struct pointer
-        /// </summary>
-        NPPM_ADDREBAR = Constants.NPPMSG + 57,
-
-        /// <summary>
-        /// BOOL NPPM_ADDREBAR(INT ID, REBARBANDINFO *)
-        ///Use ID assigned with NPPM_ADDREBAR
-        /// </summary>
-        NPPM_UPDATEREBAR = Constants.NPPMSG + 58,
-
-        /// <summary>
-        /// BOOL NPPM_ADDREBAR(INT ID, 0)
-        ///Use ID assigned with NPPM_ADDREBAR
-        /// </summary>
-        NPPM_REMOVEREBAR = Constants.NPPMSG + 59,
 
         /// <summary>
         /// BOOL NPPM_HIDETOOLBAR(0, BOOL hideOrNot)
@@ -398,7 +384,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// BOOL NPPM_GETSHORTCUTBYCMDID(int cmdID, ShortcutKey *sk)
         /// get your plugin command current mapped shortcut into sk via cmdID
         /// You may need it after getting NPPN_READY notification
-        /// returned value : TRUE if this function call is successful and shorcut is enable, otherwise FALSE
+        /// returned value : TRUE if this function call is successful and shortcut is enable, otherwise FALSE
         /// </summary>
         NPPM_GETSHORTCUTBYCMDID = Constants.NPPMSG + 76,
 
@@ -416,7 +402,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>
         /// INT NPPM_GETCURRENTNATIVELANGENCODING(0, 0)
-        /// returned value : the current native language enconding
+        /// returned value : the current native language encoding
         /// </summary>
         NPPM_GETCURRENTNATIVELANGENCODING = Constants.NPPMSG + 79,
 
@@ -443,7 +429,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>
         /// INT NPPM_GETLANGUAGENAME(int langType, TCHAR *langName)
-        /// Get programing language name from the given language type (LangType)
+        /// Get programming language name from the given language type (LangType)
         /// Return value is the number of copied character / number of character to copy (\0 is not included)
         /// You should call this function 2 times - the first time you pass langName as NULL to get the number of characters to copy.
         /// You allocate a buffer of the length of (the number of characters + 1) then call NPPM_GETLANGUAGENAME function the 2nd time
@@ -453,7 +439,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>
         /// INT NPPM_GETLANGUAGEDESC(int langType, TCHAR *langDesc)
-        /// Get programing language short description from the given language type (LangType)
+        /// Get programming language short description from the given language type (LangType)
         /// Return value is the number of copied character / number of character to copy (\0 is not included)
         /// You should call this function 2 times - the first time you pass langDesc as NULL to get the number of characters to copy.
         /// You allocate a buffer of the length of (the number of characters + 1) then call NPPM_GETLANGUAGEDESC function the 2nd time
@@ -462,7 +448,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETLANGUAGEDESC = Constants.NPPMSG + 84,
 
         /// <summary>
-        /// VOID NPPM_ISDOCSWITCHERSHOWN(0, BOOL toShowOrNot)
+        /// VOID NPPM_SHOWDOCSWITCHER(0, BOOL toShowOrNot)
         /// Send this message to show or hide doc switcher.
         /// if toShowOrNot is TRUE then show doc switcher, otherwise hide it.
         /// </summary>
@@ -476,7 +462,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         /// <summary>
         /// BOOL NPPM_GETAPPDATAPLUGINSALLOWED(0, 0)
-        /// Check to see if loading plugins from "%APPDATA%\Notepad++\plugins" is allowed.
+        /// Check to see if loading plugins from "%APPDATA%\..\Local\Notepad++\plugins" is allowed.
         /// </summary>
         NPPM_GETAPPDATAPLUGINSALLOWED = Constants.NPPMSG + 87,
 
@@ -519,6 +505,61 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         NPPM_SAVEFILE = Constants.NPPMSG + 94,
 
+        /// <summary>
+        /// VOID NPPM_DISABLEAUTOUPDATE(0, 0)
+        /// </summary>
+        NPPM_DISABLEAUTOUPDATE = Constants.NPPMSG + 95,
+
+        /// <summary>
+        /// BOOL NPPM_REMOVESHORTCUTASSIGNMENT(int cmdID)
+        /// removes the assigned shortcut mapped to cmdID
+        /// returned value : TRUE if function call is successful, otherwise FALSE
+        /// </summary>
+        NPPM_REMOVESHORTCUTBYCMDID = Constants.NPPMSG + 96,
+
+        /// <summary>
+        /// INT NPPM_GETPLUGINHOMEPATH(size_t strLen, TCHAR *pluginRootPath)
+        /// Get plugin home root path. It's useful if plugins want to get its own path
+        /// by appending <pluginFolderName> which is the name of plugin without extension part.
+        /// Returns the number of TCHAR copied/to copy.
+        /// Users should call it with pluginRootPath be NULL to get the required number of TCHAR (not including the terminating nul character),
+        /// allocate pluginRootPath buffer with the return value + 1, then call it again to get the path.
+        /// </summary>
+        NPPM_GETPLUGINHOMEPATH = Constants.NPPMSG + 97,
+
+        /// <summary>
+        /// INT NPPM_GETSETTINGSCLOUDPATH(size_t strLen, TCHAR *settingsOnCloudPath)
+        /// Get settings on cloud path. It's useful if plugins want to store its settings on Cloud, if this path is set.
+        /// Returns the number of TCHAR copied/to copy. If the return value is 0, then this path is not set, or the "strLen" is not enough to copy the path.
+        /// Users should call it with settingsCloudPath be NULL to get the required number of TCHAR (not including the terminating nul character),
+        /// allocate settingsCloudPath buffer with the return value + 1, then call it again to get the path.
+        /// </summary>
+        NPPM_GETSETTINGSONCLOUDPATH = Constants.NPPMSG + 98,
+
+        /// <summary>
+        /// BOOL NPPM_SETLINENUMBERWIDTHMODE(0, INT widthMode)
+        /// Set line number margin width in dynamic width mode (LINENUMWIDTH_DYNAMIC) or constant width mode (LINENUMWIDTH_CONSTANT)
+        /// It may help some plugins to disable non-dynamic line number margins width to have a smoothly visual effect while vertical scrolling the content in Notepad++
+        /// If calling is successful return TRUE, otherwise return FALSE.
+        /// </summary>
+        NPPM_SETLINENUMBERWIDTHMODE = Constants.NPPMSG + 99,
+        LINENUMWIDTH_DYNAMIC = 0,
+        LINENUMWIDTH_CONSTANT = 1,
+
+        /// <summary>
+        /// INT NPPM_GETLINENUMBERWIDTHMODE(0, 0)
+        /// Get line number margin width in dynamic width mode (LINENUMWIDTH_DYNAMIC) or constant width mode (LINENUMWIDTH_CONSTANT)
+        /// </summary>
+        NPPM_GETLINENUMBERWIDTHMODE = Constants.NPPMSG + 100,
+
+        /// <summary>
+        /// VOID NPPM_ADDTOOLBARICON_FORDARKMODE(UINT funcItem[X]._cmdID, toolbarIconsWithDarkMode iconHandles)
+        /// Use NPPM_ADDTOOLBARICON_FORDARKMODE instead obsolete NPPM_ADDTOOLBARICON which doesn't support the dark mode
+        /// 2 formats / 3 icons are needed:  1 * BMP + 2 * ICO 
+        /// All 3 handles below should be set so the icon will be displayed correctly if toolbar icon sets are changed by users, also in dark mode
+        /// </summary>
+        NPPM_ADDTOOLBARICON_FORDARKMODE = Constants.NPPMSG + 101,
+
         RUNCOMMAND_USER = Constants.WM_USER + 3000,
         NPPM_GETFULLCURRENTPATH = RUNCOMMAND_USER + FULL_CURRENT_PATH,
         NPPM_GETCURRENTDIRECTORY = RUNCOMMAND_USER + CURRENT_DIRECTORY,
@@ -526,6 +567,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPPM_GETNAMEPART = RUNCOMMAND_USER + NAME_PART,
         NPPM_GETEXTPART = RUNCOMMAND_USER + EXT_PART,
         NPPM_GETCURRENTWORD = RUNCOMMAND_USER + CURRENT_WORD,
+        NPPM_GETNPPDIRECTORY = RUNCOMMAND_USER + NPP_DIRECTORY,
         /// <summary>
         /// BOOL NPPM_GETXXXXXXXXXXXXXXXX(size_t strLen, TCHAR *str)
         /// where str is the allocated TCHAR array,
@@ -533,7 +575,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// The return value is TRUE when get generic_string operation success
         /// Otherwise (allocated array size is too small) FALSE
         /// </summary>
-        NPPM_GETNPPDIRECTORY = RUNCOMMAND_USER + NPP_DIRECTORY,
+        NPPM_GETFILENAMEATCURSOR = RUNCOMMAND_USER + GETFILENAMEATCURSOR,
 
         /// <summary>
         /// INT NPPM_GETCURRENTLINE(0, 0)
@@ -547,6 +589,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         NPPM_GETCURRENTCOLUMN = RUNCOMMAND_USER + CURRENT_COLUMN,
 
+        NPPM_GETNPPFULLFILEPATH = RUNCOMMAND_USER + NPP_FULL_FILE_PATH,
+
         VAR_NOT_RECOGNIZED = 0,
         FULL_CURRENT_PATH = 1,
         CURRENT_DIRECTORY = 2,
@@ -557,6 +601,8 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         NPP_DIRECTORY = 7,
         CURRENT_LINE = 8,
         CURRENT_COLUMN = 9,
+        NPP_FULL_FILE_PATH = 10,
+        GETFILENAMEATCURSOR = 11,
 
         /// <summary>
         /// To notify plugins that all the procedures of launchment of notepad++ are done.
@@ -682,12 +728,12 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         ///scnNotification->nmhdr.hwndFrom = bufferID;
         ///scnNotification->nmhdr.idFrom = docStatus;
         /// where bufferID is BufferID
-        ///       docStatus can be combined by DOCSTAUS_READONLY and DOCSTAUS_BUFFERDIRTY
+        ///       docStatus can be combined by DOCSTATUS_READONLY and DOCSTATUS_BUFFERDIRTY
         /// </summary>
         NPPN_READONLYCHANGED = NPPN_FIRST + 16,
 
-        DOCSTAUS_READONLY = 1,
-        DOCSTAUS_BUFFERDIRTY = 2,
+        DOCSTATUS_READONLY = 1,
+        DOCSTATUS_BUFFERDIRTY = 2,
 
         /// <summary>
         ///scnNotification->nmhdr.code = NPPN_DOCORDERCHANGED;

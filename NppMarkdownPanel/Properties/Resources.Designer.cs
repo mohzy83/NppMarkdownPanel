@@ -79,5 +79,15 @@ namespace NppMarkdownPanel.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap markdown_16x16_solid_dark {
+            get {
+                object obj = ResourceManager.GetObject("markdown_16x16_solid_dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

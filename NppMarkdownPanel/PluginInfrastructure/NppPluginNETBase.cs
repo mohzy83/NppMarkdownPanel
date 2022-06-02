@@ -12,17 +12,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
         }
-        
+
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut)
         {
             SetCommand(index, commandName, functionPointer, shortcut, false);
         }
-        
+
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, bool checkOnInit)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), checkOnInit);
         }
-        
+
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut, bool checkOnInit)
         {
             FuncItem funcItem = new FuncItem();
@@ -34,6 +34,15 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
                 funcItem._pShKey = shortcut;
             funcItem._init2Check = checkOnInit;
             _funcItems.Add(funcItem);
+        }
+
+        // menuitem with checkmark, toggle visible checkmark on/off
+        internal static void CheckMenuItemToggle(int idx, ref bool value)
+        {
+            // toggle value
+            value = !value;
+
+            Win32.CheckMenuItem(Win32.GetMenu(nppData._nppHandle), _funcItems.Items[idx]._cmdID, Win32.MF_BYCOMMAND | (value ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
         }
 
         internal static IntPtr GetCurrentScintilla()

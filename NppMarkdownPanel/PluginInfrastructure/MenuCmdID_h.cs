@@ -20,7 +20,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         IDM_FILE_SAVE = (IDM_FILE + 6),
         IDM_FILE_SAVEALL = (IDM_FILE + 7),
         IDM_FILE_SAVEAS = (IDM_FILE + 8),
-        //IDM_FILE_ASIAN_LANG              = (IDM_FILE + 9), 
+        //IDM_FILE_ASIAN_LANG              = (IDM_FILE + 9),
         IDM_FILE_PRINT = (IDM_FILE + 10),
         IDM_FILE_PRINTNOW = 1001,
         IDM_FILE_EXIT = (IDM_FILE + 11),
