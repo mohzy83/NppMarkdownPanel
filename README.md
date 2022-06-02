@@ -7,7 +7,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.6.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.6.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
@@ -71,6 +71,9 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+### Version 0.6.2 (released 2022-06-02)
+Bugfix release
+- viewer was crashed by too large documents (more than 10000 bytes)
 
 ### Version 0.6.1 (released 2022-05-26)
 - fix embedded images
