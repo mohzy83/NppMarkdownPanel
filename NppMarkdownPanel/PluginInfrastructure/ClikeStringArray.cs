@@ -1,7 +1,9 @@
 ﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Kbg.NppPluginNET.PluginInfrastructure
 {
@@ -18,10 +20,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             for (int i = 0; i < num; i++)
             {
                 IntPtr item = Marshal.AllocHGlobal(stringCapacity);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr(_nativeArray + (i * IntPtr.Size), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (num * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr(_nativeArray + (num * IntPtr.Size), IntPtr.Zero);
         }
         public ClikeStringArray(List<string> lstStrings)
         {
@@ -30,10 +32,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
             for (int i = 0; i < lstStrings.Count; i++)
             {
                 IntPtr item = Marshal.StringToHGlobalUni(lstStrings[i]);
-                Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (i * IntPtr.Size)), item);
+                Marshal.WriteIntPtr(_nativeArray + (i * IntPtr.Size), item);
                 _nativeItems.Add(item);
             }
-            Marshal.WriteIntPtr((IntPtr)((int)_nativeArray + (lstStrings.Count * IntPtr.Size)), IntPtr.Zero);
+            Marshal.WriteIntPtr(_nativeArray + (lstStrings.Count * IntPtr.Size), IntPtr.Zero);
         }
 
         public IntPtr NativePointer { get { return _nativeArray; } }
@@ -52,12 +54,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
 
         public void Dispose()
         {
-            if (!_disposed)
+            try
             {
-                for (int i = 0; i < _nativeItems.Count; i++)
-                    if (_nativeItems[i] != IntPtr.Zero) Marshal.FreeHGlobal(_nativeItems[i]);
-                if (_nativeArray != IntPtr.Zero) Marshal.FreeHGlobal(_nativeArray);
-                _disposed = true;
+                if (!_disposed)
+                {
+                    for (int i = 0; i < _nativeItems.Count; i++)
+                        if (_nativeItems[i] != IntPtr.Zero) Marshal.FreeHGlobal(_nativeItems[i]);
+                    if (_nativeArray != IntPtr.Zero) Marshal.FreeHGlobal(_nativeArray);
+                    _disposed = true;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(MethodBase.GetCurrentMethod().ToString() +": "+ e.Message, this.GetType().Name);
             }
         }
         ~ClikeStringArray()

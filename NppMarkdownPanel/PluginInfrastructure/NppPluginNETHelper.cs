@@ -183,14 +183,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct toolbarIconsOld
-    {
-        public IntPtr hToolbarBmp;			// standard icon (color)
-        public IntPtr hToolbarIcon;			// Fluent UI icon (black)
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct toolbarIconsNew
+    public struct toolbarIcons
     {
         public IntPtr hToolbarBmp;			// standard icon (color)
         public IntPtr hToolbarIcon;			// Fluent UI icon (black)

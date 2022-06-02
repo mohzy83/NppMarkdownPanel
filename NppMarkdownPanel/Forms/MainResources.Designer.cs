@@ -63,7 +63,7 @@ namespace NppMarkdownPanel.Forms {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die NppMarkdownPanel for Notepad++
         ///
-        ///Version 0.6.1
+        ///Version 0.6.2
         ///
         ///Created by Mohzy 2019-2022
         ///
