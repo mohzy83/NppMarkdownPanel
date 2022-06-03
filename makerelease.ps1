@@ -8,4 +8,10 @@ foreach ($d in ("$dest-x64", "$dest")) { # $dest+"-x64", $dest+""
     Copy-Item "NppMarkdownPanel\$f" -Destination $d -Force
   }
 }
+$ResDir = "$dest-tests" 
+if ( !(Test-Path -Path $ResDir)) {new-item -itemtype directory $ResDir}
+foreach ($d in ("test01_AπCÊE","_posts","assets")) {
+  Copy-Item "NppMarkdownPanel\Resources\$d" -Destination $ResDir -Recurse -Force
+}
+
 Compress-Archive -Path "$dest*" <#only paths below "...bin\"#> -DestinationPath $zipName -Force
