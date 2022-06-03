@@ -23,8 +23,8 @@ namespace NppMarkdownPanel.Forms
          @"<!DOCTYPE html>
             <html>
                 <head>
-	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
-	                <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
+                    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
+                    <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
                     <title>{0}</title>
                     <style type=""text/css"">
                     {1}
@@ -124,7 +124,6 @@ namespace NppMarkdownPanel.Forms
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
                 renderTask = new Task<Tuple<string, string>>(() => RenderHtmlInternal(currentText, filepath));
-
                 renderTask.ContinueWith((renderedText) =>
                 {
                     webBrowserPreview.DocumentText = renderedText.Result.Item1;
@@ -133,23 +132,21 @@ namespace NppMarkdownPanel.Forms
                     {
                         var fullPathFName = HtmlFileName;
                         bool valid = false;
-                        string fullPath = "";
                         if (HtmlFileName == ".")
-                        {
+                        {  //auto-name
                             fullPathFName = currentFilePath + ".html";
                             valid = true;
                         }
                         else
                         {
-                            valid = Utils.ValidateFileSelection(HtmlFileName, out fullPath, out string error, "HTML Output");
+                            valid = Utils.ValidateFileSelection(HtmlFileName, out fullPathFName, out string error, "HTML Output");
                             // the validation was run against this path, so we want to make sure the state of the preview matches that
                         }
                         if (valid)
                         {
-                            HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
                             try
                             {
-                                File.WriteAllText(HtmlFileName, htmlContent);
+                                File.WriteAllText(fullPathFName, htmlContent);
                             }
                             catch (Exception)
                             {
@@ -158,7 +155,6 @@ namespace NppMarkdownPanel.Forms
                         }
                     }
 
-                    webBrowserPreview.DocumentText = htmlContent;
                     AdjustZoomLevel();
                 }, context);
                 renderTask.Start();
@@ -321,11 +317,12 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private async void btnSaveHtml_Click(object sender, EventArgs e)
+        // private async void btnSaveHtml_Click(object sender, EventArgs e)
+        private void btnSaveHtml_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                Stream myStream;
+                // Stream myStream; 
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
                 if (string.IsNullOrEmpty(saveFileDialog.FileName))
@@ -334,11 +331,12 @@ namespace NppMarkdownPanel.Forms
                 }
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if ((myStream = saveFileDialog.OpenFile()) != null)
-                    {
-                        await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
-                        myStream.Close();
-                    }
+                    File.WriteAllText(saveFileDialog.FileName, htmlContent);
+                    // if ((myStream = saveFileDialog.OpenFile()) != null)
+                    // {
+                    //     await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
+                    //     myStream.Close(); //? but last part of long htmlContent is ignored ?
+                    // }
                 }
             }
         }
