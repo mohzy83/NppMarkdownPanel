@@ -661,8 +661,7 @@ namespace Markdig.Helpers
         [MethodImpl(MethodImplOptionPortable.AggressiveInlining)]
         private static bool IsEndOfUri(char c, bool isAutoLink)
         {
-            //return c == '\0' || c.IsSpaceOrTab() || c.IsControl() || (isAutoLink && c == '<'); // TODO: specs unclear. space is strict or relaxed? (includes tabs?)
-            return c == '\0' || c.IsTab() || c.IsControl() || (isAutoLink && c == '<'); // TODO: specs unclear. space is strict or relaxed? (includes tabs?) - space is allowed in this version
+            return c == '\0' || c.IsSpaceOrTab() || c.IsControl() || (isAutoLink && c == '<'); // TODO: specs unclear. space is strict or relaxed? (includes tabs?)
         }
 
         public static bool IsValidDomain(string link, int prefixLength)
