@@ -63,7 +63,9 @@ namespace NppMarkdownPanel.Forms {
         /// <summary>
         ///   Looks up a localized string similar to NppMarkdownPanel for Notepad++
         ///
-        ///Version 0.5.+ Created by Mohzy 2019
+        ///Version 0.6.1
+        ///
+        ///Created by Mohzy 2019-2022
         ///
         ///Github: https://github.com/mohzy83/NppMarkdownPanel
         ///

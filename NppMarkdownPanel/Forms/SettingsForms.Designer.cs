@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForms));
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -54,9 +53,9 @@
             this.tbRegExpFile = new System.Windows.Forms.TextBox();
             this.lblRegExpFile = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit(); #
             this.SuspendLayout();
             // 
             // panel1
@@ -80,15 +79,6 @@
             this.label1.Size = new System.Drawing.Size(187, 20);
             this.label1.TabIndex = 1;
             this.label1.Text = "Markdown Panel Settings";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::NppMarkdownPanel.Properties.Resources.markdown_16x16_solid;
-            this.pictureBox1.Location = new System.Drawing.Point(10, 19);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(24, 20);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
             // 
             // btnSave
             // 
@@ -146,8 +136,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 1;
             this.trackBar1.Location = new System.Drawing.Point(130, 146);
-            this.trackBar1.Maximum = 200;
-            this.trackBar1.Minimum = 90;
+            this.trackBar1.Maximum = 400;
+            this.trackBar1.Minimum = 40;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(512, 53);
             this.trackBar1.TabIndex = 6;
@@ -351,10 +341,10 @@
             this.Text = "Settings";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

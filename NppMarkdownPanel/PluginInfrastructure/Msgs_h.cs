@@ -166,7 +166,10 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// <summary>
         ///void WM_ADDTOOLBARICON(UINT funcItem[X]._cmdID, toolbarIcons icon)
         /// </summary>
-        NPPM_ADDTOOLBARICON = Constants.NPPMSG + 41,
+        NPPM_ADDTOOLBARICON_DEPRECATED = Constants.NPPMSG + 41,
+
+
+        NPPM_ADDTOOLBARICON_FORDARKMODE = Constants.NPPMSG + 101,
 
         /// <summary>
         ///winVer NPPM_GETWINDOWSVERSION(0, 0)

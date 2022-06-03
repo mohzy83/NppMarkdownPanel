@@ -31,10 +31,19 @@ namespace NppMarkdownPanel
             pipeline.PreciseSourceLocation = true;
             try
             {
-                htmlRenderer.BaseUrl = new Uri(filepath);
+                if (filepath != null)
+                {
+                    htmlRenderer.BaseUrl = new Uri(filepath);
+                }
+                else
+                {
+                    htmlRenderer.BaseUrl = null;
+                }
+                
             }
-            catch
+            catch (Exception e)
             {
+                if (e != null) {}
             }
             sb.Clear();
 

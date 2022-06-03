@@ -7,7 +7,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.5.1.2** - master branch can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.6.2** it can be found [here](https://github.com/andrzejQ/NppMarkdownPanel/releases)
 
 Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
 ( forked from <https://github.com/UrsineRaven/NppMarkdownPanel> / forked from <https://github.com/mohzy83/NppMarkdownPanel> )
@@ -98,6 +98,29 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### Version 0.6.2 (released 2022-06-09)
+- merged mohzy83/NppMarkdownPanel v.0.6.1
+
+### Version 0.6.1 (released 2022-05-26)
+(mohzy83/NppMarkdownPanel)
+- fix embedded images
+- fix dark icon
+- plugin headers for npp updated
+- darkmode icon
+- fixed refresh bug for 64-bit version of plugin
+- new zoom level range from 40 % to 400%
+- save html
+- images for help file now included
+
+### Version 0.5.1.3
+
+Do not escape chars in file: url (IE/Edge bug)  
+if  
+BaseUrl.Scheme == "file" && UseNonAsciiNoEscape  
+i.e. fix a bug under IE/Edge with local file links containing non US-ASCII chars
+
+Also when [alt] starts with "url_" then unescape input url. See "test01" in "*.zip".
 
 ### Version 0.5.1.2
 

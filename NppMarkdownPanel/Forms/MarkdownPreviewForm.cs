@@ -36,7 +36,7 @@ namespace NppMarkdownPanel.Forms
             </html>
             ";
 
-        private Task<string> renderTask;
+        private Task<Tuple<string, string>> renderTask;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
         private string htmlContent;
@@ -72,6 +72,48 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
+        private Tuple<string,string> RenderHtmlInternal(string currentText, string filepath)
+        {
+            var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+            //AK2019
+            //multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
+            if (UseRegExp)
+            {
+                if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string tmpRegExpFileName))
+                {
+                    if (RegExp3lines is null)
+                    {//re-read it
+                        RegExp3lines = Utils.ReadRegExp3lines(tmpRegExpFileName);
+                    }
+                    currentText = Utils.RegExp3replace(currentText, RegExp3lines);
+                }
+                else
+                {
+                    RegExp3lines = new string[0]; //!= null - don't re-read RegExpFile
+                }
+            }
+			//
+            var result = markdownGenerator.ConvertToHtml(currentText, filepath);
+            var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
+            var defaultBodyStyle = "";
+
+            // Path of plugin directory
+            var markdownStyleContent = "";
+
+            if (File.Exists(CssFileName))
+            {
+                markdownStyleContent = File.ReadAllText(CssFileName);
+            }
+            else
+            {
+                markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+            }
+
+            var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
+            var markdownHtml2 = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultWithRelativeImages);
+            return new Tuple<string, string>(markdownHtml, markdownHtml2);
+        }
+
         public void RenderMarkdown(string currentText, string filepath)
         {
             currentFilePath = filepath;
@@ -81,50 +123,12 @@ namespace NppMarkdownPanel.Forms
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
-                renderTask = new Task<string>(() =>
-                {
-                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-                    //AK2019
-                    //multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
-                    if (UseRegExp)
-                    {
-                        if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string tmpRegExpFileName))
-                        {
-                            if (RegExp3lines is null)
-                            {//re-read it
-                                RegExp3lines = Utils.ReadRegExp3lines(tmpRegExpFileName);
-                            }
-                            currentText = Utils.RegExp3replace(currentText, RegExp3lines);
-                        }
-                        else
-                        {
-                            RegExp3lines = new string[0]; //!= null - don't re-read RegExpFile
-                        }
-                    }
-               
-                    var result = markdownGenerator.ConvertToHtml(currentText, filepath);
-                    var defaultBodyStyle = "";
+                renderTask = new Task<Tuple<string, string>>(() => RenderHtmlInternal(currentText, filepath));
 
-                    // Path of plugin directory
-                    //var markdownStyleContent = "";
-                    if (MarkdownStyleContent is null)
-                    {
-                        if (Utils.FileNameExists(CssFileName, assemblyPath + "\\" + MainResources.DefaultCssFile, out string tmpCssFileName))
-                        {
-                            MarkdownStyleContent = File.ReadAllText(tmpCssFileName);
-                        }
-                        else
-                        {
-                            MarkdownStyleContent = ""; //!= null - don't re-read CssFile
-                        }
-                    }
-
-                    var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), MarkdownStyleContent, defaultBodyStyle, result);
-                    return markdownHtml;
-                });
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    htmlContent = renderedText.Result;
+                    webBrowserPreview.DocumentText = renderedText.Result.Item1;
+                    htmlContent = renderedText.Result.Item2;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
                         var fullPathFName = HtmlFileName;
@@ -136,7 +140,7 @@ namespace NppMarkdownPanel.Forms
                         }
                         else
                         {
-                            valid = Utils.ValidateFileSelection(HtmlFileName, out fullPathFName, out string error, "HTML Output");
+                            bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPathFName, out string error, "HTML Output");
                             // the validation was run against this path, so we want to make sure the state of the preview matches that
                         }
                         if (valid)
