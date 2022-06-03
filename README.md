@@ -7,7 +7,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.6.2** it can be found [here](https://github.com/andrzejQ/NppMarkdownPanel/releases)
+The current version is **0.6.1.1** it can be found [here](https://github.com/andrzejQ/NppMarkdownPanel/releases)
 
 Branch in develop stage: <https://github.com/andrzejQ/NppMarkdownPanel/releases>
 ( forked from <https://github.com/UrsineRaven/NppMarkdownPanel> / forked from <https://github.com/mohzy83/NppMarkdownPanel> )
