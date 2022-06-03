@@ -92,7 +92,7 @@ namespace NppMarkdownPanel.Forms
                     RegExp3lines = new string[0]; //!= null - don't re-read RegExpFile
                 }
             }
-			//
+            //
             var result = markdownGenerator.ConvertToHtml(currentText, filepath);
             var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
             var defaultBodyStyle = "";
@@ -133,6 +133,7 @@ namespace NppMarkdownPanel.Forms
                     {
                         var fullPathFName = HtmlFileName;
                         bool valid = false;
+                        string fullPath = "";
                         if (HtmlFileName == ".")
                         {
                             fullPathFName = currentFilePath + ".html";
@@ -140,14 +141,15 @@ namespace NppMarkdownPanel.Forms
                         }
                         else
                         {
-                            bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPathFName, out string error, "HTML Output");
+                            valid = Utils.ValidateFileSelection(HtmlFileName, out fullPath, out string error, "HTML Output");
                             // the validation was run against this path, so we want to make sure the state of the preview matches that
                         }
                         if (valid)
                         {
+                            HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
                             try
                             {
-                                File.WriteAllText(fullPathFName, htmlContent);
+                                File.WriteAllText(HtmlFileName, htmlContent);
                             }
                             catch (Exception)
                             {
@@ -323,7 +325,7 @@ namespace NppMarkdownPanel.Forms
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                //Stream myStream;
+                Stream myStream;
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
                 if (string.IsNullOrEmpty(saveFileDialog.FileName))
@@ -332,12 +334,11 @@ namespace NppMarkdownPanel.Forms
                 }
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    File.WriteAllText(saveFileDialog.FileName, htmlContent);
-                    // if ((myStream = saveFileDialog.OpenFile()) != null)
-                    // {
-                    //     await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
-                    //     myStream.Close();  //? but last part of htmlContent is ignored ?
-                    // }
+                    if ((myStream = saveFileDialog.OpenFile()) != null)
+                    {
+                        await myStream.WriteAsync(Encoding.UTF8.GetBytes(htmlContent), 0, htmlContent.Length); //- ! Encoding.ASCII
+                        myStream.Close();
+                    }
                 }
             }
         }
