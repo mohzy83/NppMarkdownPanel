@@ -52,9 +52,9 @@ namespace NppMarkdownPanel
             {
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
-                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
+                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
                     {
-                        lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
+                        lastCaretPosition = scintillaGateway.GetCurrentPos();
                         ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
                     }
                 }
@@ -65,8 +65,8 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    /*bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
-                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;*/
+                    bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
+                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
                     // Any modifications made ?
                     if (true)
                     {
@@ -170,12 +170,12 @@ namespace NppMarkdownPanel
 
         public void SetToolBarIcon()
         {
-            toolbarIconsOld tbIconsOld = new toolbarIconsOld();
+            toolbarIcons tbIconsOld = new toolbarIcons();
             tbIconsOld.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
             tbIconsOld.hToolbarIcon = Properties.Resources.markdown_16x16_solid_dark.GetHicon();
             IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIconsOld));
             Marshal.StructureToPtr(tbIconsOld, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON_DEPRECATED, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
 
             // if npp version >= 8 then use new NPPM_ADDTOOLBARICON_FORDARKMODE

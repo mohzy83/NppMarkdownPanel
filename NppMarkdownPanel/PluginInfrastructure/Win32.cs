@@ -266,7 +266,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// If gateways are missing or incomplete, please help extend them and send your code to the project
         /// at https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net
         /// </summary>
-	public static IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, ref LangType lParam)
+        public static IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, ref LangType lParam)
         {
             IntPtr outVal;
             IntPtr retval = SendMessage(hWnd, (UInt32)Msg, new IntPtr(wParam), out outVal);
@@ -279,7 +279,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         [DllImport("kernel32")]
         public static extern int GetPrivateProfileInt(string lpAppName, string lpKeyName, int nDefault, string lpFileName);
 
-	[DllImport("kernel32")]
+        [DllImport("kernel32")]
         public static extern int GetPrivateProfileString(string lpAppName, string lpKeyName, string lpDefault, StringBuilder lpReturnedString, int nSize, string lpFileName);
 
         [DllImport("kernel32")]
@@ -288,12 +288,18 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public const int MF_BYCOMMAND = 0;
         public const int MF_CHECKED = 8;
         public const int MF_UNCHECKED = 0;
+        public const int MF_ENABLED = 0;
+        public const int MF_GRAYED = 1;
+        public const int MF_DISABLED = 2;
 
         [DllImport("user32")]
         public static extern IntPtr GetMenu(IntPtr hWnd);
 
         [DllImport("user32")]
-        public static extern int CheckMenuItem(IntPtr hmenu, int uIDCheckItem, int uCheck);
+        public static extern int CheckMenuItem(IntPtr hMenu, int uIDCheckItem, int uCheck);
+
+        [DllImport("user32")]
+        public static extern bool EnableMenuItem(IntPtr hMenu, int uIDEnableItem, int uEnable);
 
         public const int WM_CREATE = 1;
 
