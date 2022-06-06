@@ -29,7 +29,7 @@
 	<!-- $(MSBuildProgramFiles32) points to the 32 bit program files dir.
 		On 32 bit windows usually C:\Program Files\
 		On 64 bit windows usually C:\Program Files (x86)\
-		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) 
+		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) -->
     <MakeDir Directories="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\') AND !Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'" />
     <Copy 
         SourceFiles="$(TargetPath)" 
@@ -41,6 +41,6 @@
         SourceFiles="$(TargetPath)" 
         DestinationFolder="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\" 
         Condition="Exists('$(ProgramW6432)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x64'"
-        ContinueOnError="false" />-->
+        ContinueOnError="false" />
   </Target>
 </Project>
