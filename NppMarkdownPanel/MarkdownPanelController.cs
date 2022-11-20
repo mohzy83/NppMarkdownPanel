@@ -311,8 +311,8 @@ namespace NppMarkdownPanel
         {
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
             syncViewWithScrollPosition = false;
-            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
-            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[1]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[3]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
             if (syncViewWithCaretPosition) ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
         }
 
@@ -320,8 +320,8 @@ namespace NppMarkdownPanel
         {
             syncViewWithScrollPosition = !syncViewWithScrollPosition;
             syncViewWithCaretPosition = false;
-            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[1]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
-            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[3]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
             if (syncViewWithScrollPosition) ScrollToElementAtLineNo(scintillaGateway.GetFirstVisibleLine());
         }
 
