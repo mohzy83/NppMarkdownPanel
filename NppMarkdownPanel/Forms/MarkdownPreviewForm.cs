@@ -22,10 +22,10 @@ namespace NppMarkdownPanel.Forms
         const string DEFAULT_HTML_BASE =
          @"<!DOCTYPE html>
             <html>
-                <head>
-                    <title>{0}</title>
-	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
+                <head>                    
+	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
 	                <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
+                    <title>{0}</title>
                     <style type=""text/css"">
                     {1}
                     </style>
@@ -33,7 +33,7 @@ namespace NppMarkdownPanel.Forms
                 <body style=""{2}"">
                 {3}
                 </body>
-            <html>
+            </html>
             ";
 
         private Task<Tuple<string, string>> renderTask;

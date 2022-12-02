@@ -1,4 +1,4 @@
-# NppMarkdownPanel
+# MarkdownPanel for Notepad++
 Plugin to preview Markdown files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
