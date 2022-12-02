@@ -106,14 +106,7 @@ namespace NppMarkdownPanel.Forms
                         if (valid)
                         {
                             HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
-                            try
-                            {
-                                File.WriteAllText(HtmlFileName, htmlContent);
-                            }
-                            catch (Exception)
-                            {
-                                // If it fails, just continue
-                            }
+                            writeHtmlContentToFile(HtmlFileName);
                         }
                     }
                     AdjustZoomLevel();
@@ -278,21 +271,24 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private async void btnSaveHtml_Click(object sender, EventArgs e)
+        private void btnSaveHtml_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
-                Stream myStream;
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    if ((myStream = saveFileDialog.OpenFile()) != null)
-                    {
-                        await myStream.WriteAsync(Encoding.ASCII.GetBytes(htmlContent), 0, htmlContent.Length);
-                        myStream.Close();
-                    }
+                    writeHtmlContentToFile(saveFileDialog.FileName);
                 }
+            }
+        }
+
+        private void writeHtmlContentToFile(string filename)
+        {
+            if (!string.IsNullOrEmpty(filename))
+            {
+                File.WriteAllText(filename, htmlContent);
             }
         }
     }
