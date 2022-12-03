@@ -10,14 +10,14 @@ using System.Windows.Forms;
 
 namespace NppMarkdownPanel.Forms
 {
-    public partial class SettingsForms : Form
+    public partial class SettingsForm : Form
     {
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
+        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
