@@ -283,7 +283,7 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForms(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, MkdnExtensions, HtmlExtensions);
+            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, MkdnExtensions, HtmlExtensions);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
@@ -354,9 +354,11 @@ namespace NppMarkdownPanel
 
         private void ShowAboutDialog()
         {
-            MessageBox.Show(
-                MainResources.AboutDialogText
-                , "About");
+            // MessageBox.Show(
+            //     MainResources.AboutDialogText
+            //     , "About");
+            var aboutDialog = new AboutForm();
+            aboutDialog.ShowDialog();
         }
 
         private bool initDialog;

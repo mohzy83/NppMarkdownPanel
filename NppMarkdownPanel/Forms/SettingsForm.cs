@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace NppMarkdownPanel.Forms
 {
-    public partial class SettingsForms : Form
+    public partial class SettingsForm : Form
     {
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
@@ -19,7 +19,7 @@ namespace NppMarkdownPanel.Forms
         public string HtmlExtensions { get; set; }
         public bool ShowToolbar { get; set; }
 
-        public SettingsForms(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string mkdnExtensions, string htmlExtensions)
+        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string mkdnExtensions, string htmlExtensions)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
