@@ -37,12 +37,13 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config" />	    
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MarkdigMarkdownGenerator.cs" />
     <Compile Include="Wrapper.cs" />
-  </ItemGroup>
+	<Compile Include="Properties\AssemblyInfo.cs" />
+	</ItemGroup>
   <ItemGroup>
     <Reference Include="Markdig, Version=0.30.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdig.0.30.4\lib\net452\Markdig.dll</HintPath>
