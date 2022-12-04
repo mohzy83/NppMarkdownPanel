@@ -58,7 +58,9 @@ namespace NppMarkdownPanel
                 else
                 if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
+					// Focus was switched to a new document
                     RenderMarkdown();
+                    markdownPreviewForm.ScrollToTop();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
@@ -94,7 +96,7 @@ namespace NppMarkdownPanel
             {
                 markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
             }
-            catch 
+            catch
             {
             }
         }
@@ -119,7 +121,7 @@ namespace NppMarkdownPanel
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             PluginBase.SetCommand(0, "Edit Settings", EditSettings);
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);            
+            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
             PluginBase.SetCommand(3, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             idMyDlg = 1;
         }
@@ -165,17 +167,6 @@ namespace NppMarkdownPanel
             Marshal.StructureToPtr(tbIconsOld, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
-
-            // if npp version >= 8 then use new NPPM_ADDTOOLBARICON_FORDARKMODE
-            /*    toolbarIconsNew tbIconsNew = new toolbarIconsNew();
-                tbIconsNew.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
-                tbIconsNew.hToolbarIcon = Properties.Resources.markdown_16x16_solid.GetHicon();
-                tbIconsNew.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid.GetHicon();
-                //    tbIconsOld.hToolbarIconDarkMode = Properties.Resources.markdown_16x16_solid_dark.GetHbitmap();
-                IntPtr pTbIconsNew = Marshal.AllocHGlobal(Marshal.SizeOf(tbIconsNew));
-                Marshal.StructureToPtr(tbIconsNew, pTbIconsNew, false);
-                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON_FORDARKMODE, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIconsNew);
-                Marshal.FreeHGlobal(pTbIconsNew);*/
         }
 
         public void PluginCleanUp()
@@ -194,9 +185,6 @@ namespace NppMarkdownPanel
 
         private void ShowAboutDialog()
         {
-            // MessageBox.Show(
-            //     MainResources.AboutDialogText
-            //     , "About");
             var aboutDialog = new AboutForm();
             aboutDialog.ShowDialog();
         }
