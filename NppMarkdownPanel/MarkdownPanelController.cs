@@ -117,11 +117,10 @@ namespace NppMarkdownPanel
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
-            PluginBase.SetCommand(0, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
+            PluginBase.SetCommand(0, "Edit Settings", EditSettings);
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
-            PluginBase.SetCommand(3, "Edit Settings", EditSettings);
-
+            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);            
+            PluginBase.SetCommand(3, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
             idMyDlg = 1;
         }
 
