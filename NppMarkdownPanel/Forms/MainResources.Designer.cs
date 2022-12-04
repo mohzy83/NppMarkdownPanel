@@ -91,5 +91,14 @@ namespace NppMarkdownPanel.Forms {
                 return ResourceManager.GetString("DefaultCssFile", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die style-dark.css ähnelt.
+        /// </summary>
+        internal static string DefaultDarkModeCssFile {
+            get {
+                return ResourceManager.GetString("DefaultDarkModeCssFile", resourceCulture);
+            }
+        }
     }
 }

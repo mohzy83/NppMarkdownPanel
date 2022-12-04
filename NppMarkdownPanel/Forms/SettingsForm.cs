@@ -14,19 +14,22 @@ namespace NppMarkdownPanel.Forms
     {
         public int ZoomLevel { get; set; }
         public string CssFileName { get; set; }
+        public string CssDarkModeFileName { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
 
-        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar)
+        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
+            CssDarkModeFileName = cssDarkModeFileName;
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
             tbCssFile.Text = cssFileName;
+            tbDarkmodeCssFile.Text = cssDarkModeFileName;
             tbHtmlFile.Text = htmlFileName;
             cbShowToolbar.Checked = showToolbar;
         }
@@ -41,6 +44,10 @@ namespace NppMarkdownPanel.Forms
         {
             CssFileName = tbCssFile.Text;
         }
+        private void tbDarkmodeCssFile_TextChanged(object sender, EventArgs e)
+        {
+            CssDarkModeFileName = tbDarkmodeCssFile.Text;
+        }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -52,7 +59,7 @@ namespace NppMarkdownPanel.Forms
                 else
                     tbHtmlFile.Text = validPath;
             }
-            
+
             if (String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
             {
                 this.DialogResult = DialogResult.OK;
@@ -72,8 +79,17 @@ namespace NppMarkdownPanel.Forms
                 openFileDialog.RestoreDirectory = true;
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    CssFileName = openFileDialog.FileName;
-                    tbCssFile.Text = CssFileName;
+                    if ((sender as Button).Name == "btnChooseCss")
+                    {
+                        CssFileName = openFileDialog.FileName;
+                        tbCssFile.Text = CssFileName;
+                    }
+                    else if ((sender as Button).Name == "btnChooseDarkmodeCss")
+                    {
+                        CssDarkModeFileName = openFileDialog.FileName;
+                        tbDarkmodeCssFile.Text = CssDarkModeFileName;
+                    }
+
                 }
             }
         }
@@ -81,6 +97,10 @@ namespace NppMarkdownPanel.Forms
         private void button1_Click(object sender, EventArgs e)
         {
             tbCssFile.Text = "";
+        }
+        private void btnDefaultDarkmodeCss_Click(object sender, EventArgs e)
+        {
+            tbDarkmodeCssFile.Text = "";
         }
 
         #region Output HTML File
@@ -139,5 +159,7 @@ namespace NppMarkdownPanel.Forms
             ShowToolbar = cbShowToolbar.Checked;
         }
         #endregion
+
+
     }
 }

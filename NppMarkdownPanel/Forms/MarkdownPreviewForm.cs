@@ -42,18 +42,26 @@ namespace NppMarkdownPanel.Forms
         private bool showToolbar;
 
         public string CssFileName { get; set; }
+
+        public string CssDarkModeFileName { get; set; }
+
         public int ZoomLevel { get; set; }
         public string HtmlFileName { get; set; }
-        public bool ShowToolbar {
+
+        public bool IsDarkModeEnabled { get; set; }
+
+        public bool ShowToolbar
+        {
             get => showToolbar;
-            set {
+            set
+            {
                 showToolbar = value;
                 tbPreview.Visible = value;
             }
         }
 
         private IMarkdownGenerator markdownGenerator;
-        
+
         public MarkdownPreviewForm(Action toolWindowCloseAction)
         {
             this.toolWindowCloseAction = toolWindowCloseAction;
@@ -61,7 +69,7 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
-        private Tuple<string,string> RenderHtmlInternal(string currentText, string filepath)
+        private Tuple<string, string> RenderHtmlInternal(string currentText, string filepath)
         {
             var result = markdownGenerator.ConvertToHtml(currentText, filepath);
             var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
@@ -72,13 +80,15 @@ namespace NppMarkdownPanel.Forms
 
             var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
 
-            if (File.Exists(CssFileName))
+            var defaultCss = IsDarkModeEnabled ? MainResources.DefaultDarkModeCssFile : MainResources.DefaultCssFile;
+            var customCssFile = IsDarkModeEnabled ? CssDarkModeFileName : CssFileName;
+            if (File.Exists(customCssFile))
             {
-                markdownStyleContent = File.ReadAllText(CssFileName);
+                markdownStyleContent = File.ReadAllText(customCssFile);
             }
             else
             {
-                markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
+                markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + defaultCss);
             }
 
             var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);

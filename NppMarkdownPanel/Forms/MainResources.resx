@@ -139,4 +139,7 @@ Using portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/
 
 Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark</value>
   </data>
+  <data name="DefaultDarkModeCssFile" xml:space="preserve">
+    <value>style-dark.css</value>
+  </data>
 </root>

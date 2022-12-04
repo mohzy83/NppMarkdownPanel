@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace NppMarkdownPanel
 {
@@ -20,6 +19,8 @@ namespace NppMarkdownPanel
         private Timer renderTimer;
 
         private int idMyDlg = -1;
+
+        private const int Unused = 0;
 
         private const int renderRefreshRateMilliSeconds = 500;
         private const int inputUpdateThresholdMiliseconds = 400;
@@ -58,14 +59,20 @@ namespace NppMarkdownPanel
                 else
                 if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
-					// Focus was switched to a new document
+                    // Focus was switched to a new document
                     RenderMarkdown();
                     markdownPreviewForm.ScrollToTop();
                 }
+                // NPPN_DARKMODECHANGED (NPPN_FIRST + 27) // To notify plugins that Dark Mode was enabled/disabled
+                if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST+ 27))
+                {
+                    markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
+                    RenderMarkdown();
+                }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
-                    bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
+                    //bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
+                    //bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
                     // Any modifications made ?
                     if (true)
                     {
@@ -116,9 +123,11 @@ namespace NppMarkdownPanel
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
+            markdownPreviewForm.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
+            markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
             PluginBase.SetCommand(0, "Edit Settings", EditSettings);
             PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
@@ -129,13 +138,15 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar);
+            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.CssDarkModeFileName);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
+                markdownPreviewForm.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
                 markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
                 markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
+                markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
                 SaveSettings();
                 //Update Preview
                 RenderMarkdown();
@@ -178,11 +189,11 @@ namespace NppMarkdownPanel
         private void SaveSettings()
         {
             Win32.WriteIniValue("Options", "CssFileName", markdownPreviewForm.CssFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "CssDarkModeFileName", markdownPreviewForm.CssDarkModeFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "HtmlFileName", markdownPreviewForm.HtmlFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
         }
-
         private void ShowAboutDialog()
         {
             var aboutDialog = new AboutForm();
@@ -245,5 +256,13 @@ namespace NppMarkdownPanel
         {
             return new MarkdigWrapperMarkdownGenerator();
         }
+
+        private bool IsDarkModeEnabled()
+        {
+            // NPPM_ISDARKMODEENABLED (NPPMSG + 107)
+            IntPtr ret = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)(Constants.NPPMSG + 107), Unused, Unused);
+            return ret.ToInt32() == 1;
+        }
+
     }
 }
