@@ -17,7 +17,7 @@ configuration file to render documents to HTML for viewing.  For example:
 [Filter0]
 Extensions=.pl,.pm
 Program=pod2html.bat
-Arguments=--css C:\notepad++\plugins\NppMarkdownPanel\style.css
+Arguments=--css C:\notepad++\plugins\MarkdownPanel\style.css --cachedir %TEMP% --noindex
 ```
 
 will render Perl POD to HTML and display in the viewer panel.  There are some 
