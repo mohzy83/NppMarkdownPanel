@@ -165,14 +165,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.LargeChange = 1;
             this.trackBar1.Location = new System.Drawing.Point(130, 143);
-            this.trackBar1.Maximum = 200;
-            this.trackBar1.Minimum = 90;
+            this.trackBar1.Maximum = 800;
+            this.trackBar1.Minimum = 80;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(512, 45);
             this.trackBar1.TabIndex = 10;
-            this.trackBar1.TickFrequency = 5;
+            this.trackBar1.TickFrequency = 25;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.trackBar1.Value = 90;
+            this.trackBar1.Value = 100;
             this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // lblZoomValue
@@ -183,7 +183,8 @@
             this.lblZoomValue.Name = "lblZoomValue";
             this.lblZoomValue.Size = new System.Drawing.Size(28, 13);
             this.lblZoomValue.TabIndex = 11;
-            this.lblZoomValue.Text = "90%";
+            // this.lblZoomValue.Text = "90%";
+            this.lblZoomValue.Text = $"{trackBar1.Value}%";
             // 
             // btnChooseCss
             // 
