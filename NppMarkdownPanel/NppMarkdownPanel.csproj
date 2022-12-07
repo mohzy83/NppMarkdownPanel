@@ -280,6 +280,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\markdown-16x16-solid.png" />
+    <None Include="Resources\markdown-16x16-solid-dark.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\markdown-16x16-solid.bmp" />

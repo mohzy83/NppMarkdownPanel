@@ -69,9 +69,9 @@ namespace NppMarkdownPanel
                     var buffer = scintillaGateway.LinesOnScreen()/2;
                     var lastLine = scintillaGateway.GetLineCount();
 
-                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos().Value)
+                    if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
                     {
-                        lastCaretPosition = scintillaGateway.GetCurrentPos().Value;
+                        lastCaretPosition = scintillaGateway.GetCurrentPos();
                         if ((scintillaGateway.GetCurrentLineNumber() - buffer) < 0)
                         {
                             ScrollToElementAtLineNo(0);
@@ -327,10 +327,11 @@ namespace NppMarkdownPanel
 
         public void SetToolBarIcon()
         {
-            toolbarIcons tbIcons = new toolbarIcons();
-            tbIcons.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
-            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
-            Marshal.StructureToPtr(tbIcons, pTbIcons, false);
+            toolbarIcons tbIconsOld = new toolbarIcons();
+            tbIconsOld.hToolbarBmp = Properties.Resources.markdown_16x16_solid.GetHbitmap();
+            tbIconsOld.hToolbarIcon = Properties.Resources.markdown_16x16_solid_dark.GetHicon();
+            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIconsOld));
+            Marshal.StructureToPtr(tbIconsOld, pTbIcons, false);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
         }
