@@ -1,17 +1,28 @@
-# NppMarkdownPanel
-Plugin to preview Markdown files in Notepad++
+# Markdown Panel
+Plugin to preview Markdown, HTML and other files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
-- displaying rendered markdown html with embedded IE11
-- can save rendered html to a file
+- displaying rendered markdown in HTML with embedded IE11
+- can save rendered HTML to a file
+
+### Original Version
+
+The original version can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+
 
 ### Current Version
 
-My ([VinsWorldcom](https://github.com/VinsWorldcom/NppMarkdownPanel)) changes to [UrsineRaven's repo](https://github.com/UrsineRaven/NppMarkdownPanel) can be found [here](https://github.com/VinsWorldcom/NppMarkdownPanel/releases)
+I forked [UrsineRaven's repo](https://github.com/UrsineRaven/NppMarkdownPanel) 
+because it had some desirable updates and the original did not respond to 
+issues or pull requests in a timely fashion.
+
+My ([VinsWorldcom](https://github.com/VinsWorldcom/NppMarkdownPanel)) changes to can be found [here](https://github.com/VinsWorldcom/NppMarkdownPanel/releases)
 
 The plugin renders Markdown as HTML and provides a viewer.  The plugin can also 
 render HTML documents.  Additionally, 10 filters can be created manually in the 
-configuration file to render documents to HTML for viewing.  For example:
+configuration file to render documents to HTML for viewing.
+
+For example:
 
 ```
 [Filter0]
@@ -24,16 +35,6 @@ will render Perl POD to HTML and display in the viewer panel.  There are some
 limitations with filters.  The rendered views do not synchronize scrolling no 
 matter what the plugin menu setting is and they do not update "live" with typing, 
 only update after document save.
-
-<!--
-
-My ([UrsineRaven](https://github.com/UrsineRaven/NppMarkdownPanel)) changes to [mohzy83's repo](https://github.com/mohzy83/NppMarkdownPanel) can be found in the [version history](#version-history) below.
-The current version with my modifications (0.5.0.1) can be found [here](https://github.com/UrsineRaven/NppMarkdownPanel/releases)
-
-#### Mohzy83's current version:
-The current version is **0.5.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
-
--->
 
 ### Used libs and icons
 
@@ -53,13 +54,9 @@ Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-m
 
 ## Installation
 
-### Installation over Notepad++ 
-
-The plugin can be installed over the integrated Notepad++ "Plugin Admin..".
-
 ### Manual Installation
 
-Create the folder "NppMarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
+Create the folder "MarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
 
 It should look like this:
 
@@ -75,7 +72,7 @@ Thats all you need to do ;)
 
 ### Settings
 
-To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settings
+To open the settings for this plugin: Plugins -> Markdown Panel -> Settings
 
 ![open-settings](help/open-settings.png)
 
