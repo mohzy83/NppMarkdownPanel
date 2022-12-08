@@ -66,8 +66,7 @@ namespace NppMarkdownPanel
                 markdownPreviewForm.CurrentFilePath = currentFilePath;
                 if (isPanelVisible)
                 {
-                    RenderMarkdownDirect();
-                    markdownPreviewForm.ScrollToTop();
+                    RenderMarkdownDirect(false);
                 }
                 AutoShowOrHidePanel(currentFilePath);                
             }
@@ -115,9 +114,9 @@ namespace NppMarkdownPanel
             }
         }
 
-        private void RenderMarkdownDirect()
+        private void RenderMarkdownDirect(bool preserveVerticalScrollPosition = true)
         {
-            markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
+            markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
         }
 
         private string GetCurrentEditorText()
@@ -247,7 +246,7 @@ namespace NppMarkdownPanel
             {
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 markdownPreviewForm.CurrentFilePath = currentFilePath;
-                RenderMarkdownDirect();
+                RenderMarkdownDirect(false);
             }                
         }
 

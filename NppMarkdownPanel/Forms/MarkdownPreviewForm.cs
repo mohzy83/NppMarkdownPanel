@@ -135,11 +135,19 @@ namespace NppMarkdownPanel.Forms
             return cssContent;
         }
 
-        public void RenderMarkdown(string currentText, string filepath)
+        public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
             if (renderTask == null || renderTask.IsCompleted)
             {
-                SaveLastVerticalScrollPosition();
+                if (preserveVerticalScrollPosition)
+                {
+                    SaveLastVerticalScrollPosition();
+                }
+                else
+                {
+                    lastVerticalScroll = 0;
+                }
+
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
@@ -202,11 +210,6 @@ namespace NppMarkdownPanel.Forms
             Application.DoEvents();
         }
 
-        public void ScrollToTop()
-        {
-            webBrowserPreview.Document.Window.ScrollTo(0, 0);
-            Application.DoEvents();
-        }
 
         private void HideScreenshotAndShowBrowser()
         {
@@ -354,7 +357,8 @@ namespace NppMarkdownPanel.Forms
             try
             {
                 matchExtensionList = SupportedFileExt.Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
-            } catch (Exception)
+            }
+            catch (Exception)
             {
             }
 
