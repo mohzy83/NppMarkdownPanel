@@ -17,10 +17,10 @@ namespace NppMarkdownPanel.Forms
         public string CssDarkModeFileName { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
-
         public string SupportedFileExt { get; set; }
+        public bool AutoShowPanel { get; set; }
 
-        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName, string supportedFileExt)
+        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName, string supportedFileExt, bool autoShowPanel)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
@@ -28,6 +28,8 @@ namespace NppMarkdownPanel.Forms
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
             SupportedFileExt = supportedFileExt;
+            AutoShowPanel = autoShowPanel;
+
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
@@ -36,6 +38,7 @@ namespace NppMarkdownPanel.Forms
             tbHtmlFile.Text = htmlFileName;
             cbShowToolbar.Checked = showToolbar;
             tbFileExt.Text = supportedFileExt;
+            cbAutoShowPanel.Checked = autoShowPanel;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -173,6 +176,11 @@ namespace NppMarkdownPanel.Forms
         private void tbFileExt_TextChanged(object sender, EventArgs e)
         {
             SupportedFileExt = tbFileExt.Text;
+        }
+
+        private void cbAutoShowPanel_CheckedChanged(object sender, EventArgs e)
+        {
+            AutoShowPanel = cbAutoShowPanel.Checked;
         }
     }
 }

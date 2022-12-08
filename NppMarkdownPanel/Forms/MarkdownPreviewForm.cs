@@ -347,7 +347,7 @@ namespace NppMarkdownPanel.Forms
         }
 
 
-        private bool isValidFileExtension(string filename)
+        public bool isValidFileExtension(string filename)
         {
             var currentExtension = Path.GetExtension(filename).ToLower();
             var matchExtensionList = false;

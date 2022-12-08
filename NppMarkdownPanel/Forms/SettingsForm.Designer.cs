@@ -55,6 +55,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.tbFileExt = new System.Windows.Forms.TextBox();
             this.btnDefaultFileExt = new System.Windows.Forms.Button();
+            this.cbAutoShowPanel = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -235,7 +236,7 @@
             // cbShowToolbar
             // 
             this.cbShowToolbar.AutoSize = true;
-            this.cbShowToolbar.Location = new System.Drawing.Point(159, 400);
+            this.cbShowToolbar.Location = new System.Drawing.Point(159, 413);
             this.cbShowToolbar.Name = "cbShowToolbar";
             this.cbShowToolbar.Size = new System.Drawing.Size(233, 23);
             this.cbShowToolbar.TabIndex = 15;
@@ -333,11 +334,23 @@
             this.btnDefaultFileExt.UseVisualStyleBackColor = true;
             this.btnDefaultFileExt.Click += new System.EventHandler(this.btnDefaultFileExt_Click);
             // 
+            // cbAutoShowPanel
+            // 
+            this.cbAutoShowPanel.AutoSize = true;
+            this.cbAutoShowPanel.Location = new System.Drawing.Point(159, 384);
+            this.cbAutoShowPanel.Name = "cbAutoShowPanel";
+            this.cbAutoShowPanel.Size = new System.Drawing.Size(302, 23);
+            this.cbAutoShowPanel.TabIndex = 24;
+            this.cbAutoShowPanel.Text = "Automatically show panel for supported files";
+            this.cbAutoShowPanel.UseVisualStyleBackColor = true;
+            this.cbAutoShowPanel.CheckedChanged += new System.EventHandler(this.cbAutoShowPanel_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 532);
+            this.Controls.Add(this.cbAutoShowPanel);
             this.Controls.Add(this.btnDefaultFileExt);
             this.Controls.Add(this.tbFileExt);
             this.Controls.Add(this.label5);
@@ -406,5 +419,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbFileExt;
         private System.Windows.Forms.Button btnDefaultFileExt;
+        private System.Windows.Forms.CheckBox cbAutoShowPanel;
     }
 }
