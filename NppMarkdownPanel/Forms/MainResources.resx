@@ -138,11 +138,17 @@ Github: https://github.com/UrsineRaven/NppMarkdownPanel
 
 Using Markdig by xoofx - https://github.com/lunet-io/markdig
 
-Using NotepadPlusPlusPluginPack.Net by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+Using NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
 
-Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
+Using ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater
+https://github.com/RichardSlater/ColorCodePortable
+
+Using Markdig.SyntaxHighlighting 1.0.3  - Syntax Highlighting extension for Markdig by Richard Slater
+https://github.com/RichardSlater/Markdig.SyntaxHighlighting
 
 Using portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/nea/MarkdownViewerPlusPlus
+
+Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
 
 Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark</value>
   </data>

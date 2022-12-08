@@ -8,26 +8,26 @@ using Markdig;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
+using Markdig.SyntaxHighlighting;
 
 namespace MarkdigWrapper
 {
-    public class MarkdigMarkdownGenerator 
+    public class MarkdigMarkdownGenerator
     {
-        private readonly HtmlRenderer htmlRenderer;
-        private readonly StringWriter htmlWriter;
-        private readonly StringBuilder sb;
 
         public MarkdigMarkdownGenerator()
         {
-            sb = new StringBuilder();
-            htmlWriter = new StringWriter(sb);
-            htmlRenderer = new HtmlRenderer(htmlWriter);
         }
 
         public string ConvertToHtml(string markDownText, string filepath)
         {
+            var sb = new StringBuilder();
+            var htmlWriter = new StringWriter(sb);
+            var htmlRenderer = new HtmlRenderer(htmlWriter);
+
             var pipeline = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
+                .UseSyntaxHighlighting()
                 .UsePreciseSourceLocation()
                 .Build();
             try
@@ -40,11 +40,10 @@ namespace MarkdigWrapper
                 {
                     htmlRenderer.BaseUrl = null;
                 }
-                
             }
             catch (Exception e)
             {
-                if (e != null) {}
+                if (e != null) { }
             }
             sb.Clear();
 
@@ -72,7 +71,7 @@ namespace MarkdigWrapper
                 attributes.Id = childBlock.Line.ToString();
                 childBlock.SetAttributes(attributes);
             }
-           
+
         }
     }
 }
