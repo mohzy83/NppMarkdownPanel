@@ -11,9 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Markdig;
-using Markdig.Renderers.Html;
-using Markdig.Syntax;
 using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace NppMarkdownPanel
@@ -419,7 +416,7 @@ namespace NppMarkdownPanel
 
         public static IMarkdownGenerator GetMarkdownGeneratorImpl()
         {
-            return new MarkdigMarkdownGenerator();
+            return new MarkdigWrapperMarkdownGenerator();
         }
     }
 }
