@@ -37,10 +37,10 @@ namespace NppMarkdownPanel.Forms
 
         const string MSG_NO_SUPPORTED_FILE_EXT = "<h3>The current file <u>{0}</u> has no valid Markdown file extension.</h3><div>Valid file extensions:{1}</div>";
 
-        private Task<Tuple<string, string>> renderTask;
+        private Task<RenderResult> renderTask;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
-        private string htmlContent;
+        private string htmlContentForExport;
         private bool showToolbar;
 
         public string CssFileName { get; set; }
@@ -93,7 +93,7 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
-        private Tuple<string, string> RenderHtmlInternal(string currentText, string filepath)
+        private RenderResult RenderHtmlInternal(string currentText, string filepath)
         {
             var defaultBodyStyle = "";
             var markdownStyleContent = GetCssContent(filepath);
@@ -103,15 +103,15 @@ namespace NppMarkdownPanel.Forms
                 var invalidExtensionMessage = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), SupportedFileExt);
                 invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessage);
 
-                return new Tuple<string, string>(invalidExtensionMessage, invalidExtensionMessage);
+                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage);
             }
 
-            var result = markdownGenerator.ConvertToHtml(currentText, filepath);
-            var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
+            var resultForBrowser = markdownGenerator.ConvertToHtml(currentText, filepath);
+            var resultForExport = markdownGenerator.ConvertToHtml(currentText, null);
 
-            var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
-            var markdownHtml2 = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultWithRelativeImages);
-            return new Tuple<string, string>(markdownHtml, markdownHtml2);
+            var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
+            var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
+            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport);
         }
 
         private string GetCssContent(string filepath)
@@ -151,11 +151,11 @@ namespace NppMarkdownPanel.Forms
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
-                renderTask = new Task<Tuple<string, string>>(() => RenderHtmlInternal(currentText, filepath));
+                renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    webBrowserPreview.DocumentText = renderedText.Result.Item1;
-                    htmlContent = renderedText.Result.Item2;
+                    webBrowserPreview.DocumentText = renderedText.Result.ResultForBrowser;
+                    htmlContentForExport = renderedText.Result.ResultForExport;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
                         bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -237,28 +237,6 @@ namespace NppMarkdownPanel.Forms
                 if (child != null)
                     webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
             }
-
-
-            //if (elementIndexesForAllLevels != null && elementIndexesForAllLevels.Count > 0 && webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null /*&& webBrowserPreview.Document.Body.Children.Count > elementIndex - 1*/)
-            //{
-            //    HtmlElement currentElement = webBrowserPreview.Document.Body;
-            //    HtmlElement child = null;
-            //    foreach (int elementIndexForCurrentLevel in elementIndexesForAllLevels)
-            //    {
-            //        if (currentElement.Children.Count > elementIndexForCurrentLevel)
-            //        {
-            //            child = currentElement.Children[elementIndexForCurrentLevel];
-            //            currentElement = child;
-            //        }
-            //        else
-            //        {
-            //            break;
-            //        }
-            //    }
-
-            //    if (child != null)
-            //        webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
-            //}
         }
 
         private int CalculateAbsoluteYOffset(HtmlElement currentElement)
@@ -345,7 +323,7 @@ namespace NppMarkdownPanel.Forms
         {
             if (!string.IsNullOrEmpty(filename))
             {
-                File.WriteAllText(filename, htmlContent);
+                File.WriteAllText(filename, htmlContentForExport);
             }
         }
 
