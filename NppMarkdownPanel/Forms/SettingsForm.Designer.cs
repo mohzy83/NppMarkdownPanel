@@ -52,6 +52,9 @@
             this.btnChooseDarkmodeCss = new System.Windows.Forms.Button();
             this.tbDarkmodeCssFile = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tbFileExt = new System.Windows.Forms.TextBox();
+            this.btnDefaultFileExt = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -232,7 +235,7 @@
             // cbShowToolbar
             // 
             this.cbShowToolbar.AutoSize = true;
-            this.cbShowToolbar.Location = new System.Drawing.Point(159, 333);
+            this.cbShowToolbar.Location = new System.Drawing.Point(159, 400);
             this.cbShowToolbar.Name = "cbShowToolbar";
             this.cbShowToolbar.Size = new System.Drawing.Size(233, 23);
             this.cbShowToolbar.TabIndex = 15;
@@ -301,11 +304,43 @@
             this.label4.TabIndex = 17;
             this.label4.Text = "Darkmode CSS File:";
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(12, 342);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(127, 39);
+            this.label5.TabIndex = 21;
+            this.label5.Text = "Supported File Extensions:";
+            // 
+            // tbFileExt
+            // 
+            this.tbFileExt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFileExt.Location = new System.Drawing.Point(159, 342);
+            this.tbFileExt.Name = "tbFileExt";
+            this.tbFileExt.Size = new System.Drawing.Size(401, 25);
+            this.tbFileExt.TabIndex = 22;
+            this.tbFileExt.TextChanged += new System.EventHandler(this.tbFileExt_TextChanged);
+            // 
+            // btnDefaultFileExt
+            // 
+            this.btnDefaultFileExt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDefaultFileExt.Location = new System.Drawing.Point(611, 342);
+            this.btnDefaultFileExt.Name = "btnDefaultFileExt";
+            this.btnDefaultFileExt.Size = new System.Drawing.Size(73, 28);
+            this.btnDefaultFileExt.TabIndex = 23;
+            this.btnDefaultFileExt.Text = "Default";
+            this.btnDefaultFileExt.UseVisualStyleBackColor = true;
+            this.btnDefaultFileExt.Click += new System.EventHandler(this.btnDefaultFileExt_Click);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 532);
+            this.Controls.Add(this.btnDefaultFileExt);
+            this.Controls.Add(this.tbFileExt);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.btnDefaultDarkmodeCss);
             this.Controls.Add(this.btnChooseDarkmodeCss);
             this.Controls.Add(this.tbDarkmodeCssFile);
@@ -368,5 +403,8 @@
         private System.Windows.Forms.Button btnChooseDarkmodeCss;
         private System.Windows.Forms.TextBox tbDarkmodeCssFile;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox tbFileExt;
+        private System.Windows.Forms.Button btnDefaultFileExt;
     }
 }

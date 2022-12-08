@@ -35,6 +35,8 @@ namespace NppMarkdownPanel.Forms
             </html>
             ";
 
+        const string MSG_NO_SUPPORTED_FILE_EXT = "<h3>The current file <u>{0}</u> has no valid Markdown file extension.</h3><div>Valid file extensions:{1}</div>";
+
         private Task<Tuple<string, string>> renderTask;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
@@ -48,7 +50,29 @@ namespace NppMarkdownPanel.Forms
         public int ZoomLevel { get; set; }
         public string HtmlFileName { get; set; }
 
-        public bool IsDarkModeEnabled { get; set; }
+        public string CurrentFilePath { get; set; }
+
+        public string SupportedFileExt { get; set; }
+
+        private bool isDarkModeEnabled;
+        public bool IsDarkModeEnabled
+        {
+            get { return isDarkModeEnabled; }
+            set
+            {
+                isDarkModeEnabled = value;
+                if (isDarkModeEnabled)
+                {
+                    tbPreview.BackColor = Color.Black;
+                    btnSaveHtml.ForeColor = Color.White;
+                }
+                else
+                {
+                    tbPreview.BackColor = SystemColors.Control;
+                    btnSaveHtml.ForeColor = SystemColors.ControlText;
+                }
+            }
+        }
 
         public bool ShowToolbar
         {
@@ -71,12 +95,29 @@ namespace NppMarkdownPanel.Forms
 
         private Tuple<string, string> RenderHtmlInternal(string currentText, string filepath)
         {
+            var defaultBodyStyle = "";
+            var markdownStyleContent = GetCssContent(filepath);
+
+            if (!isValidFileExtension(CurrentFilePath))
+            {
+                var invalidExtensionMessage = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), SupportedFileExt);
+                invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessage);
+
+                return new Tuple<string, string>(invalidExtensionMessage, invalidExtensionMessage);
+            }
+
             var result = markdownGenerator.ConvertToHtml(currentText, filepath);
             var resultWithRelativeImages = markdownGenerator.ConvertToHtml(currentText, null);
-            var defaultBodyStyle = "";
 
+            var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
+            var markdownHtml2 = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultWithRelativeImages);
+            return new Tuple<string, string>(markdownHtml, markdownHtml2);
+        }
+
+        private string GetCssContent(string filepath)
+        {
             // Path of plugin directory
-            var markdownStyleContent = "";
+            var cssContent = "";
 
             var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
 
@@ -84,16 +125,14 @@ namespace NppMarkdownPanel.Forms
             var customCssFile = IsDarkModeEnabled ? CssDarkModeFileName : CssFileName;
             if (File.Exists(customCssFile))
             {
-                markdownStyleContent = File.ReadAllText(customCssFile);
+                cssContent = File.ReadAllText(customCssFile);
             }
             else
             {
-                markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + defaultCss);
+                cssContent = File.ReadAllText(assemblyPath + "\\" + defaultCss);
             }
 
-            var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
-            var markdownHtml2 = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultWithRelativeImages);
-            return new Tuple<string, string>(markdownHtml, markdownHtml2);
+            return cssContent;
         }
 
         public void RenderMarkdown(string currentText, string filepath)
@@ -306,5 +345,21 @@ namespace NppMarkdownPanel.Forms
                 File.WriteAllText(filename, htmlContent);
             }
         }
+
+
+        private bool isValidFileExtension(string filename)
+        {
+            var currentExtension = Path.GetExtension(filename).ToLower();
+            var matchExtensionList = false;
+            try
+            {
+                matchExtensionList = SupportedFileExt.Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
+            } catch (Exception)
+            {
+            }
+
+            return matchExtensionList;
+        }
+
     }
 }
