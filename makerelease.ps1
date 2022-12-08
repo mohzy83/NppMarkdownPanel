@@ -10,4 +10,4 @@ function makeReleaseZip($filename, $targetPlattform)
 
 makeReleaseZip "NppMarkdownPanel\bin\Release\MarkdownPanel.dll" "x86"
 makeReleaseZip "NppMarkdownPanel\bin\Release-x64\MarkdownPanel.dll" "x64"
-pause
+# pause
