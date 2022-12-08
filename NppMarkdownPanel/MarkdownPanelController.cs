@@ -2,7 +2,7 @@
 using NppMarkdownPanel.Forms;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Diagnostics; // for Process()
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -11,7 +11,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Kbg.NppPluginNET.PluginInfrastructure.Win32;
 
 namespace NppMarkdownPanel
 {
@@ -302,7 +301,7 @@ namespace NppMarkdownPanel
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, sbIniFilePath);
             iniFilePath = sbIniFilePath.ToString();
             if (!Directory.Exists(iniFilePath)) Directory.CreateDirectory(iniFilePath);
-            iniFilePath = Path.Combine(iniFilePath, Main.PluginName + ".ini");
+            iniFilePath = Path.Combine(iniFilePath, Main.PluginFilename + ".ini");
         }
 
         private void SyncViewWithCaret()
@@ -338,8 +337,6 @@ namespace NppMarkdownPanel
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
             Win32.WritePrivateProfileString("Options", "SyncViewWithScrollPosition", syncViewWithScrollPosition ? "1" : "0", iniFilePath);
-            Win32.WriteIniValue("Options", "MkdnExtensions", MkdnExtensions.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "HtmlExtensions", HtmlExtensions.ToString(), iniFilePath);
             SaveSettings();
         }
 
@@ -349,6 +346,8 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "HtmlFileName", markdownPreviewForm.HtmlFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "MkdnExtensions", MkdnExtensions.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "HtmlExtensions", HtmlExtensions.ToString(), iniFilePath);
         }
 
         private void ShowAboutDialog()
@@ -365,11 +364,11 @@ namespace NppMarkdownPanel
             {
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = markdownPreviewForm.Handle;
-                _nppTbData.pszName = Main.PluginTitle;
+                _nppTbData.pszName = Main.PluginName;
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
                 _nppTbData.hIconTab = (uint)ConvertBitmapToIcon(Properties.Resources.markdown_16x16_solid_bmp).Handle;
-                _nppTbData.pszModuleName = Main.PluginName;
+                _nppTbData.pszModuleName = Main.PluginFilename;
                 IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
                 Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 

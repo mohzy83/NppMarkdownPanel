@@ -4,8 +4,8 @@ namespace NppMarkdownPanel
 {
     class Main
     {
-        public const string PluginName = "MarkdownPanel";
-        public const string PluginTitle = "Markdown Panel";
+        public const string PluginName = "Markdown Panel";
+        public const string PluginFilename = "MarkdownPanel";
         private static MarkdownPanelController mdpanel = new MarkdownPanelController();
 
         public static void OnNotification(ScNotification notification)

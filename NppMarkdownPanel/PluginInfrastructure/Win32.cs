@@ -319,8 +319,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         [DllImport("user32")]
         public static extern int GetScrollInfo(IntPtr hwnd, int nBar, ref ScrollInfo scrollInfo);
 
-
-        public static string ReadIniValue(string section, string key, string iniFileName,string defaultValue="")
+        public static string ReadIniValue(string section, string key, string iniFileName, string defaultValue = "")
         {
             StringBuilder temp = new StringBuilder(255);
             int i = GetPrivateProfileString(section, key, defaultValue, temp,

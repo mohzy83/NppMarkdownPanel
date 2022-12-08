@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MarkdownPanel")]
-[assembly: AssemblyCopyright("Copyright © Moritz Hasse 2019")]
+[assembly: AssemblyCopyright("Copyright Â© Moritz Hasse 2019-2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
