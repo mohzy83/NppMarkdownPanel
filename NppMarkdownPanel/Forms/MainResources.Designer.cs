@@ -69,13 +69,14 @@ namespace NppMarkdownPanel.Forms {
         ///
         ///Github: https://github.com/mohzy83/NppMarkdownPanel
         ///
-        ///Using Markdig by xoofx - https://github.com/lunet-io/markdig
+        ///Using Markdig 0.30.4 by xoofx - https://github.com/lunet-io/markdig
         ///
-        ///Using NotepadPlusPlusPluginPack.Net by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+        ///Using NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
         ///
-        ///Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
+        ///Using ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater
+        ///https://github.com/RichardSlater/ColorCodePortable
         ///
-        ///Using portions of nea&apos;s MarkdownViewerPlusPlus Plugin code - https://github.com/nea/Ma [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///Using Markdig.SyntaxHighlighting 1.0.3  - Syntax Highlighting [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string AboutDialogText {
             get {

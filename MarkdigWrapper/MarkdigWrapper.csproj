@@ -37,14 +37,21 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />	    
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LanguageTypeAdapter.cs" />
     <Compile Include="MarkdigMarkdownGenerator.cs" />
+    <Compile Include="SyntaxHighlightingCodeBlockRenderer.cs" />
+    <Compile Include="SyntaxHighlightingExtension.cs" />
+    <Compile Include="SyntaxHighlightingExtensions.cs" />
     <Compile Include="Wrapper.cs" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
-	</ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
   <ItemGroup>
+    <Reference Include="ColorCode, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ColorCode.Portable.1.0.3\lib\portable45-net45+win8+wp8+wpa81\ColorCode.dll</HintPath>
+    </Reference>
     <Reference Include="Markdig, Version=0.30.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Markdig.0.30.4\lib\net452\Markdig.dll</HintPath>
     </Reference>

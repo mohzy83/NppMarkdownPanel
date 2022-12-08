@@ -369,8 +369,9 @@ code, tt {
   padding: 0 5px;
   white-space: nowrap;
   border: 1px solid #eaeaea;
-  background-color: #070707;
+  background-color: #f8f8f8;
   border-radius: 3px;
+    
 }
 
 pre code {
@@ -379,26 +380,29 @@ pre code {
   white-space: pre;
   border: none;
   background: transparent;
+    
 }
 
 .highlight pre {
-  background-color: #070707;
+  background-color: #f8f8f8;
   border: 1px solid #cccccc;
   font-size: 13px;
   line-height: 19px;
   overflow: auto;
   padding: 6px 10px;
   border-radius: 3px;
+    color: #333;
 }
 
 pre {
-  background-color: #070707;
+  background-color: #f8f8f8;
   border: 1px solid #cccccc;
   font-size: 13px;
   line-height: 19px;
   overflow: auto;
   padding: 6px 10px;
   border-radius: 3px;
+    color: #333;
 }
 
 pre code, pre tt {
