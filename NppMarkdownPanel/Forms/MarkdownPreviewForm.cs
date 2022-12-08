@@ -194,6 +194,12 @@ namespace NppMarkdownPanel.Forms
             Application.DoEvents();
         }
 
+        public void ScrollToTop()
+        {
+            webBrowserPreview.Document.Window.ScrollTo(0, 0);
+            Application.DoEvents();
+        }
+
         private void HideScreenshotAndShowBrowser()
         {
             pictureBoxScreenshot.Visible = false;

@@ -100,6 +100,7 @@ namespace NppMarkdownPanel
                 {
                     UpdateEditorInformation();
                     RenderMarkdown();
+                    markdownPreviewForm.ScrollToTop();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
@@ -221,7 +222,7 @@ namespace NppMarkdownPanel
                         markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath());
                 }
             }
-            catch 
+            catch
             {
             }
         }
@@ -352,9 +353,6 @@ namespace NppMarkdownPanel
 
         private void ShowAboutDialog()
         {
-            // MessageBox.Show(
-            //     MainResources.AboutDialogText
-            //     , "About");
             var aboutDialog = new AboutForm();
             aboutDialog.ShowDialog();
         }
