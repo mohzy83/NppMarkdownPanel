@@ -4,16 +4,21 @@ Plugin to preview Markdown files in Notepad++
 - lightweight plugin to preview markdown within Notepad++
 - displaying rendered markdown html with embedded IE11
 - can save rendered html to a file
+- Dark mode support
 
 ### Current Version
 
-The current version is **0.6.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.7.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
-Using **Markdig** v 0.16.0 by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
+Using **Markdig** v 0.30.4 by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
 
 Using **NotepadPlusPlusPluginPack.Net** by kbilsted - [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)	
+
+Using **ColorCode (Portable)** 1.0.3 by Bashir Souid and Richard Slater - [https://github.com/RichardSlater/ColorCodePortable](https://github.com/RichardSlater/ColorCodePortable)
+
+Using **Markdig.SyntaxHighlighting** 1.1.7 by Richard Slater [https://github.com/RichardSlater/Markdig.SyntaxHighlighting](https://github.com/RichardSlater/Markdig.SyntaxHighlighting)
 
 Using Markdown style **github-markdown-css** by sindresorhus - [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)
 
@@ -22,11 +27,13 @@ Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github
 Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)
 
 ## Prerequisites
-- .NET 4.5 or higher 
+- .NET 4.5.2 or higher 
 
 ## Installation
-### Installation over Notepad++ 
-The plugin can be installed over the integrated Notepad++ "Plugin Admin..".
+### Installation in Notepad++ 
+The plugin can be installed with the Notepad++ Plugin Admin.
+The name of the plugin is **Markdown Panel**.
+
 ### Manual Installation
 Create the folder "NppMarkdownPanel" in your Notepad++ plugin folder (e.g. "C:\Program Files\Notepad++\plugins") and extract the appropriate zip (x86 or x64) to it.
 
@@ -40,7 +47,12 @@ After the installation you will find a small purple markdown icon in your toolba
 Just click it to show the markdown preview. Click again to hide the preview.
 Thats all you need to do ;)
 
-![npp-preview](help/npp-preview.png "Layout of the plugin folder after installation")
+![npp-preview](help/npp-preview.png "Markdown preview with standard CSS")
+
+With dark mode enabled in Notepad++:
+
+![npp-preview-dm](help/npp-preview-dm.png "Markdown preview with darkmode CSS")
+
 
 ### Settings
 
@@ -48,13 +60,27 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 
 * #### CSS File
     This allows you to select a CSS file to use if you don't want the default style of the preview
+	
+* #### Dark mode CSS File
+	This allows you to select a Dark mode CSS file. When the Notepad++ dark mode is enabled, this Css file is used.
+	When no file is set, the default dark mode Css is used.
 
 * #### Zoom Level
     This allows you to set the zoom level of the preview
 
 * #### Automatic HTML Output
-    This allows you ot select a file to save the rendered HTML to every time the preview is rendered. This is a way to automatically save the rendered content to use elsewhere. Leaving this empty disables the automatic saving.  
+    This allows you to select a file to save the rendered HTML to every time the preview is rendered. This is a way to automatically save the rendered content to use elsewhere. Leaving this empty disables the automatic saving.  
     __Note: This is a global setting, so all previewed documents will save to the same file.__
+
+* #### Supported File Extensions
+    This allows you to define a list of file extensions, which are supported and displayed in Markdown Panel.
+	Other file type won't be displayed (there will be a warning).
+	The file extensions have to be separated by a comma `,`
+
+* #### Automatically show panel for supported files
+    When this option is checked, Markdown Panel will open the preview window automatically for files with a supported extension.
+	The preview will be closed for files with no supported extension.
+	
 
 * #### Show Toolbar in Preview Window
     Checking this box will enable the toolbar in the preview window. By default, this is unchecked.
@@ -71,6 +97,21 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 
 
 ## Version History
+
+### Version 0.7.0 (released 2022-12-09)
+
+- dark mode support
+- new markdig 0.30.4 integrated
+- code/syntax highlighting
+	- example C# code with highlighting:
+![code-highlighting](help/code-highlighting.png "Example code highlighting")
+- new zoom level range from 80 % to 800% (for 4K Displays)
+- all html files are saved as utf-8 files
+- restrict preview to files with a specific extension
+- automatically open panel for supported files
+- enhanced about dialog
+
+
 ### Version 0.6.2 (released 2022-06-02)
 Bugfix release
 - viewer was crashed by too large documents (more than 10000 bytes)
