@@ -63,12 +63,19 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
-        public void RenderMarkdown(string currentText, string filepath)
+        public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
             currentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
-                SaveLastVerticalScrollPosition();
+                if (preserveVerticalScrollPosition)
+                {
+                    SaveLastVerticalScrollPosition();
+                }
+                else
+                {
+                    lastVerticalScroll = 0;
+                }
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
@@ -114,12 +121,19 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        public void RenderHtml(string currentText, string filepath)
+        public void RenderHtml(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
             currentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
-                SaveLastVerticalScrollPosition();
+                if (preserveVerticalScrollPosition)
+                {
+                    SaveLastVerticalScrollPosition();
+                }
+                else
+                {
+                    lastVerticalScroll = 0;
+                }
                 MakeAndDisplayScreenShot();
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
@@ -191,12 +205,6 @@ namespace NppMarkdownPanel.Forms
         private void GoToLastVerticalScrollPosition()
         {
             webBrowserPreview.Document.Window.ScrollTo(0, lastVerticalScroll);
-            Application.DoEvents();
-        }
-
-        public void ScrollToTop()
-        {
-            webBrowserPreview.Document.Window.ScrollTo(0, 0);
             Application.DoEvents();
         }
 

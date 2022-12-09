@@ -98,8 +98,8 @@ namespace NppMarkdownPanel
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
                     UpdateEditorInformation();
-                    RenderMarkdown();
-                    markdownPreviewForm.ScrollToTop();
+                    // if we get a lot tab switches within a short period, dont update preview
+                    RenderMarkdownDeferred();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
@@ -111,13 +111,13 @@ namespace NppMarkdownPanel
                     if ( ValidateMkdnExtension() || ValidateHtmlExtension() )
                     {
                         lastTickCount = Environment.TickCount;
-                        RenderMarkdown();
+                        RenderMarkdownDeferred();
                     }
                     // }
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                 {
-                    RenderMarkdown();
+                    RenderMarkdownDirect();
                 }
             }
         }
@@ -171,9 +171,9 @@ namespace NppMarkdownPanel
             scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         }
 
-        private void RenderMarkdown()
+        private void RenderMarkdownDeferred()
         {
-            // if we get a lot of key stroks within a short period, dont update preview
+            // if we get a lot of key strokes within a short period, dont update preview
             var currentDeltaMilliseconds = Environment.TickCount - lastTickCount;
             if (currentDeltaMilliseconds < inputUpdateThresholdMiliseconds)
             {
@@ -189,40 +189,45 @@ namespace NppMarkdownPanel
             renderTimer.Stop();
             try
             {
-                if (ValidateMkdnExtension())
-                    markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
-                else if (ValidateHtmlExtension())
-                    markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath());
-                else
-                {
-                    int filter = ValidateFilterExtension();
-                    if ( filter >= 0 )
-                    {
-                        var filterProgram = filterProgs[filter];
-                        var filterArguments = filterArgs[filter];
-                        var process = new Process
-                        {
-                            StartInfo = new ProcessStartInfo
-                            {
-                                FileName = filterProgram,
-                                Arguments = $"{filterArguments} \"{notepadPPGateway.GetCurrentFilePath()}\"",
-                                UseShellExecute = false,
-                                RedirectStandardOutput = true,
-                                CreateNoWindow = true
-                            }
-                        };
-
-                        process.Start();
-                        string data = process.StandardOutput.ReadToEnd();
-                        process.WaitForExit();
-                        markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath());
-                    }
-                    else
-                        markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath());
-                }
+                RenderMarkdownDirect();
             }
             catch
             {
+            }
+        }
+
+        private void RenderMarkdownDirect(bool preserveVerticalScrollPosition = true)
+        {
+            if (ValidateMkdnExtension())
+                markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            else if (ValidateHtmlExtension())
+                markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            else
+            {
+                int filter = ValidateFilterExtension();
+                if ( filter >= 0 )
+                {
+                    var filterProgram = filterProgs[filter];
+                    var filterArguments = filterArgs[filter];
+                    var process = new Process
+                    {
+                        StartInfo = new ProcessStartInfo
+                        {
+                            FileName = filterProgram,
+                            Arguments = $"{filterArguments} \"{notepadPPGateway.GetCurrentFilePath()}\"",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true
+                        }
+                    };
+
+                    process.Start();
+                    string data = process.StandardOutput.ReadToEnd();
+                    process.WaitForExit();
+                    markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+                }
+                else
+                    markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath(), false);
             }
         }
 
@@ -291,7 +296,7 @@ namespace NppMarkdownPanel
                 HtmlExtensions = settingsForm.HtmlExtensions;
                 SaveSettings();
                 //Update Preview
-                RenderMarkdown();
+                RenderMarkdownDirect();
             }
         }
 
@@ -383,7 +388,7 @@ namespace NppMarkdownPanel
             if (isPanelVisible)
             {
                 UpdateEditorInformation();
-                RenderMarkdown();
+                RenderMarkdownDirect();
             }
         }
 
