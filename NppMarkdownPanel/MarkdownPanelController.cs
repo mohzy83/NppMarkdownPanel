@@ -91,7 +91,14 @@ namespace NppMarkdownPanel
                         }
                         else
                         {
-                            ScrollToElementAtLineNo(middleLine - buffer);
+                            // if ((notification.Updated & (uint)SciMsg.SC_UPDATE_V_SCROLL) == (uint)SciMsg.SC_UPDATE_V_SCROLL)
+                            // {
+                                ScrollToElementAtLineNo(middleLine - buffer);
+                            // }
+                            // else
+                            // {
+                                // ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber() - buffer);
+                            // }
                         }
                     }
                 }
