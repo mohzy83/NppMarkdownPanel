@@ -76,7 +76,7 @@ namespace NppMarkdownPanel.Forms {
         ///Using ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater
         ///https://github.com/RichardSlater/ColorCodePortable
         ///
-        ///Using Markdig.SyntaxHighlighting 1.0.3  - Syntax Highlighting [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///Using Markdig.SyntaxHighlighting 1.1.7  - Syntax Highlighting [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string AboutDialogText {
             get {
