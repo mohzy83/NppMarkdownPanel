@@ -27,7 +27,7 @@ namespace NppMarkdownPanel
 
         private bool isPanelVisible;
 
-        private readonly IScintillaGateway scintillaGateway;
+        private IScintillaGateway scintillaGateway;
         private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
@@ -168,7 +168,7 @@ namespace NppMarkdownPanel
 
         protected void UpdateEditorInformation()
         {
-            scintillaGateway.SetScintillaHandle(PluginBase.GetCurrentScintilla());
+            scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
         }
 
         private void RenderMarkdown()
