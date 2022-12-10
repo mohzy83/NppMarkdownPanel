@@ -34,7 +34,26 @@ namespace Markdig.SyntaxHighlighting {
 
             var byIdCanidate = Languages.FindById(id);
 
-            return byIdCanidate;
+            // if no matching id, use plain text "style"
+            return byIdCanidate ?? new PlainText();
+        }
+
+        internal class PlainText : ILanguage {
+            string ILanguage.Id => "text";
+            string ILanguage.CssClassName => "text";
+            string ILanguage.Name => "Text";
+            string ILanguage.FirstLinePattern => string.Empty;
+            bool ILanguage.HasAlias(string lang) => false;
+
+            IList<LanguageRule> ILanguage.Rules {
+                get {
+                    return new List<LanguageRule> {
+                    new LanguageRule(
+                        @"(?s).*?",
+                        new Dictionary<int, string>{ { 0, "Generic Plain Text" } })
+                    };
+                }
+            }
         }
     }
 }
