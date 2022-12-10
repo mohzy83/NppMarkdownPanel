@@ -40,16 +40,6 @@ namespace Markdig.SyntaxHighlighting {
             string firstLine;
             var code = GetCode(obj, out firstLine);
 
-            // Need to see if we have a language type, if not, the code block
-            // is still a code block, so we need to reneder it default. Without
-            // this check, the output is just plain text, not a code block.
-            var languageTypeAdapter = new LanguageTypeAdapter();
-            var language = languageTypeAdapter.Parse(languageMoniker, firstLine);
-            if (language == null) {
-                _underlyingRenderer.Write(renderer, obj);
-                return;
-            }
-
             renderer
                 .Write("<div")
                 .WriteAttributes(attributes)
