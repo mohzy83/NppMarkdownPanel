@@ -28,7 +28,7 @@ namespace NppMarkdownPanel
 
         private bool isPanelVisible;
 
-        private readonly IScintillaGateway scintillaGateway;
+        private readonly Func<IScintillaGateway> scintillaGatewayFactory;
         private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
@@ -41,7 +41,7 @@ namespace NppMarkdownPanel
 
         public MarkdownPanelController()
         {
-            scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction);
             renderTimer = new Timer();
@@ -53,6 +53,7 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible && notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
             {
+                var scintillaGateway = scintillaGatewayFactory();
                 if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
                 {
                     lastCaretPosition = scintillaGateway.GetCurrentPos();
@@ -121,6 +122,7 @@ namespace NppMarkdownPanel
 
         private string GetCurrentEditorText()
         {
+            var scintillaGateway = scintillaGatewayFactory();
             return scintillaGateway.GetText(scintillaGateway.GetLength() + 1);
         }
 
@@ -182,6 +184,7 @@ namespace NppMarkdownPanel
         {
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            var scintillaGateway = scintillaGatewayFactory();
             if (syncViewWithCaretPosition) ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
         }
 
