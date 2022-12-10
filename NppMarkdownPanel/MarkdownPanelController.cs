@@ -231,7 +231,7 @@ namespace NppMarkdownPanel
                     process.Start();
                     string data = process.StandardOutput.ReadToEnd();
                     process.WaitForExit();
-                    markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+                    markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath(), false);
                 }
                 else
                     markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath(), false);
