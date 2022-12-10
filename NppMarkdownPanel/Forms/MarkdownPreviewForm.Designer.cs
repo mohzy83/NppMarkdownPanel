@@ -69,7 +69,7 @@ namespace NppMarkdownPanel.Forms
             // this.toolStripContainer1.ContentPanel.Controls.Add(this.statusStrip2);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.pictureBoxScreenshot);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.webBrowserPreview);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 575);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 573);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
@@ -88,19 +88,20 @@ namespace NppMarkdownPanel.Forms
             this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxScreenshot.Name = "pictureBoxScreenshot";
-            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 575);
+            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 573);
             this.pictureBoxScreenshot.TabIndex = 1;
             this.pictureBoxScreenshot.TabStop = false;
             this.pictureBoxScreenshot.Visible = false;
             // 
             // webBrowserPreview
             // 
+            this.webBrowserPreview.AllowWebBrowserDrop = false;
             this.webBrowserPreview.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowserPreview.Location = new System.Drawing.Point(0, 0);
             this.webBrowserPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.webBrowserPreview.MinimumSize = new System.Drawing.Size(18, 21);
             this.webBrowserPreview.Name = "webBrowserPreview";
-            this.webBrowserPreview.Size = new System.Drawing.Size(811, 575);
+            this.webBrowserPreview.Size = new System.Drawing.Size(811, 573);
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
@@ -109,12 +110,13 @@ namespace NppMarkdownPanel.Forms
             // tbPreview
             // 
             this.tbPreview.Dock = System.Windows.Forms.DockStyle.None;
+            this.tbPreview.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tbPreview.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnSaveHtml,
             this.btnPrintPreview});
             this.tbPreview.Location = new System.Drawing.Point(0, 0);
             this.tbPreview.Name = "tbPreview";
-            this.tbPreview.Size = new System.Drawing.Size(811, 25);
+            this.tbPreview.Size = new System.Drawing.Size(811, 27);
             this.tbPreview.Stretch = true;
             this.tbPreview.TabIndex = 0;
             // 
@@ -123,7 +125,7 @@ namespace NppMarkdownPanel.Forms
             this.btnSaveHtml.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveHtml.Image")));
             this.btnSaveHtml.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveHtml.Name = "btnSaveHtml";
-            this.btnSaveHtml.Size = new System.Drawing.Size(76, 22);
+            this.btnSaveHtml.Size = new System.Drawing.Size(93, 24);
             this.btnSaveHtml.Text = "Save As...";
             this.btnSaveHtml.Click += new System.EventHandler(this.btnSaveHtml_Click);
             // 
@@ -132,7 +134,7 @@ namespace NppMarkdownPanel.Forms
             this.btnPrintPreview.Image = ((System.Drawing.Image)(resources.GetObject("btnPrintPreview.Image")));
             this.btnPrintPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnPrintPreview.Name = "btnPrintPreview";
-            this.btnPrintPreview.Size = new System.Drawing.Size(96, 22);
+            this.btnPrintPreview.Size = new System.Drawing.Size(118, 24);
             this.btnPrintPreview.Text = "Print Preview";
             this.btnPrintPreview.Visible = false;
             //
