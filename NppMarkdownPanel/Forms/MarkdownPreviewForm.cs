@@ -297,12 +297,27 @@ namespace NppMarkdownPanel.Forms
 
         private void webBrowserPreview_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (e.Url.ToString() != "about:blank")
+            if (!e.Url.ToString().StartsWith("about:blank"))
             {
                 e.Cancel = true;
                 var p = new Process();
                 p.StartInfo = new ProcessStartInfo(e.Url.ToString());
                 p.Start();
+            }
+            else
+            {
+                // Jump to correct anchor on the page
+                if (e.Url.ToString().Contains("#"))
+                {
+                    var urlParts = e.Url.ToString().Split('#');
+                    e.Cancel = true;
+                    var element = webBrowserPreview.Document.GetElementById(urlParts[1]);
+                    if (element != null)
+                    {
+                        element.Focus();
+                        element.ScrollIntoView(true);
+                    }
+                }
             }
         }
 
