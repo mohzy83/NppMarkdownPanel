@@ -173,11 +173,6 @@ namespace NppMarkdownPanel
             return -1;
         }
 
-        protected void UpdateEditorInformation()
-        {
-            var scintillaGateway = scintillaGatewayFactory();
-        }
-
         private void RenderMarkdownDeferred()
         {
             // if we get a lot of key strokes within a short period, dont update preview
