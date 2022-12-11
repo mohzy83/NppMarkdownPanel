@@ -27,7 +27,7 @@ namespace NppMarkdownPanel
 
         private bool isPanelVisible;
 
-        private IScintillaGateway scintillaGateway;
+        private readonly Func<IScintillaGateway> scintillaGatewayFactory;
         private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
@@ -44,7 +44,7 @@ namespace NppMarkdownPanel
 
         public MarkdownPanelController()
         {
-            scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction);
             renderTimer = new Timer();
@@ -56,6 +56,7 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
+                var scintillaGateway = scintillaGatewayFactory();
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
                     if ( ! (ValidateMkdnExtension() || ValidateHtmlExtension()) )
@@ -104,7 +105,6 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
-                    UpdateEditorInformation();
                     // if we get a lot tab switches within a short period, dont update preview
                     RenderMarkdownDeferred();
                 }
@@ -175,7 +175,7 @@ namespace NppMarkdownPanel
 
         protected void UpdateEditorInformation()
         {
-            scintillaGateway = new ScintillaGateway(PluginBase.GetCurrentScintilla());
+            var scintillaGateway = scintillaGatewayFactory();
         }
 
         private void RenderMarkdownDeferred()
@@ -240,11 +240,13 @@ namespace NppMarkdownPanel
 
         private string GetCurrentEditorText()
         {
+            var scintillaGateway = scintillaGatewayFactory();
             return scintillaGateway.GetText(scintillaGateway.GetLength() + 1);
         }
 
         private void ScrollToElementAtLineNo(int lineNo)
         {
+            var scintillaGateway = scintillaGatewayFactory();
             if ( ValidateMkdnExtension() )
                 markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
             else
@@ -318,6 +320,7 @@ namespace NppMarkdownPanel
 
         private void SyncViewWithCaret()
         {
+            var scintillaGateway = scintillaGatewayFactory();
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
             syncViewWithScrollPosition = false;
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[3]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithScrollPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
@@ -327,6 +330,7 @@ namespace NppMarkdownPanel
 
         private void SyncViewWithScroll()
         {
+            var scintillaGateway = scintillaGatewayFactory();
             syncViewWithScrollPosition = !syncViewWithScrollPosition;
             syncViewWithCaretPosition = false;
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
@@ -394,7 +398,6 @@ namespace NppMarkdownPanel
             isPanelVisible = !isPanelVisible;
             if (isPanelVisible)
             {
-                UpdateEditorInformation();
                 RenderMarkdownDirect();
             }
         }
