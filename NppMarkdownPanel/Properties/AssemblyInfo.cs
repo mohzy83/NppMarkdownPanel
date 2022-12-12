@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Plugin to preview markdown files")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MarkdownPanel")]
-[assembly: AssemblyCopyright("Copyright Â© Moritz Hasse 2019-2022")]
+[assembly: AssemblyProduct("NppMarkdownPanel")]
+[assembly: AssemblyCopyright("Copyright © Moritz Hasse 2019-2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

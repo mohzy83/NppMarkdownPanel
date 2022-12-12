@@ -19,7 +19,7 @@ namespace NppMarkdownPanel.Forms {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class MainResources {
@@ -65,7 +65,7 @@ namespace NppMarkdownPanel.Forms {
         ///
         ///Version 0.7.0
         ///
-        ///Created by Mohzy 2019
+        ///Created by Mohzy 2019-2022
         ///
         ///Github: https://github.com/mohzy83/NppMarkdownPanel
         ///
@@ -90,6 +90,15 @@ namespace NppMarkdownPanel.Forms {
         internal static string DefaultCssFile {
             get {
                 return ResourceManager.GetString("DefaultCssFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die style-dark.css ähnelt.
+        /// </summary>
+        internal static string DefaultDarkModeCssFile {
+            get {
+                return ResourceManager.GetString("DefaultDarkModeCssFile", resourceCulture);
             }
         }
     }

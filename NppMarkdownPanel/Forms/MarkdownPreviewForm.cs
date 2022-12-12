@@ -39,13 +39,38 @@ namespace NppMarkdownPanel.Forms
         private Task<string> renderTask;
         private readonly Action toolWindowCloseAction;
         private int lastVerticalScroll = 0;
-        private string htmlContent;
+        private string htmlContentForExport;
         private bool showToolbar;
-        private string currentFilePath;
 
         public string CssFileName { get; set; }
+
+        public string CssDarkModeFileName { get; set; }
+
         public int ZoomLevel { get; set; }
         public string HtmlFileName { get; set; }
+
+        public string CurrentFilePath { get; set; }
+
+        private bool isDarkModeEnabled;
+        public bool IsDarkModeEnabled
+        {
+            get { return isDarkModeEnabled; }
+            set
+            {
+                isDarkModeEnabled = value;
+                if (isDarkModeEnabled)
+                {
+                    tbPreview.BackColor = Color.Black;
+                    btnSaveHtml.ForeColor = Color.White;
+                }
+                else
+                {
+                    tbPreview.BackColor = SystemColors.Control;
+                    btnSaveHtml.ForeColor = SystemColors.ControlText;
+                }
+            }
+        }
+
         public bool ShowToolbar {
             get => showToolbar;
             set {
@@ -63,9 +88,30 @@ namespace NppMarkdownPanel.Forms
             markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
         }
 
+        private string GetCssContent(string filepath)
+        {
+            // Path of plugin directory
+            var cssContent = "";
+
+            var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+
+            var defaultCss = IsDarkModeEnabled ? MainResources.DefaultDarkModeCssFile : MainResources.DefaultCssFile;
+            var customCssFile = IsDarkModeEnabled ? CssDarkModeFileName : CssFileName;
+            if (File.Exists(customCssFile))
+            {
+                cssContent = File.ReadAllText(customCssFile);
+            }
+            else
+            {
+                cssContent = File.ReadAllText(assemblyPath + "\\" + defaultCss);
+            }
+
+            return cssContent;
+        }
+
         public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
-            currentFilePath = filepath;
+            CurrentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
                 if (preserveVerticalScrollPosition)
@@ -83,27 +129,14 @@ namespace NppMarkdownPanel.Forms
                 {
                     var result = markdownGenerator.ConvertToHtml(currentText, filepath);
                     var defaultBodyStyle = "";
-
-                    // Path of plugin directory
-                    var markdownStyleContent = "";
-
-                    var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-
-                    if (File.Exists(CssFileName))
-                    {
-                        markdownStyleContent = File.ReadAllText(CssFileName);
-                    }
-                    else
-                    {
-                        markdownStyleContent = File.ReadAllText(assemblyPath + "\\" + MainResources.DefaultCssFile);
-                    }
+                    var markdownStyleContent = GetCssContent(filepath);
 
                     var markdownHtml = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, result);
                     return markdownHtml;
                 });
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    htmlContent = renderedText.Result;
+                    htmlContentForExport = renderedText.Result;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
                         bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -114,7 +147,7 @@ namespace NppMarkdownPanel.Forms
                         }
                     }
 
-                    webBrowserPreview.DocumentText = htmlContent;
+                    webBrowserPreview.DocumentText = htmlContentForExport;
                     AdjustZoomLevel();
                 }, context);
                 renderTask.Start();
@@ -123,7 +156,7 @@ namespace NppMarkdownPanel.Forms
 
         public void RenderHtml(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
-            currentFilePath = filepath;
+            CurrentFilePath = filepath;
             if (renderTask == null || renderTask.IsCompleted)
             {
                 if (preserveVerticalScrollPosition)
@@ -143,7 +176,7 @@ namespace NppMarkdownPanel.Forms
                 });
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    htmlContent = renderedText.Result;
+                    htmlContentForExport = renderedText.Result;
                     if (!String.IsNullOrWhiteSpace(HtmlFileName))
                     {
                         bool valid = Utils.ValidateFileSelection(HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -152,7 +185,7 @@ namespace NppMarkdownPanel.Forms
                             HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
                             try
                             {
-                                File.WriteAllText(HtmlFileName, htmlContent);
+                                File.WriteAllText(HtmlFileName, htmlContentForExport);
                             }
                             catch (Exception)
                             {
@@ -161,7 +194,7 @@ namespace NppMarkdownPanel.Forms
                         }
                     }
 
-                    webBrowserPreview.DocumentText = htmlContent;
+                    webBrowserPreview.DocumentText = htmlContentForExport;
                     AdjustZoomLevel();
                 }, context);
                 renderTask.Start();
@@ -244,28 +277,6 @@ namespace NppMarkdownPanel.Forms
                 if (child != null)
                     webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
             }
-
-
-            //if (elementIndexesForAllLevels != null && elementIndexesForAllLevels.Count > 0 && webBrowserPreview.Document != null && webBrowserPreview.Document.Body != null /*&& webBrowserPreview.Document.Body.Children.Count > elementIndex - 1*/)
-            //{
-            //    HtmlElement currentElement = webBrowserPreview.Document.Body;
-            //    HtmlElement child = null;
-            //    foreach (int elementIndexForCurrentLevel in elementIndexesForAllLevels)
-            //    {
-            //        if (currentElement.Children.Count > elementIndexForCurrentLevel)
-            //        {
-            //            child = currentElement.Children[elementIndexForCurrentLevel];
-            //            currentElement = child;
-            //        }
-            //        else
-            //        {
-            //            break;
-            //        }
-            //    }
-
-            //    if (child != null)
-            //        webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
-            //}
         }
 
         private int CalculateAbsoluteYOffset(HtmlElement currentElement)
@@ -361,8 +372,8 @@ namespace NppMarkdownPanel.Forms
             {
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
-                saveFileDialog.InitialDirectory = Path.GetDirectoryName(currentFilePath);
-                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(CurrentFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(CurrentFilePath);
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     writeHtmlContentToFile(saveFileDialog.FileName);
@@ -374,7 +385,7 @@ namespace NppMarkdownPanel.Forms
         {
             if (!string.IsNullOrEmpty(filename))
             {
-                File.WriteAllText(filename, htmlContent);
+                File.WriteAllText(filename, htmlContentForExport);
             }
         }
     }

@@ -128,15 +128,16 @@ Version 0.7.0.1
 Updated by VinsWorldcom 2022
 Github: https://github.com/VinsWorldcom/NppMarkdownPanel
 
-==
-
-Created by Mohzy 2019
-Github: https://github.com/mohzy83/NppMarkdownPanel
-
 Updated by UrsineRaven
 Github: https://github.com/UrsineRaven/NppMarkdownPanel
 
-Using Markdig by xoofx - https://github.com/lunet-io/markdig
+==
+
+Created by Mohzy 2019-2022
+
+Github: https://github.com/mohzy83/NppMarkdownPanel
+
+Using Markdig 0.30.4 by xoofx - https://github.com/lunet-io/markdig
 
 Using NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net
 
@@ -151,5 +152,8 @@ Using portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/
 Using Markdown style github-markdown-css by sindresorhus - https://github.com/sindresorhus/github-markdown-css
 
 Using the Markdown icon by dcurtis - https://github.com/dcurtis/markdown-mark</value>
+  </data>
+  <data name="DefaultDarkModeCssFile" xml:space="preserve">
+    <value>style-dark.css</value>
   </data>
 </root>

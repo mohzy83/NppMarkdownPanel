@@ -21,6 +21,8 @@ namespace NppMarkdownPanel
 
         private int idMyDlg = -1;
 
+        private const int Unused = 0;
+
         private const int renderRefreshRateMilliSeconds = 500;
         private const int inputUpdateThresholdMiliseconds = 400;
         private int lastTickCount = 0;
@@ -105,22 +107,20 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
                 {
+                    // Focus was switched to a new document
+                    var currentFilePath = notepadPPGateway.GetCurrentFilePath();
+                    markdownPreviewForm.CurrentFilePath = currentFilePath;
+
                     // if we get a lot tab switches within a short period, dont update preview
                     RenderMarkdownDeferred();
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    // bool isInsert = (notification.ModificationType & (uint)SciMsg.SC_MOD_INSERTTEXT) != 0;
-                    // bool isDelete = (notification.ModificationType & (uint)SciMsg.SC_MOD_DELETETEXT) != 0;
-                    // // Any modifications made ?
-                    // if (isInsert || isDelete)
-                    // {
                     if ( ValidateMkdnExtension() || ValidateHtmlExtension() )
                     {
                         lastTickCount = Environment.TickCount;
                         RenderMarkdownDeferred();
                     }
-                    // }
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                 {
@@ -207,29 +207,30 @@ namespace NppMarkdownPanel
             else
             {
                 int filter = ValidateFilterExtension();
-                if ( filter >= 0 )
+                if ( filter < 0 )
                 {
-                    var filterProgram = filterProgs[filter];
-                    var filterArguments = filterArgs[filter];
-                    var process = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = filterProgram,
-                            Arguments = $"{filterArguments} \"{notepadPPGateway.GetCurrentFilePath()}\"",
-                            UseShellExecute = false,
-                            RedirectStandardOutput = true,
-                            CreateNoWindow = true
-                        }
-                    };
-
-                    process.Start();
-                    string data = process.StandardOutput.ReadToEnd();
-                    process.WaitForExit();
-                    markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath(), false);
-                }
-                else
                     markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath(), false);
+                    return;
+                }
+
+                var filterProgram = filterProgs[filter];
+                var filterArguments = filterArgs[filter];
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = filterProgram,
+                        Arguments = $"{filterArguments} \"{notepadPPGateway.GetCurrentFilePath()}\"",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+                process.Start();
+                string data = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+                markdownPreviewForm.RenderHtml(data, notepadPPGateway.GetCurrentFilePath(), false);
             }
         }
 
@@ -258,6 +259,7 @@ namespace NppMarkdownPanel
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithScrollPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithScrollPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
+            markdownPreviewForm.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
             MkdnExtensions = Win32.ReadIniValue("Options", "MkdnExtensions", iniFilePath, ".md,.mkdn,.mkd");
             HtmlExtensions = Win32.ReadIniValue("Options", "HtmlExtensions", iniFilePath, ".html,.htm");
@@ -274,7 +276,7 @@ namespace NppMarkdownPanel
                     break;
                 filterFound++;
             }
-
+            markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
@@ -282,7 +284,6 @@ namespace NppMarkdownPanel
             PluginBase.SetCommand(4, "---", null);
             PluginBase.SetCommand(5, "&Settings", EditSettings);
             PluginBase.SetCommand(6, "&About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
-
             idMyDlg = 0;
         }
 
@@ -360,7 +361,6 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "MkdnExtensions", MkdnExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "HtmlExtensions", HtmlExtensions.ToString(), iniFilePath);
         }
-
         private void ShowAboutDialog()
         {
             var aboutDialog = new AboutForm();
@@ -393,6 +393,8 @@ namespace NppMarkdownPanel
             isPanelVisible = !isPanelVisible;
             if (isPanelVisible)
             {
+                var currentFilePath = notepadPPGateway.GetCurrentFilePath();
+                markdownPreviewForm.CurrentFilePath = currentFilePath;
                 RenderMarkdownDirect();
             }
         }
@@ -425,5 +427,14 @@ namespace NppMarkdownPanel
         {
             return new MarkdigWrapperMarkdownGenerator();
         }
+
+        private bool IsDarkModeEnabled()
+        {
+            // NPPM_ISDARKMODEENABLED (NPPMSG + 107)
+            IntPtr ret = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)(Constants.NPPMSG + 107), Unused, Unused);
+            // return ret.ToInt32() == 1;
+            return false;
+        }
+
     }
 }
