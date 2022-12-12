@@ -56,9 +56,9 @@ namespace NppMarkdownPanel
         {
             if (isPanelVisible)
             {
-                var scintillaGateway = scintillaGatewayFactory();
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
+                    var scintillaGateway = scintillaGatewayFactory();
                     if ( ! (ValidateMkdnExtension() || ValidateHtmlExtension()) )
                         return;
 
