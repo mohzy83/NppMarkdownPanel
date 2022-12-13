@@ -51,6 +51,9 @@ namespace NppMarkdownPanel.Forms
 
         public string CurrentFilePath { get; set; }
 
+        public string MkdnExtensions { get; set; }
+        public string HtmlExtensions { get; set; }
+
         private bool isDarkModeEnabled;
         public bool IsDarkModeEnabled
         {
@@ -388,5 +391,47 @@ namespace NppMarkdownPanel.Forms
                 File.WriteAllText(filename, htmlContentForExport);
             }
         }
+
+
+        public bool isValidMkdnExtension()
+        {
+            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
+            var currentExtension = sbFileExtension.ToString().ToLower();
+            if ( String.IsNullOrEmpty(currentExtension) )
+                return false;
+
+            var matchExtensionList = false;
+            try
+            {
+                matchExtensionList = MkdnExtensions.Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
+            }
+            catch (Exception)
+            {
+            }
+
+            return matchExtensionList;
+        }
+
+        public bool isValidHtmlExtension()
+        {
+            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
+            var currentExtension = sbFileExtension.ToString().ToLower();
+            if ( String.IsNullOrEmpty(currentExtension) )
+                return false;
+
+            var matchExtensionList = false;
+            try
+            {
+                matchExtensionList = HtmlExtensions.Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
+            }
+            catch (Exception)
+            {
+            }
+
+            return matchExtensionList;
+        }
+
     }
 }

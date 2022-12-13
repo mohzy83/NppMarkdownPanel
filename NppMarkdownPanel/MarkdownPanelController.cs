@@ -33,16 +33,20 @@ namespace NppMarkdownPanel
         private readonly INotepadPPGateway notepadPPGateway;
         private int lastCaretPosition;
         private string iniFilePath;
-        private string MkdnExtensions;
-        private string HtmlExtensions;
         private bool syncViewWithCaretPosition;
         private bool syncViewWithScrollPosition;
+
+        private bool autoShowPanel = false;
+        private bool nppReady;
+
+        public const string DEFAULT_SUPPORTED_MKDN_EXT = "md,mkd,mdwn,mdown,mdtxt,markdown";
+        public const string DEFAULT_SUPPORTED_HTML_EXT = "html,htm";
 
         private const int FILTERS = 10;
         private string[] filterExts = new string[FILTERS];
         private string[] filterProgs = new string[FILTERS];
         private string[] filterArgs = new string[FILTERS];
-        private int filterFound = 0;
+        private int filtersFound = 0;
 
         public MarkdownPanelController()
         {
@@ -61,7 +65,7 @@ namespace NppMarkdownPanel
                 if (notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
                 {
                     var scintillaGateway = scintillaGatewayFactory();
-                    if ( ! (ValidateMkdnExtension() || ValidateHtmlExtension()) )
+                    if ( ! (markdownPreviewForm.isValidMkdnExtension() || markdownPreviewForm.isValidHtmlExtension()) )
                         return;
 
                     var firstVisible = scintillaGateway.GetFirstVisibleLine();
@@ -116,61 +120,30 @@ namespace NppMarkdownPanel
                 }
                 else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
                 {
-                    if ( ValidateMkdnExtension() || ValidateHtmlExtension() )
+                    if ( markdownPreviewForm.isValidMkdnExtension() || markdownPreviewForm.isValidHtmlExtension() )
                     {
                         lastTickCount = Environment.TickCount;
                         RenderMarkdownDeferred();
                     }
+                }
+                // NPPN_DARKMODECHANGED (NPPN_FIRST + 27) // To notify plugins that Dark Mode was enabled/disabled                else             
+                else if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST + 27))
+                {
+                    markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
+                    RenderMarkdownDirect();
                 }
                 else if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
                 {
                     RenderMarkdownDirect();
                 }
             }
-        }
 
-        private bool ValidateMkdnExtension()
-        {
-            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
-            var fileExtension = sbFileExtension.ToString();
-            if ( String.IsNullOrEmpty(fileExtension) )
-                return false;
-
-            if (MkdnExtensions.ToLower().Contains(fileExtension.ToLower()))
-                return true;
-            else
-                return false;
-        }
-
-        private bool ValidateHtmlExtension()
-        {
-            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
-            var fileExtension = sbFileExtension.ToString();
-            if ( String.IsNullOrEmpty(fileExtension) )
-                return false;
-
-            if (HtmlExtensions.ToLower().Contains(fileExtension.ToLower()))
-                return true;
-            else
-                return false;
-        }
-
-        private int ValidateFilterExtension()
-        {
-            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
-            var fileExtension = sbFileExtension.ToString();
-            if ( String.IsNullOrEmpty(fileExtension) )
-                return -1;
-
-            for ( int i = 0; i < filterFound; i++ )
+            if (notification.Header.Code == (uint)NppMsg.NPPN_READY)
             {
-                if (filterExts[i].Contains(fileExtension.ToLower()))
-                    return i;
+                nppReady = true;
+                var currentFilePath = notepadPPGateway.GetCurrentFilePath();
+                AutoShowOrHidePanel(currentFilePath);
             }
-            return -1;
         }
 
         private void RenderMarkdownDeferred()
@@ -200,16 +173,16 @@ namespace NppMarkdownPanel
 
         private void RenderMarkdownDirect(bool preserveVerticalScrollPosition = true)
         {
-            if (ValidateMkdnExtension())
+            if (markdownPreviewForm.isValidMkdnExtension())
                 markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
-            else if (ValidateHtmlExtension())
+            else if (markdownPreviewForm.isValidHtmlExtension())
                 markdownPreviewForm.RenderHtml(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
             else
             {
                 int filter = ValidateFilterExtension();
                 if ( filter < 0 )
                 {
-                    markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {MkdnExtensions}\n\nNot a valid HTML file extension: {HtmlExtensions}", notepadPPGateway.GetCurrentFilePath(), false);
+                    markdownPreviewForm.RenderMarkdown($"Not a valid Markdown file extension: {markdownPreviewForm.MkdnExtensions}\n\nNot a valid HTML file extension: {markdownPreviewForm.HtmlExtensions}", notepadPPGateway.GetCurrentFilePath(), false);
                     return;
                 }
 
@@ -243,7 +216,7 @@ namespace NppMarkdownPanel
         private void ScrollToElementAtLineNo(int lineNo)
         {
             var scintillaGateway = scintillaGatewayFactory();
-            if ( ValidateMkdnExtension() )
+            if ( markdownPreviewForm.isValidMkdnExtension() )
                 markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
             else
             {
@@ -260,11 +233,12 @@ namespace NppMarkdownPanel
             syncViewWithScrollPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithScrollPosition", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
             markdownPreviewForm.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
-            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 100, iniFilePath);
-            MkdnExtensions = Win32.ReadIniValue("Options", "MkdnExtensions", iniFilePath, ".md,.mkdn,.mkd");
-            HtmlExtensions = Win32.ReadIniValue("Options", "HtmlExtensions", iniFilePath, ".html,.htm");
+            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
             markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
             markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
+            markdownPreviewForm.MkdnExtensions = Win32.ReadIniValue("Options", "MkdnExtensions", iniFilePath, DEFAULT_SUPPORTED_MKDN_EXT);
+            markdownPreviewForm.HtmlExtensions = Win32.ReadIniValue("Options", "HtmlExtensions", iniFilePath, DEFAULT_SUPPORTED_HTML_EXT);
+            autoShowPanel = Utils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
 
             for ( int i = 0; i < FILTERS; i++ )
             {
@@ -274,7 +248,7 @@ namespace NppMarkdownPanel
                 filterArgs[i]  = Win32.ReadIniValue(section, "Arguments", iniFilePath, "!!!");
                 if ( filterExts[i].Contains("!!!") )
                     break;
-                filterFound++;
+                filtersFound++;
             }
             markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
@@ -290,15 +264,18 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, MkdnExtensions, HtmlExtensions);
+            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.CssDarkModeFileName, markdownPreviewForm.MkdnExtensions, markdownPreviewForm.HtmlExtensions, autoShowPanel);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
+                markdownPreviewForm.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
                 markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
                 markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
-                MkdnExtensions = settingsForm.MkdnExtensions;
-                HtmlExtensions = settingsForm.HtmlExtensions;
+                markdownPreviewForm.MkdnExtensions = settingsForm.MkdnExtensions;
+                markdownPreviewForm.HtmlExtensions = settingsForm.HtmlExtensions;
+                autoShowPanel = settingsForm.AutoShowPanel;
+                markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
                 SaveSettings();
                 //Update Preview
                 RenderMarkdownDirect();
@@ -355,11 +332,13 @@ namespace NppMarkdownPanel
         private void SaveSettings()
         {
             Win32.WriteIniValue("Options", "CssFileName", markdownPreviewForm.CssFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "CssDarkModeFileName", markdownPreviewForm.CssDarkModeFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "HtmlFileName", markdownPreviewForm.HtmlFileName, iniFilePath);
             Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "MkdnExtensions", MkdnExtensions.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "HtmlExtensions", HtmlExtensions.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "MkdnExtensions", markdownPreviewForm.MkdnExtensions, iniFilePath);
+            Win32.WriteIniValue("Options", "HtmlExtensions", markdownPreviewForm.HtmlExtensions, iniFilePath);
+            Win32.WriteIniValue("Options", "AutoShowPanel", autoShowPanel.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
         {
@@ -432,9 +411,47 @@ namespace NppMarkdownPanel
         {
             // NPPM_ISDARKMODEENABLED (NPPMSG + 107)
             IntPtr ret = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)(Constants.NPPMSG + 107), Unused, Unused);
-            // return ret.ToInt32() == 1;
-            return false;
+            return ret.ToInt32() == 1;
         }
 
+
+        private void AutoShowOrHidePanel(string currentFilePath)
+        {
+            if (nppReady && autoShowPanel)
+            {
+                // automatically show panel for supported file types
+                // if ((!isPanelVisible && markdownPreviewForm.isValidFileExtension(currentFilePath)) ||
+                    // (isPanelVisible && !markdownPreviewForm.isValidFileExtension(currentFilePath)))
+                // {
+                    // TogglePanelVisible();
+                // }
+            }
+        }
+
+        private int ValidateFilterExtension()
+        {
+            StringBuilder sbFileExtension = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEXTPART, Win32.MAX_PATH, sbFileExtension);
+            var currentExtension = sbFileExtension.ToString().ToLower();
+            if ( String.IsNullOrEmpty(currentExtension) )
+                return -1;
+
+            for ( int i = 0; i < filtersFound; i++ )
+            {
+                // if (filterExts[i].Contains(currentExtension.ToLower()))
+                    // return i;
+                var matchExtensionList = false;
+                try
+                {
+                    matchExtensionList = filterExts[i].Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
+                }
+                catch (Exception)
+                {
+                }
+                if ( matchExtensionList )
+                    return i;
+            }
+            return -1;
+        }
     }
 }
