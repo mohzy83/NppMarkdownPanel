@@ -17,30 +17,27 @@ namespace NppMarkdownPanel.Forms
         public string CssDarkModeFileName { get; set; }
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
-        public string MkdnExtensions { get; set; }
-        public string HtmlExtensions { get; set; }
+        public string SupportedFileExt { get; set; }
         public bool AutoShowPanel { get; set; }
 
-        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName, string mkdnExtensions, string htmlExtensions, bool autoShowPanel)
+        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName, string supportedFileExt, bool autoShowPanel)
         {
             ZoomLevel = zoomLevel;
             CssFileName = cssFileName;
             CssDarkModeFileName = cssDarkModeFileName;
             HtmlFileName = htmlFileName;
             ShowToolbar = showToolbar;
-            MkdnExtensions = mkdnExtensions;
-            HtmlExtensions = htmlExtensions;
+            SupportedFileExt = supportedFileExt;
             AutoShowPanel = autoShowPanel;
+
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
-            lblZoomValue.Text = $"{zoomLevel}%";
             tbCssFile.Text = cssFileName;
             tbDarkmodeCssFile.Text = cssDarkModeFileName;
             tbHtmlFile.Text = htmlFileName;
             cbShowToolbar.Checked = showToolbar;
-            tbMkdnExts.Text = mkdnExtensions;
-            tbHtmlExts.Text = htmlExtensions;
+            tbFileExt.Text = supportedFileExt;
             cbAutoShowPanel.Checked = autoShowPanel;
         }
 
@@ -104,13 +101,13 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private void btnDefaultCss_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            tbCssFile.Text = "style.css";
+            tbCssFile.Text = "";
         }
         private void btnDefaultDarkmodeCss_Click(object sender, EventArgs e)
         {
-            tbDarkmodeCssFile.Text = "style-dark.css";
+            tbDarkmodeCssFile.Text = "";
         }
 
         #region Output HTML File
@@ -171,22 +168,14 @@ namespace NppMarkdownPanel.Forms
 
         #endregion
 
-        private void tbMkdnExts_TextChanged(object sender, EventArgs e)
+        private void btnDefaultFileExt_Click(object sender, EventArgs e)
         {
-            MkdnExtensions = tbMkdnExts.Text;
-        }
-        private void btnDefaultMkdnExts_Click(object sender, EventArgs e)
-        {
-            tbMkdnExts.Text = MarkdownPanelController.DEFAULT_SUPPORTED_MKDN_EXT;
+            tbFileExt.Text = MarkdownPanelController.DEFAULT_SUPPORTED_FILE_EXT;
         }
 
-        private void tbHtmlExts_TextChanged(object sender, EventArgs e)
+        private void tbFileExt_TextChanged(object sender, EventArgs e)
         {
-            HtmlExtensions = tbHtmlExts.Text;
-        }
-        private void btnDefaultHtmlExts_Click(object sender, EventArgs e)
-        {
-            tbHtmlExts.Text = MarkdownPanelController.DEFAULT_SUPPORTED_HTML_EXT;
+            SupportedFileExt = tbFileExt.Text;
         }
 
         private void cbAutoShowPanel_CheckedChanged(object sender, EventArgs e)
