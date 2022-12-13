@@ -143,11 +143,14 @@ namespace NppMarkdownPanel
             markdownPreviewForm.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, DEFAULT_SUPPORTED_FILE_EXT);
             autoShowPanel = Utils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
-            PluginBase.SetCommand(0, "Edit Settings", EditSettings);
-            PluginBase.SetCommand(1, "Toggle Markdown Panel", TogglePanelVisible);
-            PluginBase.SetCommand(2, "Synchronize viewer with caret position", SyncViewWithCaret, syncViewWithCaretPosition);
-            PluginBase.SetCommand(3, "About", ShowAboutDialog, new ShortcutKey(false, false, false, Keys.None));
-            idMyDlg = 1;
+            PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
+            PluginBase.SetCommand(1, "---", null);
+            PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(4, "---", null);
+            PluginBase.SetCommand(5, "&Settings", EditSettings);
+            PluginBase.SetCommand(6, "&Help", ShowHelp);
+            PluginBase.SetCommand(7, "&About", ShowAboutDialog);
+            idMyDlg = 0;
         }
 
 
@@ -169,6 +172,17 @@ namespace NppMarkdownPanel
                 //Update Preview
                 RenderMarkdownDirect();
             }
+        }
+
+        private void ShowHelp()
+        {
+            StringBuilder sbPluginPath = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINHOMEPATH, Win32.MAX_PATH, sbPluginPath);
+            var helpFile = Path.Combine(sbPluginPath.ToString(), Main.PluginFilename + "\\README.md");
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DOOPEN, 0, helpFile);
+            if (!isPanelVisible)
+                TogglePanelVisible();
+            RenderMarkdownDirect();
         }
 
         private void SetIniFilePath()
