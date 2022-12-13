@@ -33,6 +33,7 @@ namespace NppMarkdownPanel.Forms
             InitializeComponent();
 
             trackBar1.Value = zoomLevel;
+            lblZoomValue.Text = $"{zoomLevel}%";
             tbCssFile.Text = cssFileName;
             tbDarkmodeCssFile.Text = cssDarkModeFileName;
             tbHtmlFile.Text = htmlFileName;
