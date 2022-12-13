@@ -332,6 +332,8 @@ namespace NppMarkdownPanel.Forms
             {
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
                 saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(CurrentFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(CurrentFilePath);
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     writeHtmlContentToFile(saveFileDialog.FileName);
