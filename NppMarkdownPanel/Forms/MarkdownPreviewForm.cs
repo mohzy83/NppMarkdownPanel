@@ -321,6 +321,11 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
+        private void webBrowserPreview_StatusTextChanged(object sender, EventArgs e)
+        {
+            toolStripStatusLabel1.Text = webBrowserPreview.StatusText;
+        }
+
         private void btnSaveHtml_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())

@@ -36,12 +36,15 @@
             this.tbPreview = new System.Windows.Forms.ToolStrip();
             this.btnSaveHtml = new System.Windows.Forms.ToolStripButton();
             this.btnPrintPreview = new System.Windows.Forms.ToolStripButton();
+            this.statusStrip2 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelPreview.SuspendLayout();
             this.toolStripContainer1.ContentPanel.SuspendLayout();
             this.toolStripContainer1.TopToolStripPanel.SuspendLayout();
             this.toolStripContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScreenshot)).BeginInit();
             this.tbPreview.SuspendLayout();
+            this.statusStrip2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelPreview
@@ -99,6 +102,7 @@
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
+            this.webBrowserPreview.StatusTextChanged += new System.EventHandler(this.webBrowserPreview_StatusTextChanged);
             // 
             // tbPreview
             // 
@@ -130,18 +134,36 @@
             this.btnPrintPreview.Size = new System.Drawing.Size(118, 24);
             this.btnPrintPreview.Text = "Print Preview";
             this.btnPrintPreview.Visible = false;
+            //
+            // statusStrip2
+            //
+            this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+            this.statusStrip2.Location = new System.Drawing.Point(0, 553);
+            this.statusStrip2.Name = "statusStrip2";
+            this.statusStrip2.Size = new System.Drawing.Size(811, 22);
+            this.statusStrip2.TabIndex = 2;
+            this.statusStrip2.Text = "statusStrip2";
+            //
+            // toolStripStatusLabel1
+            //
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Text = "";
             // 
             // MarkdownPreviewForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.ClientSize = new System.Drawing.Size(813, 602);
             this.Controls.Add(this.panelPreview);
+            this.Controls.Add(this.statusStrip2);
             this.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MarkdownPreviewForm";
             this.Text = "MarkdownPreviewForm";
             this.panelPreview.ResumeLayout(false);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
+            this.toolStripContainer1.ContentPanel.PerformLayout();
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
@@ -149,7 +171,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxScreenshot)).EndInit();
             this.tbPreview.ResumeLayout(false);
             this.tbPreview.PerformLayout();
+            this.statusStrip2.ResumeLayout(false);
+            this.statusStrip2.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -162,5 +187,7 @@
         private System.Windows.Forms.ToolStrip tbPreview;
         private System.Windows.Forms.ToolStripButton btnSaveHtml;
         private System.Windows.Forms.ToolStripButton btnPrintPreview;
+        private System.Windows.Forms.StatusStrip statusStrip2;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }
 }
