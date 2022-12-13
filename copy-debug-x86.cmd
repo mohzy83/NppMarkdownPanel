@@ -1,1 +1,2 @@
 xcopy C:\development\NppMarkdownPanel\NppMarkdownPanel\bin\Debug\*.* C:\npp\npp32\plugins\NppMarkdownPanel /c /s /r /d /y /i
+xcopy C:\development\NppMarkdownPanel\MarkdigWrapper\bin\Debug\*.* C:\npp\npp32\plugins\NppMarkdownPanel\lib /c /s /r /d /y /i
