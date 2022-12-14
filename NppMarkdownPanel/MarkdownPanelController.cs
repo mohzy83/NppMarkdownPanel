@@ -170,7 +170,7 @@ namespace NppMarkdownPanel
                 markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
                 SaveSettings();
                 //Update Preview
-                RenderMarkdownDirect();
+                if (isPanelVisible) RenderMarkdownDirect();
             }
         }
 
