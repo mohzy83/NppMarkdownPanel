@@ -65,11 +65,17 @@ namespace NppMarkdownPanel.Forms
                 {
                     tbPreview.BackColor = Color.Black;
                     btnSaveHtml.ForeColor = Color.White;
+                    statusStrip2.BackColor = Color.Black;
+                    toolStripStatusLabel1.ForeColor = Color.White;
+
                 }
                 else
                 {
                     tbPreview.BackColor = SystemColors.Control;
                     btnSaveHtml.ForeColor = SystemColors.ControlText;
+                    statusStrip2.BackColor = SystemColors.Control;
+                    toolStripStatusLabel1.ForeColor = SystemColors.ControlText;
+
                 }
             }
         }
