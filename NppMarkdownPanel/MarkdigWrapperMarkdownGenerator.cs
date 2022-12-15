@@ -19,27 +19,43 @@ namespace NppMarkdownPanel
         private Assembly assembly;
         private Type type;
         private Object wrapperInstance;
+        private string errorText;
 
         public MarkdigWrapperMarkdownGenerator()
         {
-            var currentPluginPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var wrapperDllPath = Path.Combine(currentPluginPath, "lib", "MarkdigWrapper.dll");
-            // References to other assemblies dont work in NPP ->
-            // load Assembly using reflection from subdir npp/plugins/NppMarkdownPanel/lib/MarkdigWrapper.dll
-            assembly = Assembly.LoadFrom(wrapperDllPath);
-            type = assembly.GetType("MarkdigWrapper.Wrapper");
-            wrapperInstance  = Activator.CreateInstance(type);
+            var wrapperDllPath = "";
+            try
+            {
+                var currentPluginPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                wrapperDllPath = Path.Combine(currentPluginPath, "lib", "MarkdigWrapper.dll");
+                // References to other assemblies dont work in NPP ->
+                // load Assembly using reflection from subdir npp/plugins/NppMarkdownPanel/lib/MarkdigWrapper.dll
+                assembly = Assembly.LoadFrom(wrapperDllPath);
+                type = assembly.GetType("MarkdigWrapper.Wrapper");
+                wrapperInstance = Activator.CreateInstance(type);
+            }
+            catch (Exception e)
+            {
+                errorText = string.Format("Error loading MarkdigWrapper from path {0}. Exception: {1}", wrapperDllPath, e.Message);
+            }
         }
 
         public string ConvertToHtml(string markDownText, string filepath)
         {
-            object[] methodParams = { markDownText, filepath };
-            object result = type.InvokeMember("ConvertToHtml",
-                  BindingFlags.Default | BindingFlags.InvokeMethod,
-                  null,
-                  wrapperInstance,
-                  methodParams);
-            return result.ToString();
+            if (wrapperInstance != null)
+            {
+                object[] methodParams = { markDownText, filepath };
+                object result = type.InvokeMember("ConvertToHtml",
+                      BindingFlags.Default | BindingFlags.InvokeMethod,
+                      null,
+                      wrapperInstance,
+                      methodParams);
+                return result.ToString();
+            }
+            else
+            {
+                return errorText;
+            }
         }
 
     }
