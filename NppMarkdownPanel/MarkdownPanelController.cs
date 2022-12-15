@@ -178,7 +178,7 @@ namespace NppMarkdownPanel
         {
             StringBuilder sbPluginPath = new StringBuilder(Win32.MAX_PATH);
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETPLUGINHOMEPATH, Win32.MAX_PATH, sbPluginPath);
-            var helpFile = Path.Combine(sbPluginPath.ToString(), Main.PluginFilename + "\\README.md");
+            var helpFile = Path.Combine($"{sbPluginPath}", Main.PluginName, "README.md");
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DOOPEN, 0, helpFile);
             if (!isPanelVisible)
                 TogglePanelVisible();
