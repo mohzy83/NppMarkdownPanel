@@ -45,12 +45,21 @@ namespace NppMarkdownPanel
             if (wrapperInstance != null)
             {
                 object[] methodParams = { markDownText, filepath };
-                object result = type.InvokeMember("ConvertToHtml",
-                      BindingFlags.Default | BindingFlags.InvokeMethod,
-                      null,
-                      wrapperInstance,
-                      methodParams);
-                return result.ToString();
+
+                try
+                {
+                    object result = type.InvokeMember("ConvertToHtml",
+                          BindingFlags.Default | BindingFlags.InvokeMethod,
+                          null,
+                          wrapperInstance,
+                          methodParams);
+                    return result.ToString();
+
+                }
+                catch (Exception e)
+                {
+                    return string.Format("Error executing ConvertToHtml. Exception: {0}", e.Message);
+                }
             }
             else
             {
