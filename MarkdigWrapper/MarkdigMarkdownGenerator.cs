@@ -9,6 +9,7 @@ using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.SyntaxHighlighting;
+using MarkdigWrapper.Markdig.YamlFrontMatter;
 
 namespace MarkdigWrapper
 {
@@ -27,6 +28,11 @@ namespace MarkdigWrapper
 
             var pipeline = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
+                // YamlFrontMatter block needs to be parsed with UseYamlFrontMatter()
+                // and is then rendered as code block with UseRenderYamlFrontMatterAsCodeBlock()
+                .UseYamlFrontMatter()
+                .UseRenderYamlFrontMatterAsCodeBlock()
+                // Syntax Highlighting
                 .UseSyntaxHighlighting()
                 .UsePreciseSourceLocation()
                 .Build();

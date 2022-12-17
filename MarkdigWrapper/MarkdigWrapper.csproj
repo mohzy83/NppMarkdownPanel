@@ -40,11 +40,14 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LanguageTypeAdapter.cs" />
+    <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockExtensions.cs" />
+    <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockHtmlRenderer.cs" />
+    <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockExtension.cs" />
+    <Compile Include="Markdig\SyntaxHighlighting\LanguageTypeAdapter.cs" />
     <Compile Include="MarkdigMarkdownGenerator.cs" />
-    <Compile Include="SyntaxHighlightingCodeBlockRenderer.cs" />
-    <Compile Include="SyntaxHighlightingExtension.cs" />
-    <Compile Include="SyntaxHighlightingExtensions.cs" />
+    <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingCodeBlockRenderer.cs" />
+    <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingExtension.cs" />
+    <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingExtensions.cs" />
     <Compile Include="Wrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -66,5 +69,6 @@
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
