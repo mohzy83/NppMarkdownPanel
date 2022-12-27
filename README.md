@@ -8,7 +8,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.7.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.7.1** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 ### Used libs and icons
 
@@ -56,7 +56,8 @@ With dark mode enabled in Notepad++:
 
 ### Settings
 
-To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settings
+To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Settings
+![npp-settings](help/open-settings.png "open settings dialog")
 
 * #### CSS File
     This allows you to select a CSS file to use if you don't want the default style of the preview
@@ -85,6 +86,10 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 * #### Show Toolbar in Preview Window
     Checking this box will enable the toolbar in the preview window. By default, this is unchecked.
 
+* #### Show Statusbar in Preview Window (Preview Links)
+    Checking this box will show the status bar, which previews urls for links. By default, this is unchecked.
+
+
 ### Preview Window Toolbar
 
 * #### Save As... (![save-btn](help/save-btn.png "Picture of the Save button on the preview panel toolbar"))
@@ -95,9 +100,29 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Edit Settin
 Enabling this in the plugin's menu (Plugins -> NppMarkdownPanel) makes the preview panel stay in sync with the caret in the markdown document that is being edited.  
 This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for keeping two open editing panels scrolling together.
 
+### Synchronize with first visible line in editor
+
+When this option is enabled, the plugin ensures that the first visible line in the 
+editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
 
+### Version 0.7.1 (released 2022-12-27)
+
+- bug fixes
+	- Footnotes (links to footnotes) don't work #28
+	- Code fences not rendered for unknown languages (contributed by [rdipardo](https://github.com/rdipardo)) #55
+	- Errorhandling when libraries are missing #57
+	- Zoom label does not update on Settings panel init (contributed by [vinsworldcom](https://github.com/vinsworldcom)) #58
+	- Settings dialog should render only if visible (contributed by [vinsworldcom](https://github.com/vinsworldcom)) #66
+- features
+	- Synchronize with first visible line in editor #14
+    - Select/follow active editor pane when using mulitple editors #20
+	- YAML Frontmatter is rendered as code block #46
+	- Status bar to preview URLs for links (contributed by [vinsworldcom](https://github.com/vinsworldcom)) #60
+	- Save As toolbar button provides default directory and filename (contributed by [vinsworldcom](https://github.com/vinsworldcom)) #61
+	- Menu includes Help to access README / menu item order improved (contributed by [vinsworldcom](https://github.com/vinsworldcom)) #64
+	
 ### Version 0.7.0 (released 2022-12-09)
 
 - dark mode support
@@ -134,7 +159,6 @@ Bugfix release
 - change css file for the markdown style
 - the new settings are persistent
 - open settings dialog: Plugins-> NppMarkdownPanel -> Edit Settings
-![npp-settings](help/open-settings.png "open settings dialog")
 
 ### Version 0.4.0
 - switched from CommonMark.Net to markdig rendering library
@@ -146,10 +170,13 @@ Bugfix release
 - Initial release
 
 
-### Feature - Synchronize viewer with caret position
+### Contributors
 
-![npp-sync-caret](help/sync_caret.gif "Synchronize viewer with caret position")
+Thanks to the contributors: 
 
+[vinsworldcom](https://github.com/vinsworldcom), [rdipardo](https://github.com/rdipardo),
+[RicoP](https://github.com/RicoP), [UrsineRaven](https://github.com/UrsineRaven) and
+[eeucalyptus](https://github.com/eeucalyptus)
 
 ## License
 
