@@ -56,6 +56,7 @@
             this.tbFileExt = new System.Windows.Forms.TextBox();
             this.btnDefaultFileExt = new System.Windows.Forms.Button();
             this.cbAutoShowPanel = new System.Windows.Forms.CheckBox();
+            this.cbShowStatusbar = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -96,7 +97,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(472, 462);
+            this.btnSave.Location = new System.Drawing.Point(472, 512);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 36);
             this.btnSave.TabIndex = 1;
@@ -107,7 +108,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(583, 462);
+            this.btnCancel.Location = new System.Drawing.Point(583, 512);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(105, 36);
             this.btnCancel.TabIndex = 2;
@@ -249,7 +250,7 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sblInvalidHtmlPath});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 510);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 560);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(700, 22);
             this.statusStrip1.TabIndex = 16;
@@ -345,11 +346,23 @@
             this.cbAutoShowPanel.UseVisualStyleBackColor = true;
             this.cbAutoShowPanel.CheckedChanged += new System.EventHandler(this.cbAutoShowPanel_CheckedChanged);
             // 
+            // cbShowStatusbar
+            // 
+            this.cbShowStatusbar.AutoSize = true;
+            this.cbShowStatusbar.Location = new System.Drawing.Point(159, 442);
+            this.cbShowStatusbar.Name = "cbShowStatusbar";
+            this.cbShowStatusbar.Size = new System.Drawing.Size(340, 23);
+            this.cbShowStatusbar.TabIndex = 25;
+            this.cbShowStatusbar.Text = "Show Statusbar in Preview Window (Preview Links)";
+            this.cbShowStatusbar.UseVisualStyleBackColor = true;
+            this.cbShowStatusbar.CheckedChanged += new System.EventHandler(this.cbShowStatusbar_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(700, 532);
+            this.ClientSize = new System.Drawing.Size(700, 582);
+            this.Controls.Add(this.cbShowStatusbar);
             this.Controls.Add(this.cbAutoShowPanel);
             this.Controls.Add(this.btnDefaultFileExt);
             this.Controls.Add(this.tbFileExt);
@@ -420,5 +433,6 @@
         private System.Windows.Forms.TextBox tbFileExt;
         private System.Windows.Forms.Button btnDefaultFileExt;
         private System.Windows.Forms.CheckBox cbAutoShowPanel;
+        private System.Windows.Forms.CheckBox cbShowStatusbar;
     }
 }

@@ -55,7 +55,7 @@
             this.panelPreview.Location = new System.Drawing.Point(0, 0);
             this.panelPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelPreview.Name = "panelPreview";
-            this.panelPreview.Size = new System.Drawing.Size(813, 602);
+            this.panelPreview.Size = new System.Drawing.Size(813, 578);
             this.panelPreview.TabIndex = 0;
             // 
             // toolStripContainer1
@@ -66,13 +66,13 @@
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.pictureBoxScreenshot);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.webBrowserPreview);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 573);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 549);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(811, 600);
+            this.toolStripContainer1.Size = new System.Drawing.Size(811, 576);
             this.toolStripContainer1.TabIndex = 2;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -85,7 +85,7 @@
             this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxScreenshot.Name = "pictureBoxScreenshot";
-            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 573);
+            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 549);
             this.pictureBoxScreenshot.TabIndex = 1;
             this.pictureBoxScreenshot.TabStop = false;
             this.pictureBoxScreenshot.Visible = false;
@@ -98,7 +98,7 @@
             this.webBrowserPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.webBrowserPreview.MinimumSize = new System.Drawing.Size(18, 21);
             this.webBrowserPreview.Name = "webBrowserPreview";
-            this.webBrowserPreview.Size = new System.Drawing.Size(811, 573);
+            this.webBrowserPreview.Size = new System.Drawing.Size(811, 549);
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
@@ -134,22 +134,23 @@
             this.btnPrintPreview.Size = new System.Drawing.Size(118, 24);
             this.btnPrintPreview.Text = "Print Preview";
             this.btnPrintPreview.Visible = false;
-            //
+            // 
             // statusStrip2
-            //
+            // 
+            this.statusStrip2.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip2.Location = new System.Drawing.Point(0, 553);
+            this.statusStrip2.Location = new System.Drawing.Point(0, 578);
             this.statusStrip2.Name = "statusStrip2";
-            this.statusStrip2.Size = new System.Drawing.Size(811, 22);
+            this.statusStrip2.Size = new System.Drawing.Size(813, 24);
             this.statusStrip2.TabIndex = 2;
             this.statusStrip2.Text = "statusStrip2";
-            //
+            this.statusStrip2.Visible = false;
+            // 
             // toolStripStatusLabel1
-            //
+            // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel1.Text = "";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 18);
             // 
             // MarkdownPreviewForm
             // 
@@ -163,7 +164,6 @@
             this.Text = "MarkdownPreviewForm";
             this.panelPreview.ResumeLayout(false);
             this.toolStripContainer1.ContentPanel.ResumeLayout(false);
-            this.toolStripContainer1.ContentPanel.PerformLayout();
             this.toolStripContainer1.TopToolStripPanel.ResumeLayout(false);
             this.toolStripContainer1.TopToolStripPanel.PerformLayout();
             this.toolStripContainer1.ResumeLayout(false);
