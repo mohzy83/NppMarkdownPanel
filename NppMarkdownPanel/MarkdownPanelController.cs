@@ -30,9 +30,14 @@ namespace NppMarkdownPanel
 
         private readonly Func<IScintillaGateway> scintillaGatewayFactory;
         private readonly INotepadPPGateway notepadPPGateway;
-        private int lastCaretPosition;
+
         private string iniFilePath;
+
+        private int lastCaretPosition;
         private bool syncViewWithCaretPosition;
+
+        private int currentFirstVisibleLine;
+        private bool syncViewWithFirstVisibleLine;
 
         private bool autoShowPanel = false;
         private bool nppReady;
@@ -54,10 +59,22 @@ namespace NppMarkdownPanel
             if (isPanelVisible && notification.Header.Code == (uint)SciMsg.SCN_UPDATEUI)
             {
                 var scintillaGateway = scintillaGatewayFactory();
-                if (syncViewWithCaretPosition && lastCaretPosition != scintillaGateway.GetCurrentPos())
+                if (syncViewWithCaretPosition)
                 {
-                    lastCaretPosition = scintillaGateway.GetCurrentPos();
-                    ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
+                    if (lastCaretPosition != scintillaGateway.GetCurrentPos())
+                    {
+                        lastCaretPosition = scintillaGateway.GetCurrentPos();
+                        ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
+                    }
+                }
+                else if (syncViewWithFirstVisibleLine)
+                {
+                    if (currentFirstVisibleLine != scintillaGateway.GetFirstVisibleLine())
+                    {
+                        var firstVisibleLine = scintillaGateway.GetFirstVisibleLine();
+                        currentFirstVisibleLine = firstVisibleLine;
+                        ScrollToElementAtLineNo(firstVisibleLine);
+                    }
                 }
             }
             if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
@@ -69,7 +86,7 @@ namespace NppMarkdownPanel
                 {
                     RenderMarkdownDirect(false);
                 }
-                AutoShowOrHidePanel(currentFilePath);                
+                AutoShowOrHidePanel(currentFilePath);
             }
             // NPPN_DARKMODECHANGED (NPPN_FIRST + 27) // To notify plugins that Dark Mode was enabled/disabled
             if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST + 27))
@@ -135,6 +152,7 @@ namespace NppMarkdownPanel
         {
             SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
+            syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
             markdownPreviewForm.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
             markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
@@ -146,6 +164,7 @@ namespace NppMarkdownPanel
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
+            PluginBase.SetCommand(3, "Synchronize with &first visible line in editor", SyncViewWithFirstVisibleLine, syncViewWithFirstVisibleLine);
             PluginBase.SetCommand(4, "---", null);
             PluginBase.SetCommand(5, "&Settings", EditSettings);
             PluginBase.SetCommand(6, "&Help", ShowHelp);
@@ -197,9 +216,23 @@ namespace NppMarkdownPanel
         private void SyncViewWithCaret()
         {
             syncViewWithCaretPosition = !syncViewWithCaretPosition;
+            if (syncViewWithCaretPosition && syncViewWithFirstVisibleLine)
+                // Disable syncWithFirstVisibleLine
+                SyncViewWithFirstVisibleLine();
             Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[2]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithCaretPosition ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
             var scintillaGateway = scintillaGatewayFactory();
             if (syncViewWithCaretPosition) ScrollToElementAtLineNo(scintillaGateway.GetCurrentLineNumber());
+        }
+
+        private void SyncViewWithFirstVisibleLine()
+        {
+            syncViewWithFirstVisibleLine = !syncViewWithFirstVisibleLine;
+            if (syncViewWithFirstVisibleLine && syncViewWithCaretPosition)
+                // Disable syncViewWithCaretPosition
+                SyncViewWithCaret();
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[3]._cmdID, Win32.MF_BYCOMMAND | (syncViewWithFirstVisibleLine ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            var scintillaGateway = scintillaGatewayFactory();
+            if (syncViewWithFirstVisibleLine) ScrollToElementAtLineNo(scintillaGateway.GetFirstVisibleLine());
         }
 
         public void SetToolBarIcon()
@@ -216,6 +249,7 @@ namespace NppMarkdownPanel
         public void PluginCleanUp()
         {
             Win32.WritePrivateProfileString("Options", "SyncViewWithCaretPosition", syncViewWithCaretPosition ? "1" : "0", iniFilePath);
+            Win32.WritePrivateProfileString("Options", "SyncWithFirstVisibleLine", syncViewWithFirstVisibleLine ? "1" : "0", iniFilePath);
             SaveSettings();
         }
 
@@ -264,7 +298,7 @@ namespace NppMarkdownPanel
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 markdownPreviewForm.CurrentFilePath = currentFilePath;
                 RenderMarkdownDirect(false);
-            }                
+            }
         }
 
         private Icon ConvertBitmapToIcon(Bitmap bitmapImage)
