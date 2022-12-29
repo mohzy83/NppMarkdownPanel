@@ -10,21 +10,6 @@ Plugin to preview Markdown files in Notepad++
 
 The current version is **0.7.1** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
-### Used libs and icons
-
-Using **Markdig** v 0.30.4 by xoofx - [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)
-
-Using **NotepadPlusPlusPluginPack.Net** by kbilsted - [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net)	
-
-Using **ColorCode (Portable)** 1.0.3 by Bashir Souid and Richard Slater - [https://github.com/RichardSlater/ColorCodePortable](https://github.com/RichardSlater/ColorCodePortable)
-
-Using **Markdig.SyntaxHighlighting** 1.1.7 by Richard Slater [https://github.com/RichardSlater/Markdig.SyntaxHighlighting](https://github.com/RichardSlater/Markdig.SyntaxHighlighting)
-
-Using Markdown style **github-markdown-css** by sindresorhus - [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)
-
-Using portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)
-
-Using the **Markdown icon** by dcurtis  - [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)
 
 ## Prerequisites
 - .NET 4.5.2 or higher 
@@ -168,6 +153,20 @@ Bugfix release
 
 ### Version 0.2.0
 - Initial release
+
+### Used libs and resources
+
+| Name                              | Version | Authors                             | Link                                                                                                                   |
+|-----------------------------------|---------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| **Markdig**                       | 0.30.4  | xoofx                               | [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)                                             |
+| **NotepadPlusPlusPluginPack.Net** |   0.95  | kbilsted                            | [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net) |
+| **ColorCode (Portable)**          | 1.0.3   | Bashir Souid and Richard Slater     | [https://github.com/RichardSlater/ColorCodePortable](https://github.com/RichardSlater/ColorCodePortable)               |
+| **Markdig.SyntaxHighlighting**    | 1.1.7   | Richard Slater                      | [https://github.com/RichardSlater/Markdig.SyntaxHighlighting](https://github.com/RichardSlater/Markdig.SyntaxHighlighting) |
+| **github-markdown-css**           | 3.0.1   | sindresorhus                        | [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)             |
+| **Markdown icon**                 |         | dcurtis                             | [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)                                   |
+
+The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)
+
 
 
 ### Contributors
