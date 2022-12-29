@@ -4,7 +4,7 @@ Plugin to preview Markdown files in Notepad++
 - lightweight plugin to preview markdown within Notepad++
 - displaying rendered markdown html with embedded IE11
 - can save rendered html to a file
-- Dark mode support
+- Dark mode support (_requires Notepad++ version 8.4.1 or later_)
 
 ### Current Version
 
@@ -125,7 +125,7 @@ editor is also visible in the preview. (This is an alternative to _Synchronize v
 	
 ### Version 0.7.0 (released 2022-12-09)
 
-- dark mode support
+- dark mode support (_requires Notepad++ version 8.4.1 or later_)
 - new markdig 0.30.4 integrated
 - code/syntax highlighting
 	- example C# code with highlighting:
