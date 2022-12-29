@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using ColorCode;
+using ColorCode.Formatting;
 using Markdig.Parsers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
@@ -63,7 +64,8 @@ namespace Markdig.SyntaxHighlighting {
             var codeWriter = new StringWriter(codeBuilder);
             var styleSheet = _customCss ?? StyleSheets.Default;
             var colourizer = new CodeColorizer();
-            colourizer.Colorize(code, language, Formatters.Default, styleSheet, codeWriter);
+            var htmlFormatter = new HtmlClassFormatter();
+            colourizer.Colorize(code, language, htmlFormatter, styleSheet, codeWriter);
             return codeBuilder.ToString();
         }
 
