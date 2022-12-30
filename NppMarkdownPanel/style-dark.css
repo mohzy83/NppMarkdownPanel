@@ -407,3 +407,150 @@ pre code, pre tt {
   background-color: transparent;
   border: none;
 }
+
+/* Syntax Highlighting */
+
+.plainText {
+ background-color: #FFFFFF;
+ color: #000000;
+}
+.htmlServerSideScript {
+ background-color: #FFFF00;
+}
+.htmlComment {
+ color: #307F30;
+}
+.htmlTagDelimiter {
+ color: #7F7FFF;
+}
+.htmlElementName {
+ color: #CC6C4E;
+}
+.htmlAttributeName {
+ color: #FF0000;
+}
+.htmlAttributeValue {
+ color: #7F7FFF;
+}
+.htmlOperator {
+ color: #7F7FFF;
+}
+.comment {
+ color: #307F30;
+}
+.xmlDocTag {
+ color: #808080;
+}
+.xmlDocComment {
+ color: #307F30;
+}
+.string {
+ color: #CC6C4E;
+}
+.stringCSharpVerbatim {
+ color: #CC6C4E;
+}
+.keyword {
+ color: #7F7FFF;
+}
+.preprocessorKeyword {
+ color: #7F7FFF;
+}
+.htmlEntity {
+ color: #FF0000;
+}
+.xmlAttribute {
+ color: #FF0000;
+}
+.xmlAttributeQuotes {
+ color: #000000;
+}
+.xmlAttributeValue {
+ color: #7F7FFF;
+}
+.xmlCDataSection {
+ color: #808080;
+}
+.xmlComment {
+ color: #307F30;
+}
+.xmlDelimiter {
+ color: #7F7FFF;
+}
+.xmlName {
+ color: #CC6C4E;
+}
+.className {
+ color: #48D1CC;
+}
+.cssSelector {
+ color: #CC6C4E;
+}
+.cssPropertyName {
+ color: #FF0000;
+}
+.cssPropertyValue {
+ color: #7F7FFF;
+}
+.sqlSystemFunction {
+ color: #FF00FF;
+}
+.powershellAttribute {
+ color: #B0E0E6;
+}
+.powershellOperator {
+ color: #808080;
+}
+.powershellType {
+ color: #008080;
+}
+.powershellVariable {
+ color: #FF4500;
+}
+.type {
+ color: #008080;
+}
+.typeVariable {
+ color: #008080;
+ font-style: italic;
+}
+.namespace {
+ color: #000080;
+}
+.constructor {
+ color: #800080;
+}
+.predefined {
+ color: #000080;
+}
+.pseudoKeyword {
+ color: #000080;
+}
+.stringEscape {
+ color: #808080;
+}
+.controlKeyword {
+ color: #7F7FFF;
+}
+.number {
+}
+.operator {
+}
+.delimiter {
+}
+.markdownHeader {
+ font-weight: bold;
+}
+.markdownCode {
+ color: #008080;
+}
+.markdownListItem {
+ font-weight: bold;
+}
+.italic {
+ font-style: italic;
+}
+.bold {
+ font-weight: bold;
+}
+

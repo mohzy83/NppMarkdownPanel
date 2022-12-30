@@ -40,6 +40,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Markdig\SyntaxHighlighting\StyleToCssWriter.cs" />
     <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockExtensions.cs" />
     <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockHtmlRenderer.cs" />
     <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockExtension.cs" />

@@ -7,20 +7,25 @@ using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
 
-namespace Markdig.SyntaxHighlighting {
-    public class SyntaxHighlightingCodeBlockRenderer : HtmlObjectRenderer<CodeBlock> {
+namespace Markdig.SyntaxHighlighting
+{
+    public class SyntaxHighlightingCodeBlockRenderer : HtmlObjectRenderer<CodeBlock>
+    {
         private readonly CodeBlockRenderer _underlyingRenderer;
         private readonly IStyleSheet _customCss;
 
-        public SyntaxHighlightingCodeBlockRenderer(CodeBlockRenderer underlyingRenderer = null, IStyleSheet customCss = null) {
+        public SyntaxHighlightingCodeBlockRenderer(CodeBlockRenderer underlyingRenderer = null, IStyleSheet customCss = null)
+        {
             _underlyingRenderer = underlyingRenderer ?? new CodeBlockRenderer();
             _customCss = customCss;
         }
 
-        protected override void Write(HtmlRenderer renderer, CodeBlock obj) {
+        protected override void Write(HtmlRenderer renderer, CodeBlock obj)
+        {
             var fencedCodeBlock = obj as FencedCodeBlock;
             var parser = obj.Parser as FencedCodeBlockParser;
-            if (fencedCodeBlock == null || parser == null) {
+            if (fencedCodeBlock == null || parser == null)
+            {
                 _underlyingRenderer.Write(renderer, obj);
                 return;
             }
@@ -28,7 +33,8 @@ namespace Markdig.SyntaxHighlighting {
             var attributes = obj.TryGetAttributes() ?? new HtmlAttributes();
 
             var languageMoniker = fencedCodeBlock.Info.Replace(parser.InfoPrefix, string.Empty);
-            if (string.IsNullOrEmpty(languageMoniker)) {
+            if (string.IsNullOrEmpty(languageMoniker))
+            {
                 _underlyingRenderer.Write(renderer, obj);
                 return;
             }
@@ -52,11 +58,13 @@ namespace Markdig.SyntaxHighlighting {
             renderer.WriteLine("</div>");
         }
 
-        private string ApplySyntaxHighlighting(string languageMoniker, string firstLine, string code) {
+        private string ApplySyntaxHighlighting(string languageMoniker, string firstLine, string code)
+        {
             var languageTypeAdapter = new LanguageTypeAdapter();
             var language = languageTypeAdapter.Parse(languageMoniker, firstLine);
 
-            if (language?.Id == null) { // TODO: handle unrecognised language formats, e.g. when using mermaid diagrams
+            if (language?.Id == null)
+            { // TODO: handle unrecognised language formats, e.g. when using mermaid diagrams
                 return code;
             }
 
@@ -69,20 +77,26 @@ namespace Markdig.SyntaxHighlighting {
             return codeBuilder.ToString();
         }
 
-        private static string GetCode(LeafBlock obj, out string firstLine) {
+        private static string GetCode(LeafBlock obj, out string firstLine)
+        {
             var code = new StringBuilder();
             firstLine = null;
-            foreach (var line in obj.Lines.Lines) {
+            foreach (var line in obj.Lines.Lines)
+            {
                 var slice = line.Slice;
-                if (slice.Text == null) {
+                if (slice.Text == null)
+                {
                     continue;
                 }
 
                 var lineText = slice.Text.Substring(slice.Start, slice.Length);
 
-                if (firstLine == null) {
+                if (firstLine == null)
+                {
                     firstLine = lineText;
-                } else {
+                }
+                else
+                {
                     code.AppendLine();
                 }
 
