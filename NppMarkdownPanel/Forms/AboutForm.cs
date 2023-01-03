@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +16,14 @@ namespace NppMarkdownPanel.Forms
         public AboutForm()
         {
             InitializeComponent();
-            tbAbout.Text = MainResources.AboutDialogText;
+            var versionString = "0.X";
+            try
+            {
+                Version version = Assembly.GetExecutingAssembly().GetName().Version;
+                versionString = version.ToString();
+            }
+            catch (Exception) { }
+            tbAbout.Text = string.Format(MainResources.AboutDialogText, versionString);
             btnOk.Focus();
             this.ActiveControl = btnOk;
         }

@@ -63,20 +63,22 @@ namespace NppMarkdownPanel.Forms {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die NppMarkdownPanel for Notepad++
         ///
-        ///Version 0.7.1
+        ///Version {0}
         ///
         ///Created by Mohzy 2019-2022
         ///
         ///Github: https://github.com/mohzy83/NppMarkdownPanel
         ///
-        ///Using Markdig 0.30.4 by xoofx - https://github.com/lunet-io/markdig
+        ///Used Libs and Resources:
         ///
-        ///Using NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+        ///Markdig 0.30.4 by xoofx - https://github.com/lunet-io/markdig
         ///
-        ///Using ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater
+        ///NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net	
+        ///
+        ///ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater
         ///https://github.com/RichardSlater/ColorCodePortable
         ///
-        ///Using Markdig.SyntaxHighlighting 1.1.7  - Syntax Highlighting [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///Markdig.SyntaxHighlighting 1.1.7  - Syntax Highlighti [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string AboutDialogText {
             get {
