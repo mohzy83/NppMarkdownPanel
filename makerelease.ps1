@@ -5,7 +5,7 @@ Copy-Item -Force -Recurse -Path MarkdigWrapper\bin\Release\*.dll -Destination Re
 function makeReleaseZip($filename, $targetPlattform)
 {
 	$zipName = "Release\NppMarkdownPanel-" + (Get-Item $filename).VersionInfo.FileVersion + "-" + $targetPlattform + ".zip"
-	Compress-Archive -LiteralPath $filename, 'Release\lib\', 'NppMarkdownPanel\Resources\nppMdP.tests\', 'README.md', 'help\', 'License.txt', "NppMarkdownPanel\style.css" , "NppMarkdownPanel\style-dark.css" -DestinationPath $zipName -Force
+	Compress-Archive -LiteralPath $filename, 'Release\lib\', 'README.md', 'help\', 'License.txt', "NppMarkdownPanel\style.css" , "NppMarkdownPanel\style-dark.css" -DestinationPath $zipName -Force
 }
 
 makeReleaseZip "NppMarkdownPanel\bin\Release\NppMarkdownPanel.dll" "x86"

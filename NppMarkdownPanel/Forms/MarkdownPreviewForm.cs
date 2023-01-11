@@ -124,17 +124,8 @@ namespace NppMarkdownPanel.Forms
                 return new RenderResult(invalidExtensionMessage, invalidExtensionMessage);
             }
 
-            var resultForBrowser = markdownGenerator.ConvertToHtml(currentText, filepath);
-
-            // Unescape URI with % characters for non - US - ASCII characters in order to workaround
-            // a bug under IE/Edge with local file links containing non US-ASCII chars.
-            //               using System.Text.RegularExpressions;
-            //string inp = " * %25%20x : `<img src=\"file:///C:/tmp/test%20nonAscii%20path/A%C4%85C%C4%87E/A%C4%84%2520(2).png\" />`";
-            //outp:          * %25%20x : `<img src="file:///C:/tmp/test nonAscii path/AąCćE/AĄ%20(2).png" />`
-            Regex regex = new Regex("src=\"file:///[^\"]+");
-            resultForBrowser = regex.Replace(resultForBrowser, m => Uri.UnescapeDataString(m.Value));
-
-            var resultForExport = markdownGenerator.ConvertToHtml(currentText, null);
+            var resultForBrowser = markdownGenerator.ConvertToHtml(currentText, filepath, true);
+            var resultForExport = markdownGenerator.ConvertToHtml(currentText, null, false);
 
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);

@@ -40,11 +40,11 @@ namespace NppMarkdownPanel
             }
         }
 
-        public string ConvertToHtml(string markDownText, string filepath)
+        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInImageUris)
         {
             if (wrapperInstance != null)
             {
-                object[] methodParams = { markDownText, filepath };
+                object[] methodParams = { markDownText, filepath, supportEscapeCharsInImageUris };
 
                 try
                 {
