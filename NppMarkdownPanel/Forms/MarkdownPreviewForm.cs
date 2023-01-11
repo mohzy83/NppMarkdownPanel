@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,8 +23,8 @@ namespace NppMarkdownPanel.Forms
          @"<!DOCTYPE html>
             <html>
                 <head>                    
-	                <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
-	                <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
+                    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
+                    <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
                     <title>{0}</title>
                     <style type=""text/css"">
                     {1}
@@ -124,6 +125,15 @@ namespace NppMarkdownPanel.Forms
             }
 
             var resultForBrowser = markdownGenerator.ConvertToHtml(currentText, filepath);
+
+            // Unescape URI with % characters for non - US - ASCII characters in order to workaround
+            // a bug under IE/Edge with local file links containing non US-ASCII chars.
+            //               using System.Text.RegularExpressions;
+            //string inp = " * %25%20x : `<img src=\"file:///C:/tmp/test%20nonAscii%20path/A%C4%85C%C4%87E/A%C4%84%2520(2).png\" />`";
+            //outp:          * %25%20x : `<img src="file:///C:/tmp/test nonAscii path/AąCćE/AĄ%20(2).png" />`
+            Regex regex = new Regex("src=\"file:///[^\"]+");
+            resultForBrowser = regex.Replace(resultForBrowser, m => Uri.UnescapeDataString(m.Value));
+
             var resultForExport = markdownGenerator.ConvertToHtml(currentText, null);
 
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
