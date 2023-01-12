@@ -151,4 +151,8 @@ The plugin uses portions of nea's MarkdownViewerPlusPlus Plugin code - https://g
   <data name="DefaultDarkModeCssFile" xml:space="preserve">
     <value>style-dark.css</value>
   </data>
+  <data name="DefaultRegExpFile" xml:space="preserve">
+    <value>RegExp3.txt</value>
+    <comment>placed in Notepad++\plugins\NppMarkdownPanel\</comment>
+  </data>
 </root>

@@ -117,5 +117,6 @@ namespace NppMarkdownPanel
                     return false;
             }
         }
+
     }
 }
