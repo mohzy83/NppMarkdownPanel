@@ -117,5 +117,30 @@ namespace NppMarkdownPanel
                     return false;
             }
         }
+
+        /// <summary>
+        /// Takes a fileName or fileName2 and returns it in validFileName whether file exists.
+        /// </summary>
+        /// <param name="fileName">Filename or path of file</param>
+        /// <param name="fileName2">Filename or path of file</param>
+        /// <param name="validFileName">File name of existing file</param>
+        /// <returns>Boolean representing whether file with fileName or fileName2 exists</returns>
+        public static bool FileNameExists(string fileName, string fileName2, out string validFileName)
+        {
+            validFileName = "";
+            if (File.Exists(fileName))
+            {
+                validFileName = fileName;
+            }
+            else
+            {
+                if (File.Exists(fileName2))
+                {
+                    validFileName = fileName2;
+                }
+            }
+            return !String.IsNullOrWhiteSpace(validFileName);
+        }
+
     }
 }

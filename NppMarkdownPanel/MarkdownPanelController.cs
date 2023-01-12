@@ -162,6 +162,11 @@ namespace NppMarkdownPanel
             markdownPreviewForm.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, DEFAULT_SUPPORTED_FILE_EXT);
             autoShowPanel = Utils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
+
+            markdownPreviewForm.UseRegExp = Utils.ReadIniBool("Options", "UseRegExp", iniFilePath);
+            markdownPreviewForm.RegExpFileName = Win32.ReadIniValue("Options", "RegExpFileName", iniFilePath, MainResources.DefaultRegExpFile);
+            markdownPreviewForm.RegExp3lines = null; //(re)read it in markdownPreviewForm
+
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
@@ -176,7 +181,7 @@ namespace NppMarkdownPanel
 
         private void EditSettings()
         {
-            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.CssDarkModeFileName, markdownPreviewForm.SupportedFileExt, autoShowPanel, markdownPreviewForm.ShowStatusbar);
+            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.UseRegExp, markdownPreviewForm.RegExpFileName, markdownPreviewForm.CssDarkModeFileName, markdownPreviewForm.SupportedFileExt, autoShowPanel, markdownPreviewForm.ShowStatusbar);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
                 markdownPreviewForm.CssFileName = settingsForm.CssFileName;
@@ -186,6 +191,8 @@ namespace NppMarkdownPanel
                 markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
                 markdownPreviewForm.SupportedFileExt = settingsForm.SupportedFileExt;
                 markdownPreviewForm.ShowStatusbar = settingsForm.ShowStatusbar;
+                markdownPreviewForm.UseRegExp = settingsForm.UseRegExp;
+                markdownPreviewForm.RegExpFileName = settingsForm.RegExpFileName;
                 autoShowPanel = settingsForm.AutoShowPanel;
 
                 markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
@@ -264,6 +271,8 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "ShowStatusbar", markdownPreviewForm.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", markdownPreviewForm.SupportedFileExt, iniFilePath);
+            Win32.WriteIniValue("Options", "UseRegExp", markdownPreviewForm.UseRegExp.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "RegExpFileName", markdownPreviewForm.RegExpFileName, iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", autoShowPanel.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()

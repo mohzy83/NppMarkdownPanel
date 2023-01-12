@@ -102,6 +102,11 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
+        public bool UseRegExp { get; set; }
+        public string RegExpFileName { get; set; }
+        public string[] RegExp3lines { get; set; } //(re)read it from RegExpFileName if null
+            //multiply 3-strings: Comment, Pattern, ReplacementPattern
+
         private IMarkdownGenerator markdownGenerator;
 
         public MarkdownPreviewForm(Action toolWindowCloseAction)
@@ -113,6 +118,24 @@ namespace NppMarkdownPanel.Forms
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
         {
+
+            //multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
+            if (UseRegExp)
+            {
+                if (RegExp3lines is null)
+                {//re-read it
+                    RegExp3lines = GetRegExp3lines();
+                }
+                if (RegExp3lines is null)
+                {
+                    RegExp3lines = new string[0]; //!= null - don't re-read RegExpFile if not exists
+                }
+                else
+                {
+                    currentText = RegExp3replace(currentText, RegExp3lines);
+                }
+            }
+
             var defaultBodyStyle = "";
             var markdownStyleContent = GetCssContent(filepath);
 
@@ -130,6 +153,74 @@ namespace NppMarkdownPanel.Forms
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
             return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport);
+        }
+
+        /// <summary>
+        /// Loop - convert inputStr according to regExp3lines
+        /// </summary>
+        /// <param name="inputStr">Text to replace</param>
+        /// <param name="regExp3str">multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern
+        /// https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference
+        /// </param>
+        /// <returns>modified string</returns>
+        private string RegExp3replace(string inputStr, string[] regExp3lines)
+        {
+            if (regExp3lines.Length > 0)
+            {
+                string[] s123 = new String[3];
+                for (int i = 0; i < regExp3lines.Length; i += 3)
+                {
+                    Array.Copy(regExp3lines, i, s123, 0, 3);
+                    inputStr = System.Text.RegularExpressions.Regex.Replace(inputStr, s123[1], s123[2]);//comment in s123[0])
+
+                }
+
+            }
+            return inputStr;
+        }
+
+        /// <summary>
+        /// GetRegExp3lines
+        /// </summary>
+        /// <param>Txt with multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern</param>
+        /// <returns>regExp3lines - string[], Length = 3*n</returns>
+        /// 
+        private string[] GetRegExp3lines()
+        {
+            string[] regExp3lines = null;
+            // Path of plugin directory
+            var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+
+            if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string finalRegExpFName))
+            {
+              string regExp3str = File.ReadAllText(finalRegExpFName, Encoding.UTF8);//Utf8 with or w/o BOM 
+  
+              regExp3lines = regExp3str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+  
+              if ((regExp3lines.Length % 3 != 0)
+                  && (regExp3lines[regExp3lines.Length - 1] == ""))
+              { //remove last empty elem.
+                  Array.Resize(ref regExp3lines, regExp3lines.Length - 1);
+              }
+              int addSize = regExp3lines.Length % 3;
+              if (addSize > 0)
+              {
+                  addSize = 3 - addSize;
+                  Array.Resize(ref regExp3lines, regExp3lines.Length + addSize);
+                  while (addSize > 0)
+                  {
+                      regExp3lines[regExp3lines.Length - addSize--] = "";
+                  }
+              }
+              for (int i = 2; i < regExp3lines.Length; i += 3)
+              {
+                  regExp3lines[i] = regExp3lines[i]
+                                      .Replace("\\n", "\n")
+                                      .Replace("\\r", "\r")
+                                      .Replace("\\t", "\t");
+              }
+            }
+            return regExp3lines;
         }
 
         private string GetCssContent(string filepath)
