@@ -6,8 +6,8 @@
           DependsOnTargets="GetFrameworkPaths"
           >
     <PropertyGroup>
-		<!-- LibToolPath is optional - it's needed to debug C++, but you can still debug the C# code without it
-			If you don't have the C++ toolchain installed this is missing, but then you can't' debug C++ anyway -->
+    <!-- LibToolPath is optional - it's needed to debug C++, but you can still debug the C# code without it
+      If you don't have the C++ toolchain installed this is missing, but then you can't' debug C++ anyway -->
         <LibToolPath Condition="Exists('$(DevEnvDir)\..\..\VC\bin')">$(DevEnvDir)\..\..\VC\bin</LibToolPath>
     </PropertyGroup>
     <DllExportTask Platform="$(Platform)"
@@ -26,12 +26,12 @@
                    LibToolDllPath="$(DevEnvDir)"
                    SdkPath="$(SDK40ToolsPath)"/>
  
-	<!-- $(MSBuildProgramFiles32) points to the 32 bit program files dir.
-		On 32 bit windows usually C:\Program Files\
-		On 64 bit windows usually C:\Program Files (x86)\
-		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) -->
+  <!-- $(MSBuildProgramFiles32) points to the 32 bit program files dir.
+    On 32 bit windows usually C:\Program Files\
+    On 64 bit windows usually C:\Program Files (x86)\
+    $(ProgramW6432) points to the 64-bit Program Files (on 32-bit Windows it is blank) -->
 
-	<!-- MarkdigWrapper.dll  https://learn.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties -->
+  <!-- MarkdigWrapper.dll  https://learn.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties -->
 
     <ItemGroup>
       <AllMarkdigWrapperBin Include="$(TargetDir)..\..\..\MarkdigWrapper\bin\$(Configuration)\*.*"/>
