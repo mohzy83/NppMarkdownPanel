@@ -42,8 +42,9 @@ With dark mode enabled in Notepad++:
 ### Settings
 
 To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Settings
-![npp-settings](help/open-settings.png "open settings dialog")
-
+![open-settings](help/open-settings.png "open settings dialog")
+![settings-panel](help/settings-panel.png "settings panel")
+ 
 * #### CSS File
     This allows you to select a CSS file to use if you don't want the default style of the preview
 	
@@ -57,6 +58,20 @@ To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Settings
 * #### Automatic HTML Output
     This allows you to select a file to save the rendered HTML to every time the preview is rendered. This is a way to automatically save the rendered content to use elsewhere. Leaving this empty disables the automatic saving.  
     __Note: This is a global setting, so all previewed documents will save to the same file.__
+
+* #### Regular Expression correction
+    Npp text source can be replaced using RegExp. See "RegExp3.txt" below for configuration for [Jekyll kramdown](https://www.markdownguide.org/tools/jekyll/) corrections.  
+"**RegExp3.txt**" should have 3-lines each: Comment (ignored), Pattern, ReplacementPattern for [RegExp](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference). In ReplacementPattern `\r`,`\n`,`\t` can be used.  
+Config. file "RegExp3.txt" can be placed in folder of current `*.md` file or in Notepad++\plugins\NppMarkdownPanel\ folder. Full file name with path is also accepted (contains `:`).  
+Example:{font-size:small}  
+````cs
+	// Comment: {{ site.baseurl }} -> ..
+\{\{ site\.baseurl \}\}
+..
+	// ...{:style -> ...{style
+(\S\{):
+$1
+````  
 
 * #### Supported File Extensions
     This allows you to define a list of file extensions, which are supported and displayed in Markdown Panel.
@@ -91,6 +106,8 @@ When this option is enabled, the plugin ensures that the first visible line in t
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
+
+### Version 0.7.2 (released ...)
 
 ### Version 0.7.1 (released 2022-12-27)
 

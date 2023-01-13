@@ -183,44 +183,58 @@ namespace NppMarkdownPanel.Forms
         /// GetRegExp3lines
         /// </summary>
         /// <param>Txt with multipl. 1+2 rows of RegExp: Comment (ignored) + Pattern, ReplacementPattern</param>
-        /// <returns>regExp3lines - string[], Length = 3*n</returns>
+        /// <returns>regExp3lines_ - string[], Length = 3*n</returns>
         /// 
         private string[] GetRegExp3lines()
         {
-            string[] regExp3lines = null;
-            // Path of plugin directory
-            var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
-
-            if (Utils.FileNameExists(RegExpFileName, assemblyPath + "\\" + RegExpFileName, out string finalRegExpFName))
+            string[] regExp3lines_ = null;
+            if (String.IsNullOrEmpty(RegExpFileName))
             {
-              string regExp3str = File.ReadAllText(finalRegExpFName, Encoding.UTF8);//Utf8 with or w/o BOM 
-  
-              regExp3lines = regExp3str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-  
-              if ((regExp3lines.Length % 3 != 0)
-                  && (regExp3lines[regExp3lines.Length - 1] == ""))
-              { //remove last empty elem.
-                  Array.Resize(ref regExp3lines, regExp3lines.Length - 1);
-              }
-              int addSize = regExp3lines.Length % 3;
-              if (addSize > 0)
-              {
-                  addSize = 3 - addSize;
-                  Array.Resize(ref regExp3lines, regExp3lines.Length + addSize);
-                  while (addSize > 0)
-                  {
-                      regExp3lines[regExp3lines.Length - addSize--] = "";
-                  }
-              }
-              for (int i = 2; i < regExp3lines.Length; i += 3)
-              {
-                  regExp3lines[i] = regExp3lines[i]
-                                      .Replace("\\n", "\n")
-                                      .Replace("\\r", "\r")
-                                      .Replace("\\t", "\t");
-              }
+                return null;
             }
-            return regExp3lines;
+            string currRegExpFile = RegExpFileName;
+            if (!RegExpFileName.Contains(':'))
+            {   //i.e. relative f.name - check in *.md dir
+                currRegExpFile = Path.GetDirectoryName(CurrentFilePath) + "\\" + RegExpFileName;
+                if (!File.Exists(currRegExpFile))
+                {    // Check in path of plugin directory
+                    currRegExpFile = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location) + "\\" + RegExpFileName;
+                    if (!(File.Exists(currRegExpFile)))
+                    {
+                        currRegExpFile = "";
+                    }
+                } 
+            }
+            if (currRegExpFile != "")
+            {
+                string regExp3str = File.ReadAllText(currRegExpFile, Encoding.UTF8);//Utf8 with or w/o BOM 
+
+                regExp3lines_ = regExp3str.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                if ((regExp3lines_.Length % 3 != 0)
+                    && (regExp3lines_[regExp3lines_.Length - 1] == ""))
+                { //remove last empty elem.
+                    Array.Resize(ref regExp3lines_, regExp3lines_.Length - 1);
+                }
+                int addSize = regExp3lines_.Length % 3;
+                if (addSize > 0)
+                {
+                    addSize = 3 - addSize;
+                    Array.Resize(ref regExp3lines_, regExp3lines_.Length + addSize);
+                    while (addSize > 0)
+                    {
+                        regExp3lines_[regExp3lines_.Length - addSize--] = "";
+                    }
+                }
+                for (int i = 2; i < regExp3lines_.Length; i += 3)
+                {
+                    regExp3lines_[i] = regExp3lines_[i]
+                                        .Replace("\\n", "\n")
+                                        .Replace("\\r", "\r")
+                                        .Replace("\\t", "\t");
+                }
+            }
+            return regExp3lines_;
         }
 
         private string GetCssContent(string filepath)
