@@ -29,18 +29,41 @@
 	<!-- $(MSBuildProgramFiles32) points to the 32 bit program files dir.
 		On 32 bit windows usually C:\Program Files\
 		On 64 bit windows usually C:\Program Files (x86)\
-		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) 
-    <MakeDir Directories="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\') AND !Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'" />
+		$(ProgramW6432) points to the 64bit Program Files (on 32 bit windows it is blank) -->
+
+	<!-- MarkdigWrapper.dll  https://learn.microsoft.com/en-us/cpp/build/reference/common-macros-for-build-commands-and-properties -->
+
+    <ItemGroup>
+      <AllMarkdigWrapperBin Include="$(TargetDir)..\..\..\MarkdigWrapper\bin\$(Configuration)\*.*"/>
+    </ItemGroup>
+
+    <MakeDir Directories="$(TargetDir)lib" /> <!-- NppMarkdownPanel\bin\...\lib -->
     <Copy 
-        SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" 
+        SourceFiles="@(AllMarkdigWrapperBin)" 
+        DestinationFolder="$(TargetDir)lib"
+        SkipUnchangedFiles="true" 
+        ContinueOnError="false" />
+
+    <MakeDir Directories="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\') AND !Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'" />
+    <ItemGroup>
+      <AllTargetBin32 Include="$(TargetDir)**\*.*" />
+    </ItemGroup>
+    <Copy 
+        SourceFiles="@(AllTargetBin)"
+        DestinationFolder="$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\%(RecursiveDir)" 
+        SkipUnchangedFiles="true" 
         Condition="Exists('$(MSBuildProgramFiles32)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x86'"
         ContinueOnError="false" />
+
     <MakeDir Directories="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\" Condition="Exists('$(ProgramW6432)\Notepad++\plugins\') AND !Exists('$(ProgramW6432)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x64'" />
+    <ItemGroup>
+      <AllTargetBin Include="$(TargetDir)**\*.*" />
+    </ItemGroup>
     <Copy 
-        SourceFiles="$(TargetPath)" 
-        DestinationFolder="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\" 
+        SourceFiles="@(AllTargetBin)"
+        DestinationFolder="$(ProgramW6432)\Notepad++\plugins\$(TargetName)\%(RecursiveDir)" 
+        SkipUnchangedFiles="true" 
         Condition="Exists('$(ProgramW6432)\Notepad++\plugins\$(TargetName)\') AND '$(Platform)'=='x64'"
-        ContinueOnError="false" />-->
+        ContinueOnError="false" />
   </Target>
 </Project>
