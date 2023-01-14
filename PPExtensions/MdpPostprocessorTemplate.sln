@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33130.400
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MdpPostprocessorTemplate", "MdpPostprocessorTemplate\MdpPostprocessorTemplate.csproj", "{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18BA3918-429C-4B01-B133-6A953693AA71}
+	EndGlobalSection
+EndGlobal
