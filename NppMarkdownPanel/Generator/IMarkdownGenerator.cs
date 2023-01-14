@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NppMarkdownPanel
+namespace NppMarkdownPanel.Generator
 {
     public interface IMarkdownGenerator
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace NppMarkdownPanel
+namespace NppMarkdownPanel.Generator
 {
     /*
      * This generator is using reflection to load markdig wrapper assembly at runtime and

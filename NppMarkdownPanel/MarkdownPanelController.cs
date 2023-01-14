@@ -1,5 +1,6 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Forms;
+using NppMarkdownPanel.Generator;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -48,10 +49,22 @@ namespace NppMarkdownPanel
         {
             scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
-            markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction);
+            SetIniFilePath();
+            var markdownService = SetupMarkdownService();
+            markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction, markdownService);
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
+        }
+
+        private MarkdownService SetupMarkdownService()
+        {
+            var service = new MarkdownService(new MarkdigWrapperMarkdownGenerator());
+            service.PreProcessorCommandFilename = Win32.ReadIniValue("Options", "PreProcessorExe", iniFilePath, "");
+            service.PreProcessorArguments = Win32.ReadIniValue("Options", "PreProcessorArguments", iniFilePath, "");
+            service.PostProcessorCommandFilename = Win32.ReadIniValue("Options", "PostProcessorExe", iniFilePath, "");
+            service.PostProcessorArguments = Win32.ReadIniValue("Options", "PostProcessorArguments", iniFilePath, "");
+            return service;
         }
 
         public void OnNotification(ScNotification notification)
@@ -150,7 +163,6 @@ namespace NppMarkdownPanel
 
         public void InitCommandMenu()
         {
-            SetIniFilePath();
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
             markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
@@ -326,11 +338,6 @@ namespace NppMarkdownPanel
         private void ToolWindowCloseAction()
         {
             TogglePanelVisible();
-        }
-
-        public static IMarkdownGenerator GetMarkdownGeneratorImpl()
-        {
-            return new MarkdigWrapperMarkdownGenerator();
         }
 
         private bool IsDarkModeEnabled()

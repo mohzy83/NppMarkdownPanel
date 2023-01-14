@@ -1,4 +1,5 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using NppMarkdownPanel.Generator;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -102,13 +103,13 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        private IMarkdownGenerator markdownGenerator;
+        private MarkdownService markdownService;
 
-        public MarkdownPreviewForm(Action toolWindowCloseAction)
+        public MarkdownPreviewForm(Action toolWindowCloseAction, MarkdownService markdownService)
         {
             this.toolWindowCloseAction = toolWindowCloseAction;
             InitializeComponent();
-            markdownGenerator = MarkdownPanelController.GetMarkdownGeneratorImpl();
+            this.markdownService = markdownService;
         }
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
@@ -124,8 +125,8 @@ namespace NppMarkdownPanel.Forms
                 return new RenderResult(invalidExtensionMessage, invalidExtensionMessage);
             }
 
-            var resultForBrowser = markdownGenerator.ConvertToHtml(currentText, filepath, true);
-            var resultForExport = markdownGenerator.ConvertToHtml(currentText, null, false);
+            var resultForBrowser = markdownService.ConvertToHtml(currentText, filepath, true);
+            var resultForExport = markdownService.ConvertToHtml(currentText, null, false);
 
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
