@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A530CD48-C70D-447A-A9D0-925FCF2ACFD0}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MdpPostprocessorTemplate</RootNamespace>
-    <AssemblyName>MdpPostprocessorTemplate</AssemblyName>
+    <RootNamespace>MdpPrePostprocessorTemplate</RootNamespace>
+    <AssemblyName>MdpPrePostprocessorTemplate</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

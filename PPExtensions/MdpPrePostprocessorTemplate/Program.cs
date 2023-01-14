@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MdpPostprocessorTemplate
+namespace MdpPrePostprocessorTemplate
 {
     class Program
     {
