@@ -191,7 +191,7 @@ The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [http
 
 Thanks to the contributors: 
 
-[vinsworldcom](https://github.com/vinsworldcom), [rdipardo](https://github.com/rdipardo), [andrzejQ](https://github.com/andrzejQ)
+[vinsworldcom](https://github.com/vinsworldcom), [rdipardo](https://github.com/rdipardo), [andrzejQ](https://github.com/andrzejQ),
 [RicoP](https://github.com/RicoP), [UrsineRaven](https://github.com/UrsineRaven) and
 [eeucalyptus](https://github.com/eeucalyptus)
 
