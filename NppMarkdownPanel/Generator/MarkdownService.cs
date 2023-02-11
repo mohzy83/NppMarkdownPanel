@@ -37,10 +37,10 @@ namespace NppMarkdownPanel.Generator
             string result = input;
             if (!string.IsNullOrEmpty(commandFilename) && !string.IsNullOrEmpty(arguments))
             {
+                var inputTempfilename = Path.GetTempFileName();
+                var outputTempfilename = Path.GetTempFileName();
                 try
                 {
-                    var inputTempfilename = Path.GetTempFileName();
-                    var outputTempfilename = Path.GetTempFileName();
                     File.WriteAllText(inputTempfilename, input);
                     System.Diagnostics.Process process = new System.Diagnostics.Process();
                     System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -62,6 +62,17 @@ namespace NppMarkdownPanel.Generator
                 catch (Exception e)
                 {
                     result = string.Format("Error executing Pre/Postprocessor [{0}] with arguments [{1}] " + e.Message, commandFilename, arguments);
+                }
+                finally
+                {
+                    try
+                    {
+                        File.Delete(inputTempfilename);
+                        File.Delete(outputTempfilename);
+                    } catch (Exception)
+                    {
+
+                    }
                 }
 
             }
