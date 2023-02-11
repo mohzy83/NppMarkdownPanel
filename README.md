@@ -41,7 +41,7 @@ With dark mode enabled in Notepad++:
 
 ### Settings
 
-To open the settings for this plugin: Plugins -> NppMarkdownPanel -> Settings
+To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 ![npp-settings](help/open-settings.png "open settings dialog")
 
 * #### CSS File
