@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -116,6 +117,15 @@ namespace NppMarkdownPanel
                 else
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Gets the directory path of the plugin (derived from current executing assembly)
+        /// </summary>
+        /// <returns></returns>
+        public static string GetPluginDirectory()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
     }
 }

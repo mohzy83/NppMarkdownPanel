@@ -26,7 +26,7 @@ namespace NppMarkdownPanel.Generator
             var wrapperDllPath = "";
             try
             {
-                var currentPluginPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var currentPluginPath = Utils.GetPluginDirectory();
                 wrapperDllPath = Path.Combine(currentPluginPath, "lib", "MarkdigWrapper.dll");
                 // References to other assemblies dont work in NPP ->
                 // load Assembly using reflection from subdir npp/plugins/NppMarkdownPanel/lib/MarkdigWrapper.dll
