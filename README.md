@@ -8,7 +8,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.7.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.7.3** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 
 ## Prerequisites
@@ -91,7 +91,11 @@ When this option is enabled, the plugin ensures that the first visible line in t
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
-
+### Version 0.7.2 (released 2023-02-12)
+- bug fixes
+	- Settings file NppMarkdownPanel.ini isn't used anymore #78
+	- Plugin release v0.7.2 searches help files in wrong directory #76
+	
 ### Version 0.7.2 (released 2023-02-11)
 - bug fixes
 	- Display images with Url-encoded space character (%20) in the filename (contributed by [andrzejQ](https://github.com/andrzejQ) ) #39
