@@ -91,7 +91,7 @@ When this option is enabled, the plugin ensures that the first visible line in t
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
-### Version 0.7.2 (released 2023-02-12)
+### Version 0.7.3 (released 2023-02-12)
 - bug fixes
 	- Settings file NppMarkdownPanel.ini isn't used anymore #78
 	- Plugin release v0.7.2 searches help files in wrong directory #76
