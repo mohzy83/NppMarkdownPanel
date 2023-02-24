@@ -129,16 +129,6 @@
         gw34+vWrDLIh6AqRNSOLgzDYABCAGQISACkC0cThb/8BXmPqvKWoVTAAAAAASUVORK5CYII=
 </value>
   </data>
-  <data name="btnPrintPreview.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAADgSURBVDhPrZGxDcIwEEW9AYzACAxAlRVoocsUDJCaAVwh
-        MQAdNGmoIyQKWmACJ+A4peFbZ9mRgzESX/o653L/6Zywv0kppb/4JIQY03goDGVZ9tGccwPpum5Ckb4s
-        oBZNYAspigIQIaWcUswpBeBDKOaUCoAxSzGnGMB3FADLp9StbPX7nrqpH78BDtVNj5YbPVvtTN1X1wAS
-        BSB0PN/NICqesUkygM15bxiboO/3BgH4rxawLS9mMHkDCovFujQA6+Rv4IdR8dJ3nucm5Bt9ijvAUDhm
-        irsrwDhTO1GMvQDUEDZ5O7fHlgAAAABJRU5ErkJggg==
-</value>
-  </data>
   <metadata name="statusStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>238, 17</value>
   </metadata>

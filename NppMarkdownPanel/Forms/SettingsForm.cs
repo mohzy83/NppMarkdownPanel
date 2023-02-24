@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NppMarkdownPanel.Entities;
+using System;
 using System.Windows.Forms;
 
 namespace NppMarkdownPanel.Forms
@@ -19,31 +13,30 @@ namespace NppMarkdownPanel.Forms
         public bool ShowToolbar { get; set; }
         public string SupportedFileExt { get; set; }
         public bool AutoShowPanel { get; set; }
-
         public bool ShowStatusbar { get; set; }
 
-        public SettingsForm(int zoomLevel, string cssFileName, string htmlFileName, bool showToolbar, string cssDarkModeFileName, string supportedFileExt, bool autoShowPanel, bool showStatusbar)
+        public SettingsForm(Settings settings)
         {
-            ZoomLevel = zoomLevel;
-            CssFileName = cssFileName;
-            CssDarkModeFileName = cssDarkModeFileName;
-            HtmlFileName = htmlFileName;
-            ShowToolbar = showToolbar;
-            SupportedFileExt = supportedFileExt;
-            AutoShowPanel = autoShowPanel;
-            ShowStatusbar = showStatusbar;
+            ZoomLevel = settings.ZoomLevel;
+            CssFileName = settings.CssFileName;
+            CssDarkModeFileName = settings.CssDarkModeFileName;
+            HtmlFileName = settings.HtmlFileName;
+            ShowToolbar = settings.ShowToolbar;
+            SupportedFileExt = settings.SupportedFileExt;
+            AutoShowPanel = settings.AutoShowPanel;
+            ShowStatusbar = settings.ShowStatusbar;
 
             InitializeComponent();
 
-            trackBar1.Value = zoomLevel;
-            lblZoomValue.Text = $"{zoomLevel}%";
-            tbCssFile.Text = cssFileName;
-            tbDarkmodeCssFile.Text = cssDarkModeFileName;
-            tbHtmlFile.Text = htmlFileName;
-            cbShowToolbar.Checked = showToolbar;
-            tbFileExt.Text = supportedFileExt;
-            cbAutoShowPanel.Checked = autoShowPanel;
-            cbShowStatusbar.Checked = showStatusbar;
+            trackBar1.Value = ZoomLevel;
+            lblZoomValue.Text = $"{ZoomLevel}%";
+            tbCssFile.Text = CssFileName;
+            tbDarkmodeCssFile.Text = CssDarkModeFileName;
+            tbHtmlFile.Text = HtmlFileName;
+            cbShowToolbar.Checked = ShowToolbar;
+            tbFileExt.Text = SupportedFileExt;
+            cbAutoShowPanel.Checked = AutoShowPanel;
+            cbShowStatusbar.Checked = ShowStatusbar;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -175,7 +168,7 @@ namespace NppMarkdownPanel.Forms
 
         private void btnDefaultFileExt_Click(object sender, EventArgs e)
         {
-            tbFileExt.Text = MarkdownPanelController.DEFAULT_SUPPORTED_FILE_EXT;
+            tbFileExt.Text = Settings.DEFAULT_SUPPORTED_FILE_EXT;
         }
 
         private void tbFileExt_TextChanged(object sender, EventArgs e)

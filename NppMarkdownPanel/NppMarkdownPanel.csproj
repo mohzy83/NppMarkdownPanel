@@ -75,17 +75,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Settings.cs" />
     <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainResources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Forms\IViewerInterface.cs" />
     <Compile Include="Forms\MarkdownPreviewForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -119,6 +116,7 @@
     <Compile Include="PluginInfrastructure\Msgs_h.cs" />
     <Compile Include="PluginInfrastructure\Preference_h.cs" />
     <Compile Include="PluginInfrastructure\Resource_h.cs" />
+    <Compile Include="PluginUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -126,17 +124,12 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
-    <Compile Include="RenderResult.cs" />
+    <Compile Include="Entities\RenderResult.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MainResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MarkdownPreviewForm.resx">
       <DependentUpon>MarkdownPreviewForm.cs</DependentUpon>

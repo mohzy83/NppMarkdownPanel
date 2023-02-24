@@ -35,7 +35,6 @@
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.tbPreview = new System.Windows.Forms.ToolStrip();
             this.btnSaveHtml = new System.Windows.Forms.ToolStripButton();
-            this.btnPrintPreview = new System.Windows.Forms.ToolStripButton();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelPreview.SuspendLayout();
@@ -55,7 +54,7 @@
             this.panelPreview.Location = new System.Drawing.Point(0, 0);
             this.panelPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelPreview.Name = "panelPreview";
-            this.panelPreview.Size = new System.Drawing.Size(813, 578);
+            this.panelPreview.Size = new System.Drawing.Size(813, 602);
             this.panelPreview.TabIndex = 0;
             // 
             // toolStripContainer1
@@ -66,13 +65,13 @@
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.pictureBoxScreenshot);
             this.toolStripContainer1.ContentPanel.Controls.Add(this.webBrowserPreview);
-            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 549);
+            this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 573);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
             this.toolStripContainer1.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainer1.Name = "toolStripContainer1";
             this.toolStripContainer1.RightToolStripPanelVisible = false;
-            this.toolStripContainer1.Size = new System.Drawing.Size(811, 576);
+            this.toolStripContainer1.Size = new System.Drawing.Size(811, 600);
             this.toolStripContainer1.TabIndex = 2;
             this.toolStripContainer1.Text = "toolStripContainer1";
             // 
@@ -85,7 +84,7 @@
             this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxScreenshot.Name = "pictureBoxScreenshot";
-            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 549);
+            this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 573);
             this.pictureBoxScreenshot.TabIndex = 1;
             this.pictureBoxScreenshot.TabStop = false;
             this.pictureBoxScreenshot.Visible = false;
@@ -98,7 +97,7 @@
             this.webBrowserPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.webBrowserPreview.MinimumSize = new System.Drawing.Size(18, 21);
             this.webBrowserPreview.Name = "webBrowserPreview";
-            this.webBrowserPreview.Size = new System.Drawing.Size(811, 549);
+            this.webBrowserPreview.Size = new System.Drawing.Size(811, 573);
             this.webBrowserPreview.TabIndex = 0;
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
@@ -109,8 +108,7 @@
             this.tbPreview.Dock = System.Windows.Forms.DockStyle.None;
             this.tbPreview.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tbPreview.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnSaveHtml,
-            this.btnPrintPreview});
+            this.btnSaveHtml});
             this.tbPreview.Location = new System.Drawing.Point(0, 0);
             this.tbPreview.Name = "tbPreview";
             this.tbPreview.Size = new System.Drawing.Size(811, 27);
@@ -125,15 +123,6 @@
             this.btnSaveHtml.Size = new System.Drawing.Size(93, 24);
             this.btnSaveHtml.Text = "Save As...";
             this.btnSaveHtml.Click += new System.EventHandler(this.btnSaveHtml_Click);
-            // 
-            // btnPrintPreview
-            // 
-            this.btnPrintPreview.Image = ((System.Drawing.Image)(resources.GetObject("btnPrintPreview.Image")));
-            this.btnPrintPreview.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnPrintPreview.Name = "btnPrintPreview";
-            this.btnPrintPreview.Size = new System.Drawing.Size(118, 24);
-            this.btnPrintPreview.Text = "Print Preview";
-            this.btnPrintPreview.Visible = false;
             // 
             // statusStrip2
             // 
@@ -186,7 +175,6 @@
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip tbPreview;
         private System.Windows.Forms.ToolStripButton btnSaveHtml;
-        private System.Windows.Forms.ToolStripButton btnPrintPreview;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     }

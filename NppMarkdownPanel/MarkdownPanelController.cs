@@ -1,4 +1,5 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Forms;
 using NppMarkdownPanel.Generator;
 using System;
@@ -16,7 +17,7 @@ namespace NppMarkdownPanel
 {
     public class MarkdownPanelController
     {
-        private MarkdownPreviewForm markdownPreviewForm;
+        private IViewerInterface viewerInterface;
         private Timer renderTimer;
 
         private int idMyDlg = -1;
@@ -40,31 +41,38 @@ namespace NppMarkdownPanel
         private int currentFirstVisibleLine;
         private bool syncViewWithFirstVisibleLine;
 
-        private bool autoShowPanel = false;
         private bool nppReady;
-
-        public const string DEFAULT_SUPPORTED_FILE_EXT = "md,mkd,mdwn,mdown,mdtxt,markdown,text";
+        private Settings settings;
 
         public MarkdownPanelController()
         {
             scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             SetIniFilePath();
-            var markdownService = SetupMarkdownService();
-            markdownPreviewForm = new MarkdownPreviewForm(ToolWindowCloseAction, markdownService);
+            settings = LoadSettingsFromIni();
+            viewerInterface = MarkdownPreviewForm.InitViewer(settings, HandleWndProc);
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
         }
 
-        private MarkdownService SetupMarkdownService()
+        private Settings LoadSettingsFromIni()
         {
-            var service = new MarkdownService(new MarkdigWrapperMarkdownGenerator());
-            service.PreProcessorCommandFilename = Win32.ReadIniValue("Options", "PreProcessorExe", iniFilePath, "");
-            service.PreProcessorArguments = Win32.ReadIniValue("Options", "PreProcessorArguments", iniFilePath, "");
-            service.PostProcessorCommandFilename = Win32.ReadIniValue("Options", "PostProcessorExe", iniFilePath, "");
-            service.PostProcessorArguments = Win32.ReadIniValue("Options", "PostProcessorArguments", iniFilePath, "");
-            return service;
+            Settings settings = new Settings();
+            settings.PreProcessorCommandFilename = Win32.ReadIniValue("Options", "PreProcessorExe", iniFilePath, "");
+            settings.PreProcessorArguments = Win32.ReadIniValue("Options", "PreProcessorArguments", iniFilePath, "");
+            settings.PostProcessorCommandFilename = Win32.ReadIniValue("Options", "PostProcessorExe", iniFilePath, "");
+            settings.PostProcessorArguments = Win32.ReadIniValue("Options", "PostProcessorArguments", iniFilePath, "");
+            settings.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
+            settings.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
+            settings.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
+            settings.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
+            settings.ShowToolbar = PluginUtils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
+            settings.ShowStatusbar = PluginUtils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
+            settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
+            settings.IsDarkModeEnabled = IsDarkModeEnabled();
+            settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
+            return settings;
         }
 
         public void OnNotification(ScNotification notification)
@@ -94,7 +102,7 @@ namespace NppMarkdownPanel
             {
                 // Focus was switched to a new document
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
-                markdownPreviewForm.CurrentFilePath = currentFilePath;
+                viewerInterface.SetMarkdownFilePath(currentFilePath);
                 if (isPanelVisible)
                 {
                     RenderMarkdownDirect(false);
@@ -104,7 +112,8 @@ namespace NppMarkdownPanel
             // NPPN_DARKMODECHANGED (NPPN_FIRST + 27) // To notify plugins that Dark Mode was enabled/disabled
             if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST + 27))
             {
-                markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
+                settings.IsDarkModeEnabled = IsDarkModeEnabled();
+                viewerInterface.UpdateSettings(settings);
                 if (isPanelVisible) RenderMarkdownDirect();
             }
             if (isPanelVisible && notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
@@ -147,7 +156,7 @@ namespace NppMarkdownPanel
 
         private void RenderMarkdownDirect(bool preserveVerticalScrollPosition = true)
         {
-            markdownPreviewForm.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            viewerInterface.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
         }
 
         private string GetCurrentEditorText()
@@ -158,22 +167,13 @@ namespace NppMarkdownPanel
 
         private void ScrollToElementAtLineNo(int lineNo)
         {
-            markdownPreviewForm.ScrollToElementWithLineNo(lineNo);
+            viewerInterface.ScrollToElementWithLineNo(lineNo);
         }
 
         public void InitCommandMenu()
         {
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
-            markdownPreviewForm.CssFileName = Win32.ReadIniValue("Options", "CssFileName", iniFilePath, "style.css");
-            markdownPreviewForm.CssDarkModeFileName = Win32.ReadIniValue("Options", "CssDarkModeFileName", iniFilePath, "style-dark.css");
-            markdownPreviewForm.ZoomLevel = Win32.GetPrivateProfileInt("Options", "ZoomLevel", 130, iniFilePath);
-            markdownPreviewForm.HtmlFileName = Win32.ReadIniValue("Options", "HtmlFileName", iniFilePath);
-            markdownPreviewForm.ShowToolbar = Utils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
-            markdownPreviewForm.ShowStatusbar = Utils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
-            markdownPreviewForm.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, DEFAULT_SUPPORTED_FILE_EXT);
-            autoShowPanel = Utils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
-            markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
@@ -185,22 +185,22 @@ namespace NppMarkdownPanel
             idMyDlg = 0;
         }
 
-
         private void EditSettings()
         {
-            var settingsForm = new SettingsForm(markdownPreviewForm.ZoomLevel, markdownPreviewForm.CssFileName, markdownPreviewForm.HtmlFileName, markdownPreviewForm.ShowToolbar, markdownPreviewForm.CssDarkModeFileName, markdownPreviewForm.SupportedFileExt, autoShowPanel, markdownPreviewForm.ShowStatusbar);
+            var settingsForm = new SettingsForm(settings);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
-                markdownPreviewForm.CssFileName = settingsForm.CssFileName;
-                markdownPreviewForm.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
-                markdownPreviewForm.ZoomLevel = settingsForm.ZoomLevel;
-                markdownPreviewForm.HtmlFileName = settingsForm.HtmlFileName;
-                markdownPreviewForm.ShowToolbar = settingsForm.ShowToolbar;
-                markdownPreviewForm.SupportedFileExt = settingsForm.SupportedFileExt;
-                markdownPreviewForm.ShowStatusbar = settingsForm.ShowStatusbar;
-                autoShowPanel = settingsForm.AutoShowPanel;
+                settings.CssFileName = settingsForm.CssFileName;
+                settings.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
+                settings.ZoomLevel = settingsForm.ZoomLevel;
+                settings.HtmlFileName = settingsForm.HtmlFileName;
+                settings.ShowToolbar = settingsForm.ShowToolbar;
+                settings.SupportedFileExt = settingsForm.SupportedFileExt;
+                settings.ShowStatusbar = settingsForm.ShowStatusbar;
+                settings.AutoShowPanel = settingsForm.AutoShowPanel;
 
-                markdownPreviewForm.IsDarkModeEnabled = IsDarkModeEnabled();
+                settings.IsDarkModeEnabled = IsDarkModeEnabled();
+                viewerInterface.UpdateSettings(settings);
                 SaveSettings();
                 //Update Preview
                 if (isPanelVisible) RenderMarkdownDirect();
@@ -209,7 +209,7 @@ namespace NppMarkdownPanel
 
         private void ShowHelp()
         {
-            var currentPluginPath = Utils.GetPluginDirectory();
+            var currentPluginPath = PluginUtils.GetPluginDirectory();
             var helpFile = Path.Combine(currentPluginPath, "README.md");
             Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DOOPEN, 0, helpFile);
             if (!isPanelVisible)
@@ -268,14 +268,14 @@ namespace NppMarkdownPanel
 
         private void SaveSettings()
         {
-            Win32.WriteIniValue("Options", "CssFileName", markdownPreviewForm.CssFileName, iniFilePath);
-            Win32.WriteIniValue("Options", "CssDarkModeFileName", markdownPreviewForm.CssDarkModeFileName, iniFilePath);
-            Win32.WriteIniValue("Options", "ZoomLevel", markdownPreviewForm.ZoomLevel.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "HtmlFileName", markdownPreviewForm.HtmlFileName, iniFilePath);
-            Win32.WriteIniValue("Options", "ShowToolbar", markdownPreviewForm.ShowToolbar.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "ShowStatusbar", markdownPreviewForm.ShowStatusbar.ToString(), iniFilePath);
-            Win32.WriteIniValue("Options", "SupportedFileExt", markdownPreviewForm.SupportedFileExt, iniFilePath);
-            Win32.WriteIniValue("Options", "AutoShowPanel", autoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "CssFileName", settings.CssFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "CssDarkModeFileName", settings.CssDarkModeFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "ZoomLevel", settings.ZoomLevel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "HtmlFileName", settings.HtmlFileName, iniFilePath);
+            Win32.WriteIniValue("Options", "ShowToolbar", settings.ShowToolbar.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
+            Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
         {
@@ -290,7 +290,7 @@ namespace NppMarkdownPanel
             if (!initDialog)
             {
                 NppTbData _nppTbData = new NppTbData();
-                _nppTbData.hClient = markdownPreviewForm.Handle;
+                _nppTbData.hClient = viewerInterface.Handle;
                 _nppTbData.pszName = Main.PluginTitle;
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
@@ -304,13 +304,14 @@ namespace NppMarkdownPanel
             }
             else
             {
-                Win32.SendMessage(PluginBase.nppData._nppHandle, !isPanelVisible ? (uint)NppMsg.NPPM_DMMSHOW : (uint)NppMsg.NPPM_DMMHIDE, 0, markdownPreviewForm.Handle);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, !isPanelVisible ? (uint)NppMsg.NPPM_DMMSHOW : (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
             }
             isPanelVisible = !isPanelVisible;
             if (isPanelVisible)
             {
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
-                markdownPreviewForm.CurrentFilePath = currentFilePath;
+                viewerInterface.SetMarkdownFilePath(currentFilePath);
+                viewerInterface.UpdateSettings(settings);
                 RenderMarkdownDirect(false);
             }
         }
@@ -349,14 +350,42 @@ namespace NppMarkdownPanel
 
         private void AutoShowOrHidePanel(string currentFilePath)
         {
-            if (nppReady && autoShowPanel)
+            if (nppReady && settings.AutoShowPanel)
             {
                 // automatically show panel for supported file types
-                if ((!isPanelVisible && markdownPreviewForm.isValidFileExtension(currentFilePath)) ||
-                    (isPanelVisible && !markdownPreviewForm.isValidFileExtension(currentFilePath)))
+                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath)) ||
+                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath)))
                 {
                     TogglePanelVisible();
                 }
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct NMHDR
+        {
+            public IntPtr hwndFrom;
+            public IntPtr idFrom;
+            public int code;
+        }
+
+        public enum WindowsMessage
+        {
+            WM_NOTIFY = 0x004E
+        }
+
+        protected void HandleWndProc(ref Message m)
+        {
+            //Listen for the closing of the dockable panel to toggle the toolbar icon
+            switch (m.Msg)
+            {
+                case (int)WindowsMessage.WM_NOTIFY:
+                    var notify = (NMHDR)Marshal.PtrToStructure(m.LParam, typeof(NMHDR));
+                    if (notify.code == (int)DockMgrMsg.DMN_CLOSE)
+                    {
+                        ToolWindowCloseAction();
+                    }
+                    break;
             }
         }
 
