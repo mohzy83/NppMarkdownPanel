@@ -105,7 +105,7 @@ editor is also visible in the preview. (This is an alternative to _Synchronize v
 	- Feature to preprocess markdown files before they are send to the converter. Furthermore it's possible to postprocess the generated html files (created by markdig). 
 	To enable this feature it's necessary to configure pre/post-processor commands (can be any commandline program) in the config file `plugins/Config/NppMarkdownPanel.ini`.
 	The placeholders `%inputfile%` and `%outputfile%` have to be set in the commandline and will be resolved at runtime (with temporary file names).
-	An example C# commandline-project can be found under: `PPExtensions\MdpPrePostprocessorTemplate.sln`
+	An example C# commandline-project can be found under: `misc\PPExtensions\MdpPrePostprocessorTemplate.sln`
 ```
 [Options]
 PreProcessorExe=C:\temp\preprocessor.exe
