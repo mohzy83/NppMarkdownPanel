@@ -248,7 +248,6 @@ namespace NppMarkdownPanel.Forms
             return baseY;
         }
 
-        private int zoomlevel;
 
         /// <summary>
         /// Increase Zoomlevel in case of higher DPI settings
@@ -256,11 +255,12 @@ namespace NppMarkdownPanel.Forms
         private void AdjustZoomLevel()
         {
             Application.DoEvents();
-            zoomlevel = settings.ZoomLevel;
-            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
-            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, zoomlevel, IntPtr.Zero);
-            //   webBrowserPreview.Document.Window.ScrollTo(0, 0);
 
+            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
+
+            int zoomLevel = settings.ZoomLevel;
+
+            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, zoomLevel, IntPtr.Zero);
         }
 
         protected override void WndProc(ref Message m)
