@@ -121,15 +121,8 @@ namespace MarkdownPanelStandalone
             var settingsForm = new SettingsForm(settings);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
-                settings.CssFileName = settingsForm.CssFileName;
-                settings.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
-                settings.HtmlFileName = settingsForm.HtmlFileName;
-                settings.ShowStatusbar = settingsForm.ShowStatusbar;
-                settings.ZoomLevel = settingsForm.ZoomLevel;
+                settings = settingsForm.GetDialogSettings(settings);
                 settings.ShowToolbar = true;
-                settings.SupportedFileExt = settingsForm.SupportedFileExt;
-                settings.ShowStatusbar = settingsForm.ShowStatusbar;
-
                 viewer.UpdateSettings(settings);
                 SaveSettings(settings);
                 RenderCurrentMarkdownFile();

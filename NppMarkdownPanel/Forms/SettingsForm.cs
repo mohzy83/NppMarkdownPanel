@@ -6,14 +6,14 @@ namespace NppMarkdownPanel.Forms
 {
     public partial class SettingsForm : Form
     {
-        public int ZoomLevel { get; set; }
-        public string CssFileName { get; set; }
-        public string CssDarkModeFileName { get; set; }
-        public string HtmlFileName { get; set; }
-        public bool ShowToolbar { get; set; }
-        public string SupportedFileExt { get; set; }
-        public bool AutoShowPanel { get; set; }
-        public bool ShowStatusbar { get; set; }
+        private int ZoomLevel { get; set; }
+        private string CssFileName { get; set; }
+        private string CssDarkModeFileName { get; set; }
+        private string HtmlFileName { get; set; }
+        private bool ShowToolbar { get; set; }
+        private string SupportedFileExt { get; set; }
+        private bool AutoShowPanel { get; set; }
+        private bool ShowStatusbar { get; set; }
 
         public SettingsForm(Settings settings)
         {
@@ -37,6 +37,19 @@ namespace NppMarkdownPanel.Forms
             tbFileExt.Text = SupportedFileExt;
             cbAutoShowPanel.Checked = AutoShowPanel;
             cbShowStatusbar.Checked = ShowStatusbar;
+        }
+
+        public Settings GetDialogSettings(Settings settings)
+        {
+            settings.CssFileName = this.CssFileName;
+            settings.CssDarkModeFileName = this.CssDarkModeFileName;
+            settings.ZoomLevel = this.ZoomLevel;
+            settings.HtmlFileName = this.HtmlFileName;
+            settings.ShowToolbar = this.ShowToolbar;
+            settings.SupportedFileExt = this.SupportedFileExt;
+            settings.ShowStatusbar = this.ShowStatusbar;
+            settings.AutoShowPanel = this.AutoShowPanel;
+            return settings;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)

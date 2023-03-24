@@ -1,9 +1,7 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Forms;
-using NppMarkdownPanel.Generator;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -190,15 +188,7 @@ namespace NppMarkdownPanel
             var settingsForm = new SettingsForm(settings);
             if (settingsForm.ShowDialog() == DialogResult.OK)
             {
-                settings.CssFileName = settingsForm.CssFileName;
-                settings.CssDarkModeFileName = settingsForm.CssDarkModeFileName;
-                settings.ZoomLevel = settingsForm.ZoomLevel;
-                settings.HtmlFileName = settingsForm.HtmlFileName;
-                settings.ShowToolbar = settingsForm.ShowToolbar;
-                settings.SupportedFileExt = settingsForm.SupportedFileExt;
-                settings.ShowStatusbar = settingsForm.ShowStatusbar;
-                settings.AutoShowPanel = settingsForm.AutoShowPanel;
-
+                settings = settingsForm.GetDialogSettings(settings);
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
                 viewerInterface.UpdateSettings(settings);
                 SaveSettings();
@@ -277,6 +267,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
         }
+
         private void ShowAboutDialog()
         {
             var aboutDialog = new AboutForm();

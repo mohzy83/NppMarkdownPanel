@@ -11,7 +11,7 @@ namespace NppMarkdownPanel.Generator
      * This generator is using reflection to load markdig wrapper assembly at runtime and
      * to convert markdown to html (with markdig)
      * 
-     * Unfortunately Notepad++ is not able load other assemblies from the plugin path at runtime
+     * Unfortunately Notepad++ is not able to load other assemblies from the plugin path at runtime
      * 
      */
     public class MarkdigWrapperMarkdownGenerator : IMarkdownGenerator
