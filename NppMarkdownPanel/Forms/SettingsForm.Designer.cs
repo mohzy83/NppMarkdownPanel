@@ -87,7 +87,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::NppMarkdownPanel.Properties.Resources.markdown_16x16_solid;
+            this.pictureBox1.Image = Resources.Icons.markdown_16x16_solid;
             this.pictureBox1.Location = new System.Drawing.Point(10, 19);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(24, 20);
@@ -388,13 +388,13 @@
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Segoe UI", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "SettingsForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Settings";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.Icon = NppMarkdownPanel.Resources.Icons.md;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.statusStrip1.ResumeLayout(false);

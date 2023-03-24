@@ -117,7 +117,7 @@
             // 
             // btnSaveHtml
             // 
-            this.btnSaveHtml.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveHtml.Image")));
+            //this.btnSaveHtml.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveHtml.Image")));
             this.btnSaveHtml.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveHtml.Name = "btnSaveHtml";
             this.btnSaveHtml.Size = new System.Drawing.Size(93, 24);

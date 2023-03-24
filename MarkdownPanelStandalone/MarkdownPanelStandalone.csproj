@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A36C3545-22D7-4128-B265-3D26847A29D7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>MarkdownPanelStandalone</RootNamespace>
+    <AssemblyName>MarkdownPanelStandalone</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>markdown-mark-solid-win10.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SHDocVw">
+      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>1</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\NppMarkdownPanel\Entities\RenderResult.cs">
+      <Link>Entities\RenderResult.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Entities\Settings.cs">
+      <Link>Entities\Settings.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\AboutForm.cs">
+      <Link>Forms\AboutForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\AboutForm.Designer.cs">
+      <Link>Forms\AboutForm.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\ActiveXScreenShotMaker.cs">
+      <Link>Forms\ActiveXScreenShotMaker.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\IViewerInterface.cs">
+      <Link>Forms\IViewerInterface.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\MarkdownPreviewForm.cs">
+      <Link>Forms\MarkdownPreviewForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\MarkdownPreviewForm.Designer.cs">
+      <Link>Forms\MarkdownPreviewForm.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\SettingsForm.cs">
+      <Link>Forms\SettingsForm.cs</Link>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Forms\SettingsForm.Designer.cs">
+      <Link>Forms\SettingsForm.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Generator\IMarkdownGenerator.cs">
+      <Link>Generator\IMarkdownGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Generator\MarkdigWrapperMarkdownGenerator.cs">
+      <Link>Generator\MarkdigWrapperMarkdownGenerator.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Generator\MarkdownService.cs">
+      <Link>Generator\MarkdownService.cs</Link>
+    </Compile>
+    <Compile Include="..\NppMarkdownPanel\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Icons.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icons.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="..\NppMarkdownPanel\Forms\AboutForm.resx">
+      <Link>Forms\AboutForm.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\NppMarkdownPanel\Forms\MarkdownPreviewForm.resx">
+      <Link>Forms\MarkdownPreviewForm.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\NppMarkdownPanel\Forms\SettingsForm.resx">
+      <Link>Forms\SettingsForm.resx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="markdown-mark-solid-win10.ico" />
+    <Content Include="md.ico" />
+    <EmbeddedResource Include="Resources\Icons.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\markdown-16x16-solid.bmp" />
+    <EmbeddedResource Include="Resources\md.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

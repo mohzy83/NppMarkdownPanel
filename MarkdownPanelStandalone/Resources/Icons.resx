@@ -117,23 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        Qk02AwAAAAAAADYAAAAoAAAAEAAAABAAAAABABgAAAAAAAAAAADBDgAAwQ4AAAAAAAAAAAAA////////
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////7Fep5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ
-        5iWQ7Fep5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ
-        7Fys8pLH5iWQ5iWQ5iWQ8pLH7Fys5iWQ5iWQ61Gm5imS5iWQ5iWQ5iWQ5iWQ5iWQ8pLH////5iWQ606l
-        5iWQ////8pLH5iWQ61Gn/vT59rPY5iaQ5iWQ5iWQ5iWQ5iWQ8pLH////7F2t//v97V6t////8pLH6UOf
-        /ev1////////9J3N5iWQ5iWQ5iWQ5iWQ8pLH/////ev1+tbq/ev1////8pLH5iWQ5iWQ////8pLH5iWQ
-        5iWQ5iWQ5iWQ5iWQ8pLH////+cfi5iiS+Mbi////8pLH5iWQ5iWQ////8pLH5iWQ5iWQ5iWQ5iWQ5iWQ
-        7Fys8pLH6Dma5iWQ6Dma8pLH7Fys5iWQ5iWQ8pLH7Fys5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ
-        5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ7V6t5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ5iWQ
-        5iWQ5iWQ5iWQ5iWQ5iWQ7V6t////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////
-</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="markdown_16x16_solid" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>markdown-16x16-solid.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="md" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>md.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

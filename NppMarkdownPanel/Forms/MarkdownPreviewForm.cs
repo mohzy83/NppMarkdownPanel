@@ -265,7 +265,8 @@ namespace NppMarkdownPanel.Forms
 
         protected override void WndProc(ref Message m)
         {
-            wndProcCallback(ref m);
+            if (wndProcCallback != null)
+                wndProcCallback(ref m);
 
             //Continue the processing, as we only toggle
             base.WndProc(ref m);
@@ -343,6 +344,11 @@ namespace NppMarkdownPanel.Forms
         public void SetMarkdownFilePath(string filepath)
         {
             currentFilePath = filepath;
+        }
+
+        public ToolStrip GetToolStrip()
+        {
+            return this.tbPreview;
         }
     }
 }
