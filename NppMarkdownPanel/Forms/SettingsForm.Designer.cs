@@ -57,6 +57,7 @@
             this.btnDefaultFileExt = new System.Windows.Forms.Button();
             this.cbAutoShowPanel = new System.Windows.Forms.CheckBox();
             this.cbShowStatusbar = new System.Windows.Forms.CheckBox();
+            this.cbAllowMissingFileExt = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -357,11 +358,23 @@
             this.cbShowStatusbar.UseVisualStyleBackColor = true;
             this.cbShowStatusbar.CheckedChanged += new System.EventHandler(this.cbShowStatusbar_CheckedChanged);
             // 
+            // cbAllowMissingFileExt
+            // 
+            this.cbAllowMissingFileExt.AutoSize = true;
+            this.cbAllowMissingFileExt.Location = new System.Drawing.Point(159, 471);
+            this.cbAllowMissingFileExt.Name = "cbAllowMissingFileExt";
+            this.cbAllowMissingFileExt.Size = new System.Drawing.Size(226, 23);
+            this.cbAllowMissingFileExt.TabIndex = 26;
+            this.cbAllowMissingFileExt.Text = "Allow panel for files without extension";
+            this.cbAllowMissingFileExt.UseVisualStyleBackColor = true;
+            this.cbAllowMissingFileExt.CheckedChanged += new System.EventHandler(this.cbAllowMissingFileExt_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(700, 582);
+            this.Controls.Add(this.cbAllowMissingFileExt);
             this.Controls.Add(this.cbShowStatusbar);
             this.Controls.Add(this.cbAutoShowPanel);
             this.Controls.Add(this.btnDefaultFileExt);
@@ -434,5 +447,6 @@
         private System.Windows.Forms.Button btnDefaultFileExt;
         private System.Windows.Forms.CheckBox cbAutoShowPanel;
         private System.Windows.Forms.CheckBox cbShowStatusbar;
+        private System.Windows.Forms.CheckBox cbAllowMissingFileExt;
     }
 }

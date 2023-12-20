@@ -70,6 +70,7 @@ namespace NppMarkdownPanel
             settings.ShowToolbar = PluginUtils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             settings.ShowStatusbar = PluginUtils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
             settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
+            settings.AllowMissingFileExt = PluginUtils.ReadIniBool("Options", "AllowMissingFileExt", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             return settings;
@@ -196,6 +197,7 @@ namespace NppMarkdownPanel
                 settings.HtmlFileName = settingsForm.HtmlFileName;
                 settings.ShowToolbar = settingsForm.ShowToolbar;
                 settings.SupportedFileExt = settingsForm.SupportedFileExt;
+                settings.AllowMissingFileExt = settingsForm.AllowMissingFileExt;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
 
@@ -275,6 +277,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowToolbar", settings.ShowToolbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
+            Win32.WriteIniValue("Options", "AllowMissingFileExt", settings.AllowMissingFileExt.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
@@ -353,8 +356,8 @@ namespace NppMarkdownPanel
             if (nppReady && settings.AutoShowPanel)
             {
                 // automatically show panel for supported file types
-                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath)) ||
-                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath)))
+                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath) == true) ||
+                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath) != true))
                 {
                     TogglePanelVisible();
                 }

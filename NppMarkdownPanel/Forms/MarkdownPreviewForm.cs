@@ -94,7 +94,7 @@ namespace NppMarkdownPanel.Forms
             var defaultBodyStyle = "";
             var markdownStyleContent = GetCssContent(filepath);
 
-            if (!IsValidFileExtension(currentFilePath))
+            if (!IsValidFileExtension(currentFilePath) == false)
             {
                 var invalidExtensionMessage = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
                 invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessage);
@@ -325,9 +325,13 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
-        public bool IsValidFileExtension(string filename)
+        public bool? IsValidFileExtension(string filename)
         {
             var currentExtension = Path.GetExtension(filename).ToLower();
+            if (settings.AllowMissingFileExt && currentExtension == String.Empty)
+            {
+                return null;
+            }
             var matchExtensionList = false;
             try
             {

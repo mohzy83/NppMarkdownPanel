@@ -17,6 +17,7 @@ namespace NppMarkdownPanel.Entities
         public int ZoomLevel { get; set; }
         public string HtmlFileName { get; set; }
         public string SupportedFileExt { get; set; }
+        public bool AllowMissingFileExt { get; set; }
         public bool IsDarkModeEnabled { get; set; }
         public bool ShowToolbar { get; set; }
         public bool ShowStatusbar { get; set; }

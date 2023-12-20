@@ -12,6 +12,7 @@ namespace NppMarkdownPanel.Forms
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
         public string SupportedFileExt { get; set; }
+        public bool AllowMissingFileExt { get; set; }
         public bool AutoShowPanel { get; set; }
         public bool ShowStatusbar { get; set; }
 
@@ -23,6 +24,7 @@ namespace NppMarkdownPanel.Forms
             HtmlFileName = settings.HtmlFileName;
             ShowToolbar = settings.ShowToolbar;
             SupportedFileExt = settings.SupportedFileExt;
+            AllowMissingFileExt = settings.AllowMissingFileExt;
             AutoShowPanel = settings.AutoShowPanel;
             ShowStatusbar = settings.ShowStatusbar;
 
@@ -35,6 +37,7 @@ namespace NppMarkdownPanel.Forms
             tbHtmlFile.Text = HtmlFileName;
             cbShowToolbar.Checked = ShowToolbar;
             tbFileExt.Text = SupportedFileExt;
+            cbAllowMissingFileExt.Checked = AllowMissingFileExt;
             cbAutoShowPanel.Checked = AutoShowPanel;
             cbShowStatusbar.Checked = ShowStatusbar;
         }
@@ -174,6 +177,11 @@ namespace NppMarkdownPanel.Forms
         private void tbFileExt_TextChanged(object sender, EventArgs e)
         {
             SupportedFileExt = tbFileExt.Text;
+        }
+
+        private void cbAllowMissingFileExt_CheckedChanged(object sender, EventArgs e)
+        {
+            AllowMissingFileExt = cbAllowMissingFileExt.Checked;
         }
 
         private void cbAutoShowPanel_CheckedChanged(object sender, EventArgs e)
