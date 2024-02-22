@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,9 @@ namespace NppMarkdownPanel
 
         public MarkdownPanelController()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
+
             scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             SetIniFilePath();
@@ -54,6 +58,23 @@ namespace NppMarkdownPanel
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
+        }
+
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            //  foreach (var moduleDir in Directory)
+            //  {
+            var di = new DirectoryInfo(Path.Combine(PluginUtils.GetPluginDirectory(), "lib"));
+
+            var modulename = args.Name.Split(',')[0];
+
+            var module = di.GetFiles().FirstOrDefault(i => i.Name == modulename + ".dll");
+            if (module != null)
+            {
+                return Assembly.LoadFrom(module.FullName);
+            }
+            // }
+            return null;
         }
 
         private Settings LoadSettingsFromIni()

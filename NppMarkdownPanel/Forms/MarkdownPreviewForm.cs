@@ -1,21 +1,15 @@
 ﻿using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Generator;
 using NppMarkdownPanel.Webbrowser;
-using SHDocVw;
+using PanelCommon;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Webview2Viewer;
 
 namespace NppMarkdownPanel.Forms
 {
@@ -46,7 +40,6 @@ namespace NppMarkdownPanel.Forms
         private Settings settings;
         private string currentFilePath;
         private IWebbrowserControl webbrowserControl;
-        private Webview2Panel webview2Panel;
 
         public void UpdateSettings(Settings settings)
         {
@@ -92,9 +85,10 @@ namespace NppMarkdownPanel.Forms
             markdownService.PostProcessorArguments = settings.PostProcessorArguments;
             this.settings = settings;
             panel1.Visible = true;
-            //  webview2Panel = new Webview2Panel(panel1);
 
-            webbrowserControl = new IE11WebbrowserControl();
+            webbrowserControl = new Webview2WebbrowserControl(); 
+       //     webbrowserControl = new IE11WebbrowserControl(); 
+
             webbrowserControl.AddToHost(panel1);
             webbrowserControl.RenderingDoneAction = () => { HideScreenshotAndShowBrowser(); };
             webbrowserControl.StatusTextChangedAction  = (status) => { toolStripStatusLabel1.Text = status; };
@@ -155,8 +149,6 @@ namespace NppMarkdownPanel.Forms
                 renderTask.ContinueWith((renderedText) =>
                 {
                     webbrowserControl.SetContent(renderedText.Result.ResultForBrowser);
-                    //webBrowserPreview.DocumentText = renderedText.Result.ResultForBrowser;
-                   // webview2Panel.DisplayHtml(renderedText.Result.ResultForBrowser);
                     htmlContentForExport = renderedText.Result.ResultForExport;
                     if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                     {

@@ -57,7 +57,14 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MDPWebview2Viewer.cs" />
+    <Compile Include="InterfaceProvider.cs" />
+    <Compile Include="Webview2WebbrowserControl.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PanelCommon\PanelCommon.csproj">
+      <Project>{a52a6264-26ec-4af6-9031-53b99ae4f65a}</Project>
+      <Name>PanelCommon</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Web.WebView2.1.0.1661.34\build\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.1661.34\build\Microsoft.Web.WebView2.targets')" />

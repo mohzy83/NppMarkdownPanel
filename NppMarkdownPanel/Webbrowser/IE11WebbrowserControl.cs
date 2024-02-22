@@ -1,4 +1,5 @@
-﻿using NppMarkdownPanel.Entities;
+﻿using PanelCommon;
+using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Forms;
 using SHDocVw;
 using System;
