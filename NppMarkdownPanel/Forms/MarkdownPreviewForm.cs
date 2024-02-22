@@ -1,5 +1,6 @@
 ﻿using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Generator;
+using NppMarkdownPanel.Webbrowser;
 using SHDocVw;
 using System;
 using System.Collections.Generic;
@@ -40,10 +41,12 @@ namespace NppMarkdownPanel.Forms
         const string MSG_NO_SUPPORTED_FILE_EXT = "<h3>The current file <u>{0}</u> has no valid Markdown file extension.</h3><div>Valid file extensions:{1}</div>";
 
         private Task<RenderResult> renderTask;
-        private int lastVerticalScroll = 0;
+
         private string htmlContentForExport;
         private Settings settings;
         private string currentFilePath;
+        private IWebbrowserControl webbrowserControl;
+        private Webview2Panel webview2Panel;
 
         public void UpdateSettings(Settings settings)
         {
@@ -79,6 +82,8 @@ namespace NppMarkdownPanel.Forms
 
         private MarkdownPreviewForm(Settings settings, ActionRef<Message> wndProcCallback)
         {
+            InitializeComponent();
+
             this.wndProcCallback = wndProcCallback;
             markdownService = new MarkdownService(new MarkdigWrapperMarkdownGenerator());
             markdownService.PreProcessorCommandFilename = settings.PreProcessorCommandFilename;
@@ -86,7 +91,14 @@ namespace NppMarkdownPanel.Forms
             markdownService.PostProcessorCommandFilename = settings.PostProcessorCommandFilename;
             markdownService.PostProcessorArguments = settings.PostProcessorArguments;
             this.settings = settings;
-            InitializeComponent();
+            panel1.Visible = true;
+            //  webview2Panel = new Webview2Panel(panel1);
+
+            webbrowserControl = new IE11WebbrowserControl();
+            webbrowserControl.AddToHost(panel1);
+            webbrowserControl.RenderingDoneAction = () => { HideScreenshotAndShowBrowser(); };
+            webbrowserControl.StatusTextChangedAction  = (status) => { toolStripStatusLabel1.Text = status; };
+
         }
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
@@ -135,22 +147,16 @@ namespace NppMarkdownPanel.Forms
         {
             if (renderTask == null || renderTask.IsCompleted)
             {
-                if (preserveVerticalScrollPosition)
-                {
-                    SaveLastVerticalScrollPosition();
-                }
-                else
-                {
-                    lastVerticalScroll = 0;
-                }
-
                 MakeAndDisplayScreenShot();
+                webbrowserControl.PrepareContentUpdate(preserveVerticalScrollPosition);
 
                 var context = TaskScheduler.FromCurrentSynchronizationContext();
                 renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    webBrowserPreview.DocumentText = renderedText.Result.ResultForBrowser;
+                    webbrowserControl.SetContent(renderedText.Result.ResultForBrowser);
+                    //webBrowserPreview.DocumentText = renderedText.Result.ResultForBrowser;
+                   // webview2Panel.DisplayHtml(renderedText.Result.ResultForBrowser);
                     htmlContentForExport = renderedText.Result.ResultForExport;
                     if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                     {
@@ -161,7 +167,8 @@ namespace NppMarkdownPanel.Forms
                             writeHtmlContentToFile(settings.HtmlFileName);
                         }
                     }
-                    AdjustZoomLevel();
+                    webbrowserControl.SetZoomLevel(settings.ZoomLevel);
+
                 }, context);
                 renderTask.Start();
             }
@@ -172,40 +179,10 @@ namespace NppMarkdownPanel.Forms
         /// </summary>
         private void MakeAndDisplayScreenShot()
         {
-            Bitmap screenshot = new Bitmap(webBrowserPreview.Width, webBrowserPreview.Height);
-            ActiveXScreenShotMaker.GetImage(webBrowserPreview.ActiveXInstance, screenshot, Color.White);
+            Bitmap screenshot = webbrowserControl.MakeScreenshot();
             pictureBoxScreenshot.Image = screenshot;
             pictureBoxScreenshot.Visible = true;
         }
-
-        /// <summary>
-        /// Saves the last vertical scrollpositions, after reloading the position will be 0
-        /// </summary>
-        private void SaveLastVerticalScrollPosition()
-        {
-            if (webBrowserPreview.Document != null)
-            {
-                try
-                {
-                    lastVerticalScroll = webBrowserPreview.Document.GetElementsByTagName("HTML")[0].ScrollTop;
-                }
-                catch { }
-            }
-        }
-
-        private void webBrowserPreview_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            Cursor.Current = Cursors.IBeam;
-            GoToLastVerticalScrollPosition();
-            HideScreenshotAndShowBrowser();
-        }
-
-        private void GoToLastVerticalScrollPosition()
-        {
-            webBrowserPreview.Document.Window.ScrollTo(0, lastVerticalScroll);
-            Application.DoEvents();
-        }
-
 
         private void HideScreenshotAndShowBrowser()
         {
@@ -215,52 +192,7 @@ namespace NppMarkdownPanel.Forms
 
         public void ScrollToElementWithLineNo(int lineNo)
         {
-            Application.DoEvents();
-            if (webBrowserPreview.Document != null)
-            {
-                HtmlElement child = null;
-
-                for (int i = lineNo; i >= 0; i--)
-                {
-                    var htmlElement = webBrowserPreview.Document.GetElementById(i.ToString());
-                    if (htmlElement != null)
-                    {
-                        child = htmlElement;
-                        break;
-                    }
-                }
-
-                if (child != null)
-                    webBrowserPreview.Document.Window.ScrollTo(0, CalculateAbsoluteYOffset(child) - 20);
-            }
-        }
-
-        private int CalculateAbsoluteYOffset(HtmlElement currentElement)
-        {
-            int baseY = currentElement.OffsetRectangle.Top;
-            var offsetParent = currentElement.OffsetParent;
-            while (offsetParent != null)
-            {
-                baseY += offsetParent.OffsetRectangle.Top;
-                offsetParent = offsetParent.OffsetParent;
-            }
-
-            return baseY;
-        }
-
-
-        /// <summary>
-        /// Increase Zoomlevel in case of higher DPI settings
-        /// </summary>
-        private void AdjustZoomLevel()
-        {
-            Application.DoEvents();
-
-            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
-
-            int zoomLevel = settings.ZoomLevel;
-
-            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, zoomLevel, IntPtr.Zero);
+            webbrowserControl.ScrollToElementWithLineNo((int)lineNo);
         }
 
         protected override void WndProc(ref Message m)
@@ -269,37 +201,6 @@ namespace NppMarkdownPanel.Forms
 
             //Continue the processing, as we only toggle
             base.WndProc(ref m);
-        }
-
-        private void webBrowserPreview_Navigating(object sender, WebBrowserNavigatingEventArgs e)
-        {
-            if (!e.Url.ToString().StartsWith("about:blank"))
-            {
-                e.Cancel = true;
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(e.Url.ToString());
-                p.Start();
-            }
-            else
-            {
-                // Jump to correct anchor on the page
-                if (e.Url.ToString().Contains("#"))
-                {
-                    var urlParts = e.Url.ToString().Split('#');
-                    e.Cancel = true;
-                    var element = webBrowserPreview.Document.GetElementById(urlParts[1]);
-                    if (element != null)
-                    {
-                        element.Focus();
-                        element.ScrollIntoView(true);
-                    }
-                }
-            }
-        }
-
-        private void webBrowserPreview_StatusTextChanged(object sender, EventArgs e)
-        {
-            toolStripStatusLabel1.Text = webBrowserPreview.StatusText;
         }
 
         private void btnSaveHtml_Click(object sender, EventArgs e)

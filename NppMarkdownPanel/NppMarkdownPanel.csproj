@@ -97,6 +97,7 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Generator\IMarkdownGenerator.cs" />
+    <Compile Include="Generator\Webview2Panel.cs" />
     <Compile Include="Generator\MarkdigWrapperMarkdownGenerator.cs" />
     <Compile Include="MarkdownPanelController.cs" />
     <Compile Include="Generator\MarkdownService.cs" />
@@ -126,6 +127,8 @@
     <Compile Include="PluginInfrastructure\UnmanagedExports.cs" />
     <Compile Include="Entities\RenderResult.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="Webbrowser\IE11WebbrowserControl.cs" />
+    <Compile Include="Webbrowser\IWebbrowserControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutForm.resx">
