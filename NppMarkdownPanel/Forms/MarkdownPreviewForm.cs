@@ -40,6 +40,8 @@ namespace NppMarkdownPanel.Forms
         private Settings settings;
         private string currentFilePath;
         private IWebbrowserControl webbrowserControl;
+        private IWebbrowserControl webview1Instance;
+        private IWebbrowserControl webview2Instance;
 
         public void UpdateSettings(Settings settings)
         {
@@ -63,6 +65,14 @@ namespace NppMarkdownPanel.Forms
 
             tbPreview.Visible = settings.ShowToolbar;
             statusStrip2.Visible = settings.ShowStatusbar;
+
+            if (webbrowserControl != null)
+            {
+                if (webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
+                {
+                    InitRenderingEngine(settings);
+                }
+            }
         }
 
         private MarkdownService markdownService;
@@ -78,7 +88,7 @@ namespace NppMarkdownPanel.Forms
             InitializeComponent();
 
             this.wndProcCallback = wndProcCallback;
-            markdownService = new MarkdownService(new MarkdigWrapperMarkdownGenerator());
+            markdownService = new MarkdownService(new MarkdigWrapper.MarkdigWrapper());
             markdownService.PreProcessorCommandFilename = settings.PreProcessorCommandFilename;
             markdownService.PreProcessorArguments = settings.PreProcessorArguments;
             markdownService.PostProcessorCommandFilename = settings.PostProcessorCommandFilename;
@@ -86,13 +96,44 @@ namespace NppMarkdownPanel.Forms
             this.settings = settings;
             panel1.Visible = true;
 
-            webbrowserControl = new Webview2WebbrowserControl(); 
-       //     webbrowserControl = new IE11WebbrowserControl(); 
+            InitRenderingEngine(settings);
+        }
+
+        private void InitRenderingEngine(Settings settings)
+        {
+            panel1.Controls.Clear();
+          
+
+            if (settings.IsRenderingEngineIE11())
+            {
+                if (webview1Instance == null)
+                {
+                    webbrowserControl = new IE11WebbrowserControl();
+                    webbrowserControl.Initialize(settings.ZoomLevel);
+                    webview1Instance = webbrowserControl;
+                }
+                else
+                {
+                    webbrowserControl = webview1Instance;
+                }
+            }
+            else if (settings.IsRenderingEngineEdge())
+            {
+                if (webview2Instance == null)
+                {
+                    webbrowserControl = new Webview2WebbrowserControl();
+                    webbrowserControl.Initialize(settings.ZoomLevel);
+                    webview2Instance = webbrowserControl;
+                }
+                else
+                {
+                    webbrowserControl = webview2Instance;
+                }
+            }
 
             webbrowserControl.AddToHost(panel1);
             webbrowserControl.RenderingDoneAction = () => { HideScreenshotAndShowBrowser(); };
-            webbrowserControl.StatusTextChangedAction  = (status) => { toolStripStatusLabel1.Text = status; };
-
+            webbrowserControl.StatusTextChangedAction = (status) => { toolStripStatusLabel1.Text = status; };
         }
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
@@ -171,15 +212,22 @@ namespace NppMarkdownPanel.Forms
         /// </summary>
         private void MakeAndDisplayScreenShot()
         {
-            Bitmap screenshot = webbrowserControl.MakeScreenshot();
-            pictureBoxScreenshot.Image = screenshot;
-            pictureBoxScreenshot.Visible = true;
+            Bitmap bm = webbrowserControl.MakeScreenshot();
+            if (bm != null)
+            {
+                pictureBoxScreenshot.Image = bm;
+                pictureBoxScreenshot.Visible = true;
+            }
+
         }
 
         private void HideScreenshotAndShowBrowser()
         {
-            pictureBoxScreenshot.Visible = false;
-            pictureBoxScreenshot.Image = null;
+            if (pictureBoxScreenshot.Image != null)
+            {
+                pictureBoxScreenshot.Visible = false;
+                pictureBoxScreenshot.Image = null;
+            }
         }
 
         public void ScrollToElementWithLineNo(int lineNo)

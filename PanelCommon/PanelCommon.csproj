@@ -36,6 +36,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMarkdownGenerator.cs" />
     <Compile Include="IWebbrowserControl.cs" />
   </ItemGroup>
   <ItemGroup>

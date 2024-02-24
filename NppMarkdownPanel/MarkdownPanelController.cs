@@ -49,7 +49,6 @@ namespace NppMarkdownPanel
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
-
             scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             SetIniFilePath();
@@ -62,8 +61,6 @@ namespace NppMarkdownPanel
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-            //  foreach (var moduleDir in Directory)
-            //  {
             var di = new DirectoryInfo(Path.Combine(PluginUtils.GetPluginDirectory(), "lib"));
 
             var modulename = args.Name.Split(',')[0];
@@ -73,7 +70,6 @@ namespace NppMarkdownPanel
             {
                 return Assembly.LoadFrom(module.FullName);
             }
-            // }
             return null;
         }
 
@@ -93,6 +89,7 @@ namespace NppMarkdownPanel
             settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
+            settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW1_IE11);
             return settings;
         }
 
@@ -219,6 +216,7 @@ namespace NppMarkdownPanel
                 settings.SupportedFileExt = settingsForm.SupportedFileExt;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
+                settings.RenderingEngine = settingsForm.RenderingEngine;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
                 viewerInterface.UpdateSettings(settings);
@@ -297,6 +295,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
         }
         private void ShowAboutDialog()
         {

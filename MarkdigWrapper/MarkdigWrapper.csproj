@@ -49,7 +49,7 @@
     <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingCodeBlockRenderer.cs" />
     <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingExtension.cs" />
     <Compile Include="Markdig\SyntaxHighlighting\SyntaxHighlightingExtensions.cs" />
-    <Compile Include="Wrapper.cs" />
+    <Compile Include="MarkdigWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +70,11 @@
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\netstandard1.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PanelCommon\PanelCommon.csproj">
+      <Project>{a52a6264-26ec-4af6-9031-53b99ae4f65a}</Project>
+      <Name>PanelCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

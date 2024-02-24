@@ -14,6 +14,8 @@ namespace NppMarkdownPanel.Forms
         public string SupportedFileExt { get; set; }
         public bool AutoShowPanel { get; set; }
         public bool ShowStatusbar { get; set; }
+        public string RenderingEngine { get; set; }
+
 
         public SettingsForm(Settings settings)
         {
@@ -25,6 +27,7 @@ namespace NppMarkdownPanel.Forms
             SupportedFileExt = settings.SupportedFileExt;
             AutoShowPanel = settings.AutoShowPanel;
             ShowStatusbar = settings.ShowStatusbar;
+            RenderingEngine = settings.RenderingEngine;
 
             InitializeComponent();
 
@@ -37,6 +40,14 @@ namespace NppMarkdownPanel.Forms
             tbFileExt.Text = SupportedFileExt;
             cbAutoShowPanel.Checked = AutoShowPanel;
             cbShowStatusbar.Checked = ShowStatusbar;
+            if (settings.IsRenderingEngineIE11())
+            {
+                comboRenderingEngine.SelectedIndex = 0;
+            }
+            else if (settings.IsRenderingEngineEdge())
+            {
+                comboRenderingEngine.SelectedIndex = 1;
+            }
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -184,6 +195,18 @@ namespace NppMarkdownPanel.Forms
         private void cbShowStatusbar_CheckedChanged(object sender, EventArgs e)
         {
             ShowStatusbar = cbShowStatusbar.Checked;
+        }
+
+        private void comboRenderingEngine_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboRenderingEngine.SelectedIndex == 0)
+            {
+                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW1_IE11;
+            }
+            else
+            {
+                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW2_EDGE;
+            }
         }
     }
 }

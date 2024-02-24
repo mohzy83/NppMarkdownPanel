@@ -1,4 +1,5 @@
 ﻿using NppMarkdownPanel.Generator;
+using PanelCommon;
 using System;
 using System.Collections.Generic;
 using System.IO;

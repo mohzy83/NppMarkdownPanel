@@ -96,8 +96,6 @@
     <Compile Include="Forms\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Generator\IMarkdownGenerator.cs" />
-    <Compile Include="Generator\MarkdigWrapperMarkdownGenerator.cs" />
     <Compile Include="MarkdownPanelController.cs" />
     <Compile Include="Generator\MarkdownService.cs" />
     <Compile Include="PluginInfrastructure\ClikeStringArray.cs" />
@@ -172,13 +170,20 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MarkdigWrapper\MarkdigWrapper.csproj">
+      <Project>{00858d38-b221-40b2-90f4-e029a1affe5a}</Project>
+      <Name>MarkdigWrapper</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\PanelCommon\PanelCommon.csproj">
       <Project>{a52a6264-26ec-4af6-9031-53b99ae4f65a}</Project>
       <Name>PanelCommon</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Webview2Viewer\Webview2Viewer.csproj">
       <Project>{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}</Project>
       <Name>Webview2Viewer</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

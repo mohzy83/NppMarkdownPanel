@@ -1,6 +1,9 @@
 if (Test-Path Release\lib\) {Remove-Item Release\lib\ -Recurse -Force}
 New-Item "Release\lib\" -itemType Directory
 Copy-Item -Force -Recurse -Path MarkdigWrapper\bin\Release\*.dll -Destination Release\lib\
+Copy-Item -Force -Recurse -Path PanelCommon\bin\Release\*.dll -Destination Release\lib\
+Copy-Item -Force -Recurse -Path Webview2Viewer\bin\Release\*.dll -Destination Release\lib\
+Copy-Item -Force -Recurse -Path Webview2Viewer\bin\Release\runtimes\ -Destination Release\lib\runtimes\
 
 function makeReleaseZip($filename, $targetPlattform)
 {

@@ -1,5 +1,4 @@
 ﻿using PanelCommon;
-using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Forms;
 using SHDocVw;
 using System;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NppMarkdownPanel.Entities;
 
 namespace NppMarkdownPanel.Webbrowser
 {
@@ -21,7 +21,8 @@ namespace NppMarkdownPanel.Webbrowser
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
 
-        public void AddToHost(Control host)
+
+        public void Initialize(int zoomLevel)
         {
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.webBrowserPreview.AllowWebBrowserDrop = false;
@@ -35,6 +36,10 @@ namespace NppMarkdownPanel.Webbrowser
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
             this.webBrowserPreview.StatusTextChanged += new System.EventHandler(this.webBrowserPreview_StatusTextChanged);
+        }
+
+        public void AddToHost(Control host)
+        {
             host.Controls.Add(this.webBrowserPreview);
         }
 
@@ -172,5 +177,11 @@ namespace NppMarkdownPanel.Webbrowser
             ActiveXScreenShotMaker.GetImage(webBrowserPreview.ActiveXInstance, screenshot, Color.White);
             return screenshot;
         }
+
+        public string GetRenderingEngineName()
+        {
+            return Settings.RENDERING_ENGINE_WEBVIEW1_IE11;
+        }
+
     }
 }
