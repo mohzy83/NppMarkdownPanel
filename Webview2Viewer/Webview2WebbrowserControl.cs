@@ -8,12 +8,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 namespace Webview2Viewer
 {
     public class Webview2WebbrowserControl : IWebbrowserControl
     {
+
+        const string virtualHostName = "markdownpanel-virtualhost";
         const string CONFIG_FOLDER_NAME = "MarkdownPanel";
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
         private int lastVerticalScroll = 0;
@@ -22,20 +25,31 @@ namespace Webview2Viewer
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
 
+        private string currentBody;
+        private string currentStyle;
+
+        private string currentDocumentPath;
+
+        private CoreWebView2Environment environment = null;
 
         public Webview2WebbrowserControl()
         {
             webView = null;
         }
 
-        public void Initialize(int zoomLevel)
+        public async void Initialize(int zoomLevel)
         {
             var cacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CONFIG_FOLDER_NAME, "webview2");
-            var props = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties();
-            props.UserDataFolder = cacheDir;
+            //var props = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties();
+            //props.UserDataFolder = cacheDir;
             //props.AdditionalBrowserArguments = "--disable-web-security --allow-file-access-from-files --allow-file-access";
             webView = new Microsoft.Web.WebView2.WinForms.WebView2();
-            webView.CreationProperties = props;
+            var opt = new CoreWebView2EnvironmentOptions();
+            //opt.
+            environment = await CoreWebView2Environment.CreateAsync(null, cacheDir, opt);
+            await webView.EnsureCoreWebView2Async(environment);
+
+            //webView.CreationProperties = props;
             webView.AccessibleName = "webView";
             webView.Name = "webView";
             webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
@@ -47,7 +61,11 @@ namespace Webview2Viewer
             webView.NavigationStarting += OnWebBrowser_NavigationStarting;
             webView.NavigationCompleted += WebView_NavigationCompleted;
             webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
-            webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
+
+
+            webViewInitialized = true;
+
+            //webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
         }
 
         public void AddToHost(Control host)
@@ -55,15 +73,18 @@ namespace Webview2Viewer
             host.Controls.Add(webView);
         }
 
-        private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        /*private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             webViewInitialized = true;
-        }
+        }*/
 
-        private async void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        private void WebView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
-            await webView.ExecuteScriptAsync("window.scrollBy(0, " + lastVerticalScroll + " )");
-            if (RenderingDoneAction != null) RenderingDoneAction();
+            ExecuteWebviewAction(new Action(async () =>
+            {
+                await webView.ExecuteScriptAsync("window.scrollBy(0, " + lastVerticalScroll + " )");
+                if (RenderingDoneAction != null) RenderingDoneAction();
+            }));
         }
 
         /*public async Task SetScreenshot(PictureBox pictureBox)
@@ -82,13 +103,16 @@ namespace Webview2Viewer
             return null;
         }
 
-        public async void PrepareContentUpdate(bool preserveVerticalScrollPosition)
+        public void PrepareContentUpdate(bool preserveVerticalScrollPosition)
         {
             if (!webViewInitialized) return;
             if (preserveVerticalScrollPosition)
             {
-                var scrollPosition = await webView.ExecuteScriptAsync("window.pageYOffset");
-                lastVerticalScroll = int.Parse(scrollPosition.Split('.')[0]);
+                ExecuteWebviewAction(new Action(async () =>
+                {
+                    var scrollPosition = await webView.ExecuteScriptAsync("window.pageYOffset");
+                    lastVerticalScroll = int.Parse(scrollPosition.Split('.')[0]);
+                }));
             }
             else
             {
@@ -96,46 +120,89 @@ namespace Webview2Viewer
             }
         }
 
+        const string scrollScript =
+            "var element = document.getElementById('{0}');\n" +
+            "var headerOffset = 10;\n" +
+            "var elementPosition = element.getBoundingClientRect().top;\n" +
+            "var offsetPosition = elementPosition + window.pageYOffset - headerOffset;\n" +
+            "window.scrollTo({{top: offsetPosition}});";
+
 
         public void ScrollToElementWithLineNo(int lineNo)
         {
-
+            if (lineNo <= 0) lineNo = 1;
+            ExecuteWebviewAction(new Action(async () =>
+            {
+                await webView.ExecuteScriptAsync(string.Format(scrollScript, lineNo));
+            }));
         }
 
-        public void SetContent(string content)
+        public void SetContent(string content, string body, string style, string currentDocumentPath)
         {
             if (!webViewInitialized) return;
-            try
+
+            var currentPath = Path.GetDirectoryName(currentDocumentPath);
+            var replaceFileMapping = "file:///" + currentPath.Replace('\\', '/');
+
+            content = content.Replace(replaceFileMapping, "http://" + virtualHostName);
+            body = body.Replace(replaceFileMapping, "http://" + virtualHostName);
+
+            var fullReload = false;
+            if (this.currentDocumentPath != currentDocumentPath)
             {
-                webView.Invoke(new MethodInvoker(delegate
+                ExecuteWebviewAction(new Action(() =>
+                {
+                    webView.CoreWebView2.SetVirtualHostNameToFolderMapping(virtualHostName, currentPath, CoreWebView2HostResourceAccessKind.Allow);
+                }));
+                this.currentDocumentPath = currentDocumentPath;
+                fullReload = true;
+            }
+
+            if (!fullReload && currentBody != null && currentStyle != null)
+            {
+                if (currentBody != body)
+                {
+                    currentBody = body;
+                    ExecuteWebviewAction(new Action(async () =>
+                    {
+                        await webView.ExecuteScriptAsync("document.body.innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "'");
+                    }));
+                }
+                if (currentStyle != style)
+                {
+                    currentStyle = style;
+                    ExecuteWebviewAction(new Action(async () =>
+                    {
+                        await webView.ExecuteScriptAsync(
+                            "document.head.removeChild(document.head.lastElementChild);\n" +
+                            "var style = document.createElement('style');\n" +
+                            "style.type = 'text/css'; \n" +
+                            "style.textContent = '" + HttpUtility.JavaScriptStringEncode(currentStyle) + "'; \n" +
+                            "document.head.appendChild(style); \n"
+                            );
+                    }));
+                }
+            }
+            else
+            {
+                currentBody = body;
+                currentStyle = style;
+                ExecuteWebviewAction(new Action(() =>
                 {
                     webView.NavigateToString(content);
                 }));
-
             }
-            catch (Exception ex)
-            {
-
-            }
-
         }
 
         public void SetZoomLevel(int zoomLevel)
         {
-            try
+            double zoomFactor = ConvertToZoomFactor(zoomLevel);
+            ExecuteWebviewAction(new Action(() =>
             {
-                double zoomFactor = ConvertToZoomFactor(zoomLevel);
-                webView.Invoke(new MethodInvoker(delegate
-                {
-                    if (webView.ZoomFactor != zoomFactor)
-                        webView.ZoomFactor = zoomFactor;
-                }));
+                if (webView.ZoomFactor != zoomFactor)
+                    webView.ZoomFactor = zoomFactor;
 
-            }
-            catch (Exception ex)
-            {
-
-            }
+            }));
         }
 
         private double ConvertToZoomFactor(int zoomLevel)
@@ -164,6 +231,17 @@ namespace Webview2Viewer
             return "EDGE";
         }
 
+
+        private void ExecuteWebviewAction(Action action)
+        {
+            try
+            {
+                webView.Invoke(action);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
 
     }
 }

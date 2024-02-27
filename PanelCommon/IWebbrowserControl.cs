@@ -12,7 +12,7 @@ namespace PanelCommon
         void Initialize(int zoomLevel);
         void AddToHost(Control host);
         void PrepareContentUpdate(bool preserveVerticalScrollPosition);
-        void SetContent(string content);
+        void SetContent(string content, string body, string style, string currentDocumentPath);
         void SetZoomLevel(int zoomLevel);
         void ScrollToElementWithLineNo(int lineNo);
         string GetRenderingEngineName();

@@ -90,7 +90,7 @@ namespace NppMarkdownPanel.Webbrowser
             }
         }
 
-        public void SetContent(string content)
+        public void SetContent(string content, string body, string style, string currentDocumentPath)
         {
             webBrowserPreview.DocumentText = content;
         }

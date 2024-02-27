@@ -143,10 +143,10 @@ namespace NppMarkdownPanel.Forms
 
             if (!IsValidFileExtension(currentFilePath))
             {
-                var invalidExtensionMessage = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
-                invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessage);
+                var invalidExtensionMessageBody = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
+                var invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
 
-                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage);
+                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent);
             }
 
             var resultForBrowser = markdownService.ConvertToHtml(currentText, filepath, true);
@@ -154,7 +154,7 @@ namespace NppMarkdownPanel.Forms
 
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
-            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport);
+            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent);
         }
 
         private string GetCssContent(string filepath)
@@ -189,7 +189,7 @@ namespace NppMarkdownPanel.Forms
                 renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    webbrowserControl.SetContent(renderedText.Result.ResultForBrowser);
+                    webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
                     htmlContentForExport = renderedText.Result.ResultForExport;
                     if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                     {
