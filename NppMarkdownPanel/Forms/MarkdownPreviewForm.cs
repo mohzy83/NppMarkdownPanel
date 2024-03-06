@@ -26,7 +26,7 @@ namespace NppMarkdownPanel.Forms
                     {1}
                     </style>
                 </head>
-                <body style=""{2}"">
+                <body class=""markdown-body"" style=""{2}"">
                 {3}
                 </body>
             </html>
