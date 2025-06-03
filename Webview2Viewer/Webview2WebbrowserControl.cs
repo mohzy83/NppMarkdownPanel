@@ -130,7 +130,7 @@ namespace Webview2Viewer
 
         public void ScrollToElementWithLineNo(int lineNo)
         {
-            if (lineNo <= 0) lineNo = 1;
+            if (lineNo <= 0) lineNo = 0;
             ExecuteWebviewAction(new Action(async () =>
             {
                 await webView.ExecuteScriptAsync(string.Format(scrollScript, lineNo));
