@@ -2,17 +2,17 @@
 Plugin to preview Markdown files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
-- displaying rendered markdown html with embedded IE11
+- displaying rendered markdown html with WebView2 (Edge) or embedded IE11
 - can save rendered html to a file
 - Dark mode support (_requires Notepad++ version 8.4.1 or later_)
 
 ### Current Version
 
-The current version is **0.7.3** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.9.0** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 
 ## Prerequisites
-- .NET 4.5.2 or higher 
+- .NET 4.7.2 or higher 
 
 ## Installation
 ### Installation in Notepad++ 
@@ -91,6 +91,10 @@ When this option is enabled, the plugin ensures that the first visible line in t
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
+### Version 0.9.0 
+- features
+	- WebView2 Edge integration
+
 ### Version 0.7.3 (released 2023-02-12)
 - bug fixes
 	- Settings file NppMarkdownPanel.ini isn't used anymore #78
@@ -180,8 +184,9 @@ Bugfix release
 
 | Name                              | Version | Authors                             | Link                                                                                                                   |
 |-----------------------------------|---------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| **Markdig**                       | 0.30.4  | xoofx                               | [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)                                             |
+| **Markdig**                       | 0.41.1  | xoofx                               | [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)                                             |
 | **NotepadPlusPlusPluginPack.Net** |   0.95  | kbilsted                            | [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net) |
+| **WebView2 Edge** 				|1.0.3296.44| Microsoft                           | [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net) |
 | **ColorCode (Portable)**          | 1.0.3   | Bashir Souid and Richard Slater     | [https://github.com/RichardSlater/ColorCodePortable](https://github.com/RichardSlater/ColorCodePortable)               |
 | **Markdig.SyntaxHighlighting**    | 1.1.7   | Richard Slater                      | [https://github.com/RichardSlater/Markdig.SyntaxHighlighting](https://github.com/RichardSlater/Markdig.SyntaxHighlighting) |
 | **github-markdown-css**           | 3.0.1   | sindresorhus                        | [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)             |
