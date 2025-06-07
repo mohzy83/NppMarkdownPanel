@@ -401,11 +401,57 @@ namespace NppMarkdownPanel
             {
                 case (int)WindowsMessage.WM_NOTIFY:
                     var notify = (NMHDR)Marshal.PtrToStructure(m.LParam, typeof(NMHDR));
+
+                    var panel = (MarkdownPreviewForm)viewerInterface;
+
+                    // do not intercept Npp notifications like DMN_CLOSE, etc.
+                    if (notify.hwndFrom != PluginBase.nppData._nppHandle)
+                    {
+                        panel.Invalidate(true);
+                        if (IntPtr.Size == 8)
+                        {
+                            SetControlParent(panel, Win32.GetWindowLongPtr, Win32.SetWindowLongPtr);
+                        }
+                        else
+                        {
+                            SetControlParent(panel, Win32.GetWindowLong, Win32.SetWindowLong);
+                        }
+
+                        panel.Update();
+                        return;
+                    }
+
                     if (notify.code == (int)DockMgrMsg.DMN_CLOSE)
                     {
                         ToolWindowCloseAction();
                     }
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Win32.WS_EX_CONTROLPARENT"/> extended attribute on <paramref name="parent"/> and any child controls,
+        /// following @mahee96's advice on the archived Plugin.Net issue tracker.
+        /// <para>
+        /// <seealso href="https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net/issues/17#issuecomment-683455467"/>
+        /// </para>
+        /// </summary>
+        /// <param name="parent">
+        /// A WinForm that's been registered with Npp's Docking Manager by sending <see cref="NppMsg.NPPM_DMMREGASDCKDLG"/>.
+        /// </param>
+        private void SetControlParent(Control parent, Func<IntPtr, int, IntPtr> wndLongGetter, Func<IntPtr, int, IntPtr, IntPtr> wndLongSetter)
+        {
+            if (parent.HasChildren)
+            {
+                long extAttrs = (long)wndLongGetter(parent.Handle, Win32.GWL_EXSTYLE);
+                if (Win32.WS_EX_CONTROLPARENT != (extAttrs & Win32.WS_EX_CONTROLPARENT))
+                {
+                    wndLongSetter(parent.Handle, Win32.GWL_EXSTYLE, new IntPtr(extAttrs | Win32.WS_EX_CONTROLPARENT));
+                }
+                foreach (Control c in parent.Controls)
+                {
+                    SetControlParent(c, wndLongGetter, wndLongSetter);
+                }
             }
         }
 
