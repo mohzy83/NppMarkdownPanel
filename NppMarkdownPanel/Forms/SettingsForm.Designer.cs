@@ -45,7 +45,6 @@
             this.btnChooseHtml = new System.Windows.Forms.Button();
             this.tbHtmlFile = new System.Windows.Forms.TextBox();
             this.lblHtmlFile = new System.Windows.Forms.Label();
-            this.cbShowToolbar = new System.Windows.Forms.CheckBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.sblInvalidHtmlPath = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnDefaultDarkmodeCss = new System.Windows.Forms.Button();
@@ -56,9 +55,11 @@
             this.tbFileExt = new System.Windows.Forms.TextBox();
             this.btnDefaultFileExt = new System.Windows.Forms.Button();
             this.cbAutoShowPanel = new System.Windows.Forms.CheckBox();
-            this.cbShowStatusbar = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.comboRenderingEngine = new System.Windows.Forms.ComboBox();
+            this.cbShowToolbar = new System.Windows.Forms.CheckBox();
+            this.cbShowStatusbar = new System.Windows.Forms.CheckBox();
+            this.cbAllowAllExtensions = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -99,10 +100,10 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(468, 540);
+            this.btnSave.Location = new System.Drawing.Point(468, 548);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 36);
-            this.btnSave.TabIndex = 1;
+            this.btnSave.TabIndex = 20;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -110,10 +111,11 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(579, 540);
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(579, 548);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(105, 36);
-            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TabIndex = 21;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -134,7 +136,7 @@
             this.tbCssFile.Location = new System.Drawing.Point(170, 119);
             this.tbCssFile.Name = "tbCssFile";
             this.tbCssFile.Size = new System.Drawing.Size(386, 25);
-            this.tbCssFile.TabIndex = 4;
+            this.tbCssFile.TabIndex = 2;
             this.tbCssFile.TextChanged += new System.EventHandler(this.tbCssFile_TextChanged);
             // 
             // label3
@@ -156,7 +158,7 @@
             this.trackBar1.Minimum = 80;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(474, 56);
-            this.trackBar1.TabIndex = 6;
+            this.trackBar1.TabIndex = 8;
             this.trackBar1.TickFrequency = 5;
             this.trackBar1.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.trackBar1.Value = 90;
@@ -178,7 +180,7 @@
             this.btnChooseCss.Location = new System.Drawing.Point(562, 117);
             this.btnChooseCss.Name = "btnChooseCss";
             this.btnChooseCss.Size = new System.Drawing.Size(39, 25);
-            this.btnChooseCss.TabIndex = 8;
+            this.btnChooseCss.TabIndex = 3;
             this.btnChooseCss.Text = "...";
             this.btnChooseCss.UseVisualStyleBackColor = true;
             this.btnChooseCss.Click += new System.EventHandler(this.btnChooseCss_Click);
@@ -189,7 +191,7 @@
             this.btnDefaultCss.Location = new System.Drawing.Point(607, 117);
             this.btnDefaultCss.Name = "btnDefaultCss";
             this.btnDefaultCss.Size = new System.Drawing.Size(73, 26);
-            this.btnDefaultCss.TabIndex = 9;
+            this.btnDefaultCss.TabIndex = 4;
             this.btnDefaultCss.Text = "Default";
             this.btnDefaultCss.UseVisualStyleBackColor = true;
             this.btnDefaultCss.Click += new System.EventHandler(this.button1_Click);
@@ -200,7 +202,7 @@
             this.btnResetHtml.Location = new System.Drawing.Point(607, 294);
             this.btnResetHtml.Name = "btnResetHtml";
             this.btnResetHtml.Size = new System.Drawing.Size(73, 28);
-            this.btnResetHtml.TabIndex = 13;
+            this.btnResetHtml.TabIndex = 11;
             this.btnResetHtml.Text = "Default";
             this.btnResetHtml.UseVisualStyleBackColor = true;
             this.btnResetHtml.Click += new System.EventHandler(this.btnResetHtml_Click);
@@ -211,7 +213,7 @@
             this.btnChooseHtml.Location = new System.Drawing.Point(562, 294);
             this.btnChooseHtml.Name = "btnChooseHtml";
             this.btnChooseHtml.Size = new System.Drawing.Size(39, 27);
-            this.btnChooseHtml.TabIndex = 12;
+            this.btnChooseHtml.TabIndex = 10;
             this.btnChooseHtml.Text = "...";
             this.btnChooseHtml.UseVisualStyleBackColor = true;
             this.btnChooseHtml.Click += new System.EventHandler(this.btnChooseHtml_Click);
@@ -223,7 +225,7 @@
             this.tbHtmlFile.Location = new System.Drawing.Point(170, 296);
             this.tbHtmlFile.Name = "tbHtmlFile";
             this.tbHtmlFile.Size = new System.Drawing.Size(386, 25);
-            this.tbHtmlFile.TabIndex = 11;
+            this.tbHtmlFile.TabIndex = 9;
             this.tbHtmlFile.TextChanged += new System.EventHandler(this.tbHtmlFile_TextChanged);
             this.tbHtmlFile.Leave += new System.EventHandler(this.tbHtmlFile_Leave);
             // 
@@ -236,23 +238,12 @@
             this.lblHtmlFile.TabIndex = 10;
             this.lblHtmlFile.Text = "Automatically Save \r\nHTML from Current \r\nPreview to this File:";
             // 
-            // cbShowToolbar
-            // 
-            this.cbShowToolbar.AutoSize = true;
-            this.cbShowToolbar.Location = new System.Drawing.Point(170, 435);
-            this.cbShowToolbar.Name = "cbShowToolbar";
-            this.cbShowToolbar.Size = new System.Drawing.Size(223, 21);
-            this.cbShowToolbar.TabIndex = 15;
-            this.cbShowToolbar.Text = "Show Toolbar in Preview Window";
-            this.cbShowToolbar.UseVisualStyleBackColor = true;
-            this.cbShowToolbar.CheckedChanged += new System.EventHandler(this.cbShowToolbar_Changed);
-            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.sblInvalidHtmlPath});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 588);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 596);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(696, 22);
             this.statusStrip1.TabIndex = 16;
@@ -273,7 +264,7 @@
             this.btnDefaultDarkmodeCss.Location = new System.Drawing.Point(607, 165);
             this.btnDefaultDarkmodeCss.Name = "btnDefaultDarkmodeCss";
             this.btnDefaultDarkmodeCss.Size = new System.Drawing.Size(73, 26);
-            this.btnDefaultDarkmodeCss.TabIndex = 20;
+            this.btnDefaultDarkmodeCss.TabIndex = 7;
             this.btnDefaultDarkmodeCss.Text = "Default";
             this.btnDefaultDarkmodeCss.UseVisualStyleBackColor = true;
             this.btnDefaultDarkmodeCss.Click += new System.EventHandler(this.btnDefaultDarkmodeCss_Click);
@@ -284,7 +275,7 @@
             this.btnChooseDarkmodeCss.Location = new System.Drawing.Point(562, 165);
             this.btnChooseDarkmodeCss.Name = "btnChooseDarkmodeCss";
             this.btnChooseDarkmodeCss.Size = new System.Drawing.Size(39, 25);
-            this.btnChooseDarkmodeCss.TabIndex = 19;
+            this.btnChooseDarkmodeCss.TabIndex = 6;
             this.btnChooseDarkmodeCss.Text = "...";
             this.btnChooseDarkmodeCss.UseVisualStyleBackColor = true;
             this.btnChooseDarkmodeCss.Click += new System.EventHandler(this.btnChooseCss_Click);
@@ -296,7 +287,7 @@
             this.tbDarkmodeCssFile.Location = new System.Drawing.Point(170, 167);
             this.tbDarkmodeCssFile.Name = "tbDarkmodeCssFile";
             this.tbDarkmodeCssFile.Size = new System.Drawing.Size(386, 25);
-            this.tbDarkmodeCssFile.TabIndex = 18;
+            this.tbDarkmodeCssFile.TabIndex = 5;
             this.tbDarkmodeCssFile.TextChanged += new System.EventHandler(this.tbDarkmodeCssFile_TextChanged);
             // 
             // label4
@@ -310,7 +301,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(12, 364);
+            this.label5.Location = new System.Drawing.Point(12, 397);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(127, 39);
             this.label5.TabIndex = 21;
@@ -320,19 +311,19 @@
             // 
             this.tbFileExt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFileExt.Location = new System.Drawing.Point(170, 364);
+            this.tbFileExt.Location = new System.Drawing.Point(170, 397);
             this.tbFileExt.Name = "tbFileExt";
             this.tbFileExt.Size = new System.Drawing.Size(386, 25);
-            this.tbFileExt.TabIndex = 22;
+            this.tbFileExt.TabIndex = 15;
             this.tbFileExt.TextChanged += new System.EventHandler(this.tbFileExt_TextChanged);
             // 
             // btnDefaultFileExt
             // 
             this.btnDefaultFileExt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDefaultFileExt.Location = new System.Drawing.Point(607, 364);
+            this.btnDefaultFileExt.Location = new System.Drawing.Point(607, 397);
             this.btnDefaultFileExt.Name = "btnDefaultFileExt";
             this.btnDefaultFileExt.Size = new System.Drawing.Size(73, 28);
-            this.btnDefaultFileExt.TabIndex = 23;
+            this.btnDefaultFileExt.TabIndex = 16;
             this.btnDefaultFileExt.Text = "Default";
             this.btnDefaultFileExt.UseVisualStyleBackColor = true;
             this.btnDefaultFileExt.Click += new System.EventHandler(this.btnDefaultFileExt_Click);
@@ -340,24 +331,13 @@
             // cbAutoShowPanel
             // 
             this.cbAutoShowPanel.AutoSize = true;
-            this.cbAutoShowPanel.Location = new System.Drawing.Point(170, 406);
+            this.cbAutoShowPanel.Location = new System.Drawing.Point(170, 439);
             this.cbAutoShowPanel.Name = "cbAutoShowPanel";
             this.cbAutoShowPanel.Size = new System.Drawing.Size(290, 21);
-            this.cbAutoShowPanel.TabIndex = 24;
+            this.cbAutoShowPanel.TabIndex = 17;
             this.cbAutoShowPanel.Text = "Automatically show panel for supported files";
             this.cbAutoShowPanel.UseVisualStyleBackColor = true;
             this.cbAutoShowPanel.CheckedChanged += new System.EventHandler(this.cbAutoShowPanel_CheckedChanged);
-            // 
-            // cbShowStatusbar
-            // 
-            this.cbShowStatusbar.AutoSize = true;
-            this.cbShowStatusbar.Location = new System.Drawing.Point(170, 464);
-            this.cbShowStatusbar.Name = "cbShowStatusbar";
-            this.cbShowStatusbar.Size = new System.Drawing.Size(321, 21);
-            this.cbShowStatusbar.TabIndex = 25;
-            this.cbShowStatusbar.Text = "Show Statusbar in Preview Window (Preview Links)";
-            this.cbShowStatusbar.UseVisualStyleBackColor = true;
-            this.cbShowStatusbar.CheckedChanged += new System.EventHandler(this.cbShowStatusbar_CheckedChanged);
             // 
             // label6
             // 
@@ -380,14 +360,49 @@
             this.comboRenderingEngine.Location = new System.Drawing.Point(170, 80);
             this.comboRenderingEngine.Name = "comboRenderingEngine";
             this.comboRenderingEngine.Size = new System.Drawing.Size(511, 25);
-            this.comboRenderingEngine.TabIndex = 27;
+            this.comboRenderingEngine.TabIndex = 1;
             this.comboRenderingEngine.SelectedIndexChanged += new System.EventHandler(this.comboRenderingEngine_SelectedIndexChanged);
+            // 
+            // cbShowToolbar
+            // 
+            this.cbShowToolbar.AutoSize = true;
+            this.cbShowToolbar.Location = new System.Drawing.Point(170, 466);
+            this.cbShowToolbar.Name = "cbShowToolbar";
+            this.cbShowToolbar.Size = new System.Drawing.Size(223, 21);
+            this.cbShowToolbar.TabIndex = 18;
+            this.cbShowToolbar.Text = "Show Toolbar in Preview Window";
+            this.cbShowToolbar.UseVisualStyleBackColor = true;
+            this.cbShowToolbar.CheckedChanged += new System.EventHandler(this.cbShowToolbar_Changed);
+            // 
+            // cbShowStatusbar
+            // 
+            this.cbShowStatusbar.AutoSize = true;
+            this.cbShowStatusbar.Location = new System.Drawing.Point(170, 495);
+            this.cbShowStatusbar.Name = "cbShowStatusbar";
+            this.cbShowStatusbar.Size = new System.Drawing.Size(321, 21);
+            this.cbShowStatusbar.TabIndex = 19;
+            this.cbShowStatusbar.Text = "Show Statusbar in Preview Window (Preview Links)";
+            this.cbShowStatusbar.UseVisualStyleBackColor = true;
+            this.cbShowStatusbar.CheckedChanged += new System.EventHandler(this.cbShowStatusbar_CheckedChanged);
+            // 
+            // cbAllowAllExtensions
+            // 
+            this.cbAllowAllExtensions.AutoSize = true;
+            this.cbAllowAllExtensions.Location = new System.Drawing.Point(170, 357);
+            this.cbAllowAllExtensions.Name = "cbAllowAllExtensions";
+            this.cbAllowAllExtensions.Size = new System.Drawing.Size(164, 21);
+            this.cbAllowAllExtensions.TabIndex = 14;
+            this.cbAllowAllExtensions.Text = "Allow all file extensions";
+            this.cbAllowAllExtensions.UseVisualStyleBackColor = true;
+            this.cbAllowAllExtensions.CheckedChanged += new System.EventHandler(this.cbAllowAllExtensions_CheckedChanged);
             // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(696, 610);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(696, 618);
+            this.Controls.Add(this.cbAllowAllExtensions);
             this.Controls.Add(this.comboRenderingEngine);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.cbShowStatusbar);
@@ -450,7 +465,6 @@
         private System.Windows.Forms.Button btnChooseHtml;
         private System.Windows.Forms.TextBox tbHtmlFile;
         private System.Windows.Forms.Label lblHtmlFile;
-        private System.Windows.Forms.CheckBox cbShowToolbar;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel sblInvalidHtmlPath;
         private System.Windows.Forms.Button btnDefaultDarkmodeCss;
@@ -461,8 +475,10 @@
         private System.Windows.Forms.TextBox tbFileExt;
         private System.Windows.Forms.Button btnDefaultFileExt;
         private System.Windows.Forms.CheckBox cbAutoShowPanel;
-        private System.Windows.Forms.CheckBox cbShowStatusbar;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox comboRenderingEngine;
+        private System.Windows.Forms.CheckBox cbShowToolbar;
+        private System.Windows.Forms.CheckBox cbShowStatusbar;
+        private System.Windows.Forms.CheckBox cbAllowAllExtensions;
     }
 }

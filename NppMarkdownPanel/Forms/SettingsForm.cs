@@ -12,6 +12,7 @@ namespace NppMarkdownPanel.Forms
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
         public string SupportedFileExt { get; set; }
+        public bool AllowAllExtensions { get; set; }
         public bool AutoShowPanel { get; set; }
         public bool ShowStatusbar { get; set; }
         public string RenderingEngine { get; set; }
@@ -28,6 +29,7 @@ namespace NppMarkdownPanel.Forms
             AutoShowPanel = settings.AutoShowPanel;
             ShowStatusbar = settings.ShowStatusbar;
             RenderingEngine = settings.RenderingEngine;
+            AllowAllExtensions = settings.AllowAllExtensions;
 
             InitializeComponent();
 
@@ -40,6 +42,8 @@ namespace NppMarkdownPanel.Forms
             tbFileExt.Text = SupportedFileExt;
             cbAutoShowPanel.Checked = AutoShowPanel;
             cbShowStatusbar.Checked = ShowStatusbar;
+            cbAllowAllExtensions.Checked = AllowAllExtensions;
+
             if (settings.IsRenderingEngineIE11())
             {
                 comboRenderingEngine.SelectedIndex = 0;
@@ -206,6 +210,19 @@ namespace NppMarkdownPanel.Forms
             else
             {
                 RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW2_EDGE;
+            }
+        }
+
+        private void cbAllowAllExtensions_CheckedChanged(object sender, EventArgs e)
+        {
+            AllowAllExtensions = cbAllowAllExtensions.Checked;
+            if (AllowAllExtensions)
+            {
+                tbFileExt.Enabled = false;
+            }
+            else
+            {
+                tbFileExt.Enabled = true;
             }
         }
     }

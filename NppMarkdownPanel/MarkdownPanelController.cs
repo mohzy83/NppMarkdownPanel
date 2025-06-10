@@ -87,6 +87,7 @@ namespace NppMarkdownPanel
             settings.ShowToolbar = PluginUtils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             settings.ShowStatusbar = PluginUtils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
             settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
+            settings.AllowAllExtensions = PluginUtils.ReadIniBool("Options", "AllowAllExtensions", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW1_IE11);
@@ -214,6 +215,7 @@ namespace NppMarkdownPanel
                 settings.HtmlFileName = settingsForm.HtmlFileName;
                 settings.ShowToolbar = settingsForm.ShowToolbar;
                 settings.SupportedFileExt = settingsForm.SupportedFileExt;
+                settings.AllowAllExtensions = settingsForm.AllowAllExtensions;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
                 settings.RenderingEngine = settingsForm.RenderingEngine;
@@ -295,6 +297,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
         }
         private void ShowAboutDialog()
