@@ -19,8 +19,8 @@ namespace NppMarkdownPanel.Forms
          @"<!DOCTYPE html>
             <html>
                 <head>                    
-                    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"">
-                    <meta http-equiv=""content-type"" content=""text/html; charset=utf-8"">
+                    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
+                    <meta http-equiv=""content-type"" content=""text/html; charset=utf-8""></meta>
                     <title>{0}</title>
                     <style type=""text/css"">
                     {1}
