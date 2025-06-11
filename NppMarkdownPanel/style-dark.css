@@ -29,11 +29,11 @@ body {
   color: #CCCCCC;
 }
 
-body &gt; *:first-child {
+body > *:first-child {
   margin-top: 0 !important;
 }
 
-body &gt; *:last-child {
+body > *:last-child {
   margin-bottom: 0 !important;
 }
 
@@ -139,22 +139,22 @@ hr {
   padding: 0;
 }
 */
-body &gt; h2:first-child {
+body > h2:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-body &gt; h1:first-child {
+body > h1:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-body &gt; h1:first-child + h2 {
+body > h1:first-child + h2 {
   margin-top: 0;
   padding-top: 0;
 }
 
-body &gt; h3:first-child, body &gt; h4:first-child, body &gt; h5:first-child, body &gt; h6:first-child {
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
   margin-top: 0;
   padding-top: 0;
 }
@@ -200,11 +200,11 @@ dl dt:first-child {
   padding: 0;
 }
 
-dl dt &gt; :first-child {
+dl dt > :first-child {
   margin-top: 0;
 }
 
-dl dt &gt; :last-child {
+dl dt > :last-child {
   margin-bottom: 0;
 }
 
@@ -213,11 +213,11 @@ dl dd {
   padding: 0 15px;
 }
 
-dl dd &gt; :first-child {
+dl dd > :first-child {
   margin-top: 0;
 }
 
-dl dd &gt; :last-child {
+dl dd > :last-child {
   margin-bottom: 0;
 }
 
@@ -227,11 +227,11 @@ blockquote {
   color: #888888;
 }
 
-blockquote &gt; :first-child {
+blockquote > :first-child {
   margin-top: 0;
 }
 
-blockquote &gt; :last-child {
+blockquote > :last-child {
   margin-bottom: 0;
 }
 
@@ -281,7 +281,7 @@ span.frame {
   overflow: hidden;
 }
 
-span.frame &gt; span {
+span.frame > span {
   border: 1px solid #dddddd;
   display: block;
   float: left;
@@ -309,7 +309,7 @@ span.align-center {
   clear: both;
 }
 
-span.align-center &gt; span {
+span.align-center > span {
   display: block;
   overflow: hidden;
   margin: 13px auto 0;
@@ -327,7 +327,7 @@ span.align-right {
   clear: both;
 }
 
-span.align-right &gt; span {
+span.align-right > span {
   display: block;
   overflow: hidden;
   margin: 13px 0 0;
@@ -357,7 +357,7 @@ span.float-right {
   float: right;
 }
 
-span.float-right &gt; span {
+span.float-right > span {
   display: block;
   overflow: hidden;
   margin: 13px auto 0;
