@@ -15,7 +15,7 @@ namespace Webview2Viewer
 {
     public class Webview2WebbrowserControl : IWebbrowserControl
     {
-
+        const string virtualHostProtocol = "http://";
         const string virtualHostName = "markdownpanel-virtualhost";
         const string CONFIG_FOLDER_NAME = "MarkdownPanel";
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
@@ -61,7 +61,6 @@ namespace Webview2Viewer
             webView.NavigationStarting += OnWebBrowser_NavigationStarting;
             webView.NavigationCompleted += WebView_NavigationCompleted;
             webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
-
 
             webViewInitialized = true;
 
@@ -144,8 +143,8 @@ namespace Webview2Viewer
             var currentPath = Path.GetDirectoryName(currentDocumentPath);
             var replaceFileMapping = "file:///" + currentPath.Replace('\\', '/');
 
-            content = content.Replace(replaceFileMapping, "http://" + virtualHostName);
-            body = body.Replace(replaceFileMapping, "http://" + virtualHostName);
+            content = content.Replace(replaceFileMapping, virtualHostProtocol + virtualHostName);
+            body = body.Replace(replaceFileMapping, virtualHostProtocol + virtualHostName);
 
             var fullReload = false;
             if (this.currentDocumentPath != currentDocumentPath)
@@ -221,7 +220,14 @@ namespace Webview2Viewer
             {
                 e.Cancel = true;
                 var p = new Process();
-                p.StartInfo = new ProcessStartInfo(e.Uri.ToString());
+                var navUri = e.Uri.ToString();
+                if (navUri.StartsWith(virtualHostProtocol + virtualHostName))
+                {
+                    var currentPath = Path.GetDirectoryName(currentDocumentPath);
+                    navUri = navUri.Replace(virtualHostProtocol + virtualHostName, currentPath);
+                    navUri = Uri.UnescapeDataString(navUri);
+                }
+                p.StartInfo = new ProcessStartInfo(navUri);
                 p.Start();
             }
         }
