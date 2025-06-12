@@ -15,9 +15,9 @@ namespace MarkdigWrapper
             markdigMarkdownGenerator = new MarkdigMarkdownGenerator();
         }
 
-        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInImageUris)
+        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
         {
-            return markdigMarkdownGenerator.ConvertToHtml(markDownText, filepath, supportEscapeCharsInImageUris);
+            return markdigMarkdownGenerator.ConvertToHtml(markDownText, filepath, supportEscapeCharsInUris);
         }
     }
 }

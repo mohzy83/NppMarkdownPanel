@@ -14,8 +14,8 @@ namespace PanelCommon
         /// </summary>
         /// <param name="markDownText"></param>
         /// <param name="filepath"></param>
-        /// <param name="supportEscapeCharsInImageUris"></param>
+        /// <param name="supportEscapeCharsInUris"></param>
         /// <returns>html formatted text</returns>
-        string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInImageUris);
+        string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris);
     }
 }

@@ -26,10 +26,10 @@ namespace NppMarkdownPanel.Generator
             this.markdownGenerator = markdownGenerator;
         }
 
-        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInImageUris)
+        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
         {
             var input = executeExternalProcessor(PreProcessorCommandFilename, PreProcessorArguments, markDownText);
-            var html = markdownGenerator.ConvertToHtml(input, filepath, supportEscapeCharsInImageUris);
+            var html = markdownGenerator.ConvertToHtml(input, filepath, supportEscapeCharsInUris);
             return executeExternalProcessor(PostProcessorCommandFilename, PostProcessorArguments, html);
         }
 
