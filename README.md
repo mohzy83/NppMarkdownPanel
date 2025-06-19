@@ -71,14 +71,14 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
     __Note: This is a global setting, so all previewed documents will save to the same file.__
 
 * #### Allow all file extensions
-   This option allows to skip file extension checking. Every active file will be processed by the markdown converter.
+   This option allows you to skip file extension checking. Every active file will be processed by the markdown converter.
    But be careful, this option may have undesired effects. (e.g. rendering large logs or large source code files can be slow)
    The input field for supported file extensions is disabled when this option is checked.
 
 * #### Supported File Extensions
     This allows you to define a list of file extensions, which are supported and displayed in Markdown Panel.
 	Other file type won't be displayed (there will be a warning).
-	The file extensions have to be separated by a comma `,`
+	The file extensions have to be separated by a comma `,` - character.
 	No input allowed when option "Allow all file extensions" is checked.
 
 * #### Automatically show panel for supported files
