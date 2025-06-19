@@ -2,7 +2,7 @@
 Plugin to preview Markdown files in Notepad++
 
 - lightweight plugin to preview markdown within Notepad++
-- displaying rendered markdown html with WebView2 (Edge) or embedded IE11
+- displaying rendered markdown HTML with **WebView2 Edge** (since 0.9.0) or an embedded IE11
 - can save rendered html to a file
 - Dark mode support (_requires Notepad++ version 8.4.1 or later_)
 
@@ -12,7 +12,7 @@ The current version is **0.9.0** it can be found [here](https://github.com/mohzy
 
 
 ## Prerequisites
-- .NET 4.7.2 or higher 
+- .NET 4.7.2 or higher
 
 ## Installation
 ### Installation in Notepad++ 
@@ -44,6 +44,18 @@ With dark mode enabled in Notepad++:
 To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 ![npp-settings](help/open-settings.png "open settings dialog")
 
+* #### HTML Rendering Engine
+	This option allows you to switch between two HTML Rendering Engines.
+	
+	1. Edge (WebView2)	
+	2. Internet Explorer 11 (WebView1)
+	
+	Default option is **Edge (WebView2)**. It is a modern browser implementation based on Chromium 
+	and it supports modern web standards. IE11 option is still available, but not recommended anymore 
+	due to its age.
+	
+	![settings-rendering](help/settings-rendering.png "settings Rendering")
+
 * #### CSS File
     This allows you to select a CSS file to use if you don't want the default style of the preview
 	
@@ -58,10 +70,16 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
     This allows you to select a file to save the rendered HTML to every time the preview is rendered. This is a way to automatically save the rendered content to use elsewhere. Leaving this empty disables the automatic saving.  
     __Note: This is a global setting, so all previewed documents will save to the same file.__
 
+* #### Allow all file extensions
+   This option allows to skip file extension checking. Every active file will be processed by the markdown converter.
+   But be careful, this option may have undesired effects. (e.g. rendering large logs or large source code files can be slow)
+   The input field for supported file extensions is disabled when this option is checked.
+
 * #### Supported File Extensions
     This allows you to define a list of file extensions, which are supported and displayed in Markdown Panel.
 	Other file type won't be displayed (there will be a warning).
 	The file extensions have to be separated by a comma `,`
+	No input allowed when option "Allow all file extensions" is checked.
 
 * #### Automatically show panel for supported files
     When this option is checked, Markdown Panel will open the preview window automatically for files with a supported extension.
@@ -92,9 +110,21 @@ editor is also visible in the preview. (This is an alternative to _Synchronize v
 
 ## Version History
 ### Version 0.9.0 
+- requirements
+	- .NET 4.7.2 or higher 
 - features
-	- WebView2 Edge integration
-
+	- WebView2 Edge integration (see settings to switch between HTML Rendering Engines)
+	- Linking to filesystem files #8 ( works only with WebView2 (Edge) )
+	- Disable file extension check #111, #112, #99
+- bug fixes
+	- NppTbData.pszModuleName is not properly assigned when Markdown panel is docked (contributed by [rdipardo](https://github.com/rdipardo)) #90
+	- The keyboard shortcuts are not working on the Markdown Panel #91 (works only with WebView2 (Edge))
+	- Undocking the viewer from its default position crashes NotePad++ (contributed by [rdipardo](https://github.com/rdipardo)) #97, #106
+	- Meta tags in generated html not closed #100
+	- Links pointing to file with whitespace (%20) is incorrectly parsed (%2520) #101
+	- Incorrect opening of URL with CR encoded character (%0D) #105 (works only with WebView2 (Edge))
+	- Add mermaid graph markdown setting pre tag class #115
+	
 ### Version 0.7.3 (released 2023-02-12)
 - bug fixes
 	- Settings file NppMarkdownPanel.ini isn't used anymore #78
