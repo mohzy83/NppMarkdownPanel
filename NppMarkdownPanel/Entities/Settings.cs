@@ -15,7 +15,7 @@ namespace NppMarkdownPanel.Entities
         public const string RENDERING_ENGINE_WEBVIEW1_IE11 = "IE11";
         public const string RENDERING_ENGINE_WEBVIEW2_EDGE = "EDGE";
 
-        public Settings() { RenderingEngine = RENDERING_ENGINE_WEBVIEW1_IE11; }
+        public Settings() { RenderingEngine = RENDERING_ENGINE_WEBVIEW2_EDGE; }
 
         public string CssFileName { get; set; }
         public string CssDarkModeFileName { get; set; }

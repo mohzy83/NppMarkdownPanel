@@ -46,11 +46,11 @@ namespace NppMarkdownPanel.Forms
 
             if (settings.IsRenderingEngineIE11())
             {
-                comboRenderingEngine.SelectedIndex = 0;
+                comboRenderingEngine.SelectedIndex = 1;
             }
             else if (settings.IsRenderingEngineEdge())
             {
-                comboRenderingEngine.SelectedIndex = 1;
+                comboRenderingEngine.SelectedIndex = 0;
             }
         }
 
@@ -205,11 +205,15 @@ namespace NppMarkdownPanel.Forms
         {
             if (comboRenderingEngine.SelectedIndex == 0)
             {
+                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW2_EDGE;
+            }
+            else if (comboRenderingEngine.SelectedIndex == 1)
+            {
                 RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW1_IE11;
             }
             else
             {
-                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW2_EDGE;
+                throw new NotSupportedException("Rendering Engine with id " + comboRenderingEngine.SelectedIndex + " not supported!");
             }
         }
 

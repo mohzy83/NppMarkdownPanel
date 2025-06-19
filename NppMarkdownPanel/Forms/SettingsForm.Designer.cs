@@ -355,8 +355,8 @@
             this.comboRenderingEngine.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboRenderingEngine.FormattingEnabled = true;
             this.comboRenderingEngine.Items.AddRange(new object[] {
-            "Internet Explorer 11 (WebView 1)",
-            "Edge (WebView 2)"});
+            "Edge (WebView 2)",
+            "Internet Explorer 11 (WebView 1)"});
             this.comboRenderingEngine.Location = new System.Drawing.Point(170, 80);
             this.comboRenderingEngine.Name = "comboRenderingEngine";
             this.comboRenderingEngine.Size = new System.Drawing.Size(511, 25);
