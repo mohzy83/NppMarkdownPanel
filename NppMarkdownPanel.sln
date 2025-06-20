@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32428.217
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NppMarkdownPanel", "NppMarkdownPanel\NppMarkdownPanel.csproj", "{AFF60ED7-B5B8-456E-AE00-0B3D87F81937}"
 EndProject
@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkdigWrapper", "MarkdigWrapper\MarkdigWrapper.csproj", "{00858D38-B221-40B2-90F4-E029A1AFFE5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Webview2Viewer", "Webview2Viewer\Webview2Viewer.csproj", "{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanelCommon", "PanelCommon\PanelCommon.csproj", "{A52A6264-26EC-4AF6-9031-53B99AE4F65A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,30 @@ Global
 		{00858D38-B221-40B2-90F4-E029A1AFFE5A}.Release|x64.Build.0 = Release|Any CPU
 		{00858D38-B221-40B2-90F4-E029A1AFFE5A}.Release|x86.ActiveCfg = Release|Any CPU
 		{00858D38-B221-40B2-90F4-E029A1AFFE5A}.Release|x86.Build.0 = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|x64.Build.0 = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Debug|x86.Build.0 = Debug|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|x64.ActiveCfg = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|x64.Build.0 = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|x86.ActiveCfg = Release|Any CPU
+		{5EEC55BE-F283-4F9D-A2FD-F9050BD17B59}.Release|x86.Build.0 = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|x64.Build.0 = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Debug|x86.Build.0 = Debug|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|x64.ActiveCfg = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|x64.Build.0 = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|x86.ActiveCfg = Release|Any CPU
+		{A52A6264-26EC-4AF6-9031-53B99AE4F65A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

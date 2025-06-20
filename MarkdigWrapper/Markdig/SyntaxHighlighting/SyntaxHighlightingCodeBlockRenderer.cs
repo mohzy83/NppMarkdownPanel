@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using ColorCode;
 using ColorCode.Formatting;
@@ -33,7 +34,10 @@ namespace Markdig.SyntaxHighlighting
             var attributes = obj.TryGetAttributes() ?? new HtmlAttributes();
 
             var languageMoniker = fencedCodeBlock.Info.Replace(parser.InfoPrefix, string.Empty);
-            if (string.IsNullOrEmpty(languageMoniker))
+
+            if (string.IsNullOrEmpty(languageMoniker)
+                // skip syntax highlighting for mermaid - leave block as pre tag which allows "mermaid JS" to render the codeblock as graph
+                || string.Equals(languageMoniker, LanguageTypeAdapter.LANGUAGE_KEY_MERMAID, StringComparison.OrdinalIgnoreCase))
             {
                 _underlyingRenderer.Write(renderer, obj);
                 return;

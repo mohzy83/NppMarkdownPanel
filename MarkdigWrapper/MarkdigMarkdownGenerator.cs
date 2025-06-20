@@ -21,7 +21,7 @@ namespace MarkdigWrapper
         {
         }
 
-        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInImageUris)
+        public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
         {
             var sb = new StringBuilder();
             var htmlWriter = new StringWriter(sb);
@@ -63,7 +63,8 @@ namespace MarkdigWrapper
 
             htmlWriter.Flush();
             var result = sb.ToString();
-            if (supportEscapeCharsInImageUris) result = UnescapeImageUris(result);
+            if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
+            if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             return result;
         }
 
@@ -90,7 +91,20 @@ namespace MarkdigWrapper
             //string inp = " * %25%20x : `<img src=\"file:///C:/tmp/test%20nonAscii%20path/A%C4%85C%C4%87E/A%C4%84%2520(2).png\" />`";
             //outp:          * %25%20x : `<img src="file:///C:/tmp/test nonAscii path/AąCćE/AĄ%20(2).png" />`
             Regex regex = new Regex("src=\"file:///[^\"]+");
-            return regex.Replace(html, m => {
+            return regex.Replace(html, m =>
+            {
+                return Uri.UnescapeDataString(m.Value);
+            });
+        }
+
+        private string UnescapeAnchorUris(string html)
+        {
+            // Unescape URI with % characters for non - US - ASCII characters in order to workaround
+            // a bug under IE/Edge with local file links containing non US-ASCII chars.
+            //               using System.Text.RegularExpressions;
+            Regex regex = new Regex("href=\"file:///[^\"]+");
+            return regex.Replace(html, m =>
+            {
                 return Uri.UnescapeDataString(m.Value);
             });
         }

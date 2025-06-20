@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,6 +47,8 @@ namespace NppMarkdownPanel
 
         public MarkdownPanelController()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+
             scintillaGatewayFactory = PluginBase.GetGatewayFactory();
             notepadPPGateway = new NotepadPPGateway();
             SetIniFilePath();
@@ -54,6 +57,20 @@ namespace NppMarkdownPanel
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
+        }
+
+        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            var di = new DirectoryInfo(Path.Combine(PluginUtils.GetPluginDirectory(), "lib"));
+
+            var modulename = args.Name.Split(',')[0];
+
+            var module = di.GetFiles().FirstOrDefault(i => i.Name == modulename + ".dll");
+            if (module != null)
+            {
+                return Assembly.LoadFrom(module.FullName);
+            }
+            return null;
         }
 
         private Settings LoadSettingsFromIni()
@@ -70,8 +87,10 @@ namespace NppMarkdownPanel
             settings.ShowToolbar = PluginUtils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             settings.ShowStatusbar = PluginUtils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
             settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
+            settings.AllowAllExtensions = PluginUtils.ReadIniBool("Options", "AllowAllExtensions", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
+            settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
             return settings;
         }
 
@@ -196,8 +215,10 @@ namespace NppMarkdownPanel
                 settings.HtmlFileName = settingsForm.HtmlFileName;
                 settings.ShowToolbar = settingsForm.ShowToolbar;
                 settings.SupportedFileExt = settingsForm.SupportedFileExt;
+                settings.AllowAllExtensions = settingsForm.AllowAllExtensions;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
+                settings.RenderingEngine = settingsForm.RenderingEngine;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
                 viewerInterface.UpdateSettings(settings);
@@ -276,6 +297,8 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
         }
         private void ShowAboutDialog()
         {
@@ -295,7 +318,7 @@ namespace NppMarkdownPanel
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
                 _nppTbData.hIconTab = (uint)ConvertBitmapToIcon(Properties.Resources.markdown_16x16_solid_bmp).Handle;
-                _nppTbData.pszModuleName = Main.ModuleName;
+                _nppTbData.pszModuleName = $"{Main.ModuleName}.dll";
                 IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
                 Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 
@@ -381,11 +404,57 @@ namespace NppMarkdownPanel
             {
                 case (int)WindowsMessage.WM_NOTIFY:
                     var notify = (NMHDR)Marshal.PtrToStructure(m.LParam, typeof(NMHDR));
+
+                    var panel = (MarkdownPreviewForm)viewerInterface;
+
+                    // do not intercept Npp notifications like DMN_CLOSE, etc.
+                    if (notify.hwndFrom != PluginBase.nppData._nppHandle)
+                    {
+                        panel.Invalidate(true);
+                        if (IntPtr.Size == 8)
+                        {
+                            SetControlParent(panel, Win32.GetWindowLongPtr, Win32.SetWindowLongPtr);
+                        }
+                        else
+                        {
+                            SetControlParent(panel, Win32.GetWindowLong, Win32.SetWindowLong);
+                        }
+
+                        panel.Update();
+                        return;
+                    }
+
                     if (notify.code == (int)DockMgrMsg.DMN_CLOSE)
                     {
                         ToolWindowCloseAction();
                     }
                     break;
+            }
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Win32.WS_EX_CONTROLPARENT"/> extended attribute on <paramref name="parent"/> and any child controls,
+        /// following @mahee96's advice on the archived Plugin.Net issue tracker.
+        /// <para>
+        /// <seealso href="https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net/issues/17#issuecomment-683455467"/>
+        /// </para>
+        /// </summary>
+        /// <param name="parent">
+        /// A WinForm that's been registered with Npp's Docking Manager by sending <see cref="NppMsg.NPPM_DMMREGASDCKDLG"/>.
+        /// </param>
+        private void SetControlParent(Control parent, Func<IntPtr, int, IntPtr> wndLongGetter, Func<IntPtr, int, IntPtr, IntPtr> wndLongSetter)
+        {
+            if (parent.HasChildren)
+            {
+                long extAttrs = (long)wndLongGetter(parent.Handle, Win32.GWL_EXSTYLE);
+                if (Win32.WS_EX_CONTROLPARENT != (extAttrs & Win32.WS_EX_CONTROLPARENT))
+                {
+                    wndLongSetter(parent.Handle, Win32.GWL_EXSTYLE, new IntPtr(extAttrs | Win32.WS_EX_CONTROLPARENT));
+                }
+                foreach (Control c in parent.Controls)
+                {
+                    SetControlParent(c, wndLongGetter, wndLongSetter);
+                }
             }
         }
 

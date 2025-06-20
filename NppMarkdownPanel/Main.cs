@@ -1,9 +1,16 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using System.IO;
+using System.Reflection;
+using System;
+using System.Linq;
 
 namespace NppMarkdownPanel
 {
     class Main
     {
+
+
+
         // PluginName is used as npp plugin's menu entry
         public const string PluginName = "MarkdownPanel";
         // Modulename is used as config name (ini-file) and as _nppTbData.pszModuleName
@@ -30,5 +37,8 @@ namespace NppMarkdownPanel
         {
             mdpanel.PluginCleanUp();
         }
+
+
+
     }
 }

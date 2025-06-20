@@ -12,8 +12,11 @@ namespace NppMarkdownPanel.Forms
         public string HtmlFileName { get; set; }
         public bool ShowToolbar { get; set; }
         public string SupportedFileExt { get; set; }
+        public bool AllowAllExtensions { get; set; }
         public bool AutoShowPanel { get; set; }
         public bool ShowStatusbar { get; set; }
+        public string RenderingEngine { get; set; }
+
 
         public SettingsForm(Settings settings)
         {
@@ -25,6 +28,8 @@ namespace NppMarkdownPanel.Forms
             SupportedFileExt = settings.SupportedFileExt;
             AutoShowPanel = settings.AutoShowPanel;
             ShowStatusbar = settings.ShowStatusbar;
+            RenderingEngine = settings.RenderingEngine;
+            AllowAllExtensions = settings.AllowAllExtensions;
 
             InitializeComponent();
 
@@ -37,6 +42,16 @@ namespace NppMarkdownPanel.Forms
             tbFileExt.Text = SupportedFileExt;
             cbAutoShowPanel.Checked = AutoShowPanel;
             cbShowStatusbar.Checked = ShowStatusbar;
+            cbAllowAllExtensions.Checked = AllowAllExtensions;
+
+            if (settings.IsRenderingEngineIE11())
+            {
+                comboRenderingEngine.SelectedIndex = 1;
+            }
+            else if (settings.IsRenderingEngineEdge())
+            {
+                comboRenderingEngine.SelectedIndex = 0;
+            }
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -184,6 +199,35 @@ namespace NppMarkdownPanel.Forms
         private void cbShowStatusbar_CheckedChanged(object sender, EventArgs e)
         {
             ShowStatusbar = cbShowStatusbar.Checked;
+        }
+
+        private void comboRenderingEngine_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboRenderingEngine.SelectedIndex == 0)
+            {
+                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW2_EDGE;
+            }
+            else if (comboRenderingEngine.SelectedIndex == 1)
+            {
+                RenderingEngine = Settings.RENDERING_ENGINE_WEBVIEW1_IE11;
+            }
+            else
+            {
+                throw new NotSupportedException("Rendering Engine with id " + comboRenderingEngine.SelectedIndex + " not supported!");
+            }
+        }
+
+        private void cbAllowAllExtensions_CheckedChanged(object sender, EventArgs e)
+        {
+            AllowAllExtensions = cbAllowAllExtensions.Checked;
+            if (AllowAllExtensions)
+            {
+                tbFileExt.Enabled = false;
+            }
+            else
+            {
+                tbFileExt.Enabled = true;
+            }
         }
     }
 }

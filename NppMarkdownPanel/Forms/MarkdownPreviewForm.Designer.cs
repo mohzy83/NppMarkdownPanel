@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MarkdownPreviewForm));
             this.panelPreview = new System.Windows.Forms.Panel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
-            this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.tbPreview = new System.Windows.Forms.ToolStrip();
             this.btnSaveHtml = new System.Windows.Forms.ToolStripButton();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
@@ -64,7 +64,7 @@
             // toolStripContainer1.ContentPanel
             // 
             this.toolStripContainer1.ContentPanel.Controls.Add(this.pictureBoxScreenshot);
-            this.toolStripContainer1.ContentPanel.Controls.Add(this.webBrowserPreview);
+            this.toolStripContainer1.ContentPanel.Controls.Add(this.panel1);
             this.toolStripContainer1.ContentPanel.Size = new System.Drawing.Size(811, 573);
             this.toolStripContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainer1.LeftToolStripPanelVisible = false;
@@ -79,29 +79,24 @@
             // 
             this.toolStripContainer1.TopToolStripPanel.Controls.Add(this.tbPreview);
             // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(811, 573);
+            this.panel1.TabIndex = 2;
+            // 
             // pictureBoxScreenshot
             // 
             this.pictureBoxScreenshot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxScreenshot.Image = global::NppMarkdownPanel.Properties.Resources.markdown_16x16_solid_bmp;
             this.pictureBoxScreenshot.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxScreenshot.Name = "pictureBoxScreenshot";
             this.pictureBoxScreenshot.Size = new System.Drawing.Size(811, 573);
             this.pictureBoxScreenshot.TabIndex = 1;
             this.pictureBoxScreenshot.TabStop = false;
             this.pictureBoxScreenshot.Visible = false;
-            // 
-            // webBrowserPreview
-            // 
-            this.webBrowserPreview.AllowWebBrowserDrop = false;
-            this.webBrowserPreview.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowserPreview.Location = new System.Drawing.Point(0, 0);
-            this.webBrowserPreview.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.webBrowserPreview.MinimumSize = new System.Drawing.Size(18, 21);
-            this.webBrowserPreview.Name = "webBrowserPreview";
-            this.webBrowserPreview.Size = new System.Drawing.Size(811, 573);
-            this.webBrowserPreview.TabIndex = 0;
-            this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
-            this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
-            this.webBrowserPreview.StatusTextChanged += new System.EventHandler(this.webBrowserPreview_StatusTextChanged);
             // 
             // tbPreview
             // 
@@ -170,12 +165,12 @@
         #endregion
 
         private System.Windows.Forms.Panel panelPreview;
-        private System.Windows.Forms.WebBrowser webBrowserPreview;
         private System.Windows.Forms.PictureBox pictureBoxScreenshot;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip tbPreview;
         private System.Windows.Forms.ToolStripButton btnSaveHtml;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        public System.Windows.Forms.Panel panel1;
     }
 }
