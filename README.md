@@ -26,6 +26,17 @@ It should look like this:
 
 ![pluginfolder](help/pluginfolder.png "Layout of the plugin folder after installation")
 
+**Issues with manual installation:**
+Windows blocks downloaded DLLs by default. That means you likely get the following error message: 
+
+> Failed to load <br>
+> NppMarkdownPanel.dll is not compatible with the current version of Notepad++
+	
+Make sure to unblock __all__ DLLs of the plugin (also DLLs in subfolders).
+![npp-unblock](help/npp-unblock.png "Unblock all DLLs")
+
+For an detailed explanation check issue #57.
+
 ## Usage
 
 After the installation you will find a small purple markdown icon in your toolbar.
