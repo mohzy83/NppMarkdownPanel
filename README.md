@@ -35,7 +35,7 @@ Windows blocks downloaded DLLs by default. That means you likely get the followi
 Make sure to unblock __all__ DLLs of the plugin (also DLLs in subfolders).
 ![npp-unblock](help/npp-unblock.png "Unblock all DLLs")
 
-For an detailed explanation check issue #57.
+For an detailed explanation check issue [57](https://github.com/mohzy83/NppMarkdownPanel/issues/57).
 
 ## Usage
 
