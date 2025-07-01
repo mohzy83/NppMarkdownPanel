@@ -120,7 +120,7 @@ When this option is enabled, the plugin ensures that the first visible line in t
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
 ## Version History
-### Version 0.9.0 
+### Version 0.9.0 (released 2025-06-20)
 - requirements
 	- .NET 4.7.2 or higher 
 - features
