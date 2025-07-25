@@ -37,6 +37,10 @@ Make sure to unblock __all__ DLLs of the plugin (also DLLs in subfolders).
 
 For an detailed explanation check issue [57](https://github.com/mohzy83/NppMarkdownPanel/issues/57).
 
+**Note for Windows 7 users:**
+ WebView2 Edge is required for the plugin to function properly. 
+ Windows 7 does not include WebView2 Edge by default, so you must manually install the WebView2 Runtime from Microsoft's WebView2 download page before using the plugin.
+ https://developer.microsoft.com/en-us/microsoft-edge/webview2?form=MA13LH#download
 ## Usage
 
 After the installation you will find a small purple markdown icon in your toolbar.
