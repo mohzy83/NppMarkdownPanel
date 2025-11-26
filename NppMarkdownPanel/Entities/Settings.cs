@@ -10,7 +10,7 @@ namespace NppMarkdownPanel.Entities
     {
         public const string DefaultCssFile = "style.css";
         public const string DefaultDarkModeCssFile = "style-dark.css";
-        public const string DEFAULT_SUPPORTED_FILE_EXT = "md,mkd,mdwn,mdown,mdtxt,markdown,text";
+        public const string DEFAULT_SUPPORTED_FILE_EXT = "md,mkd,mdwn,mdown,mdtxt,markdown,txt";
 
         public const string RENDERING_ENGINE_WEBVIEW1_IE11 = "IE11";
         public const string RENDERING_ENGINE_WEBVIEW2_EDGE = "EDGE";
