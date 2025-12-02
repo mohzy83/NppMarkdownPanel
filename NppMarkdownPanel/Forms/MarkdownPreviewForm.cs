@@ -13,7 +13,7 @@ using Webview2Viewer;
 
 namespace NppMarkdownPanel.Forms
 {
-    public partial class MarkdownPreviewForm : Form, IViewerInterface
+    public partial class MarkdownPreviewForm : DockingFormBase, IViewerInterface
     {
         const string DEFAULT_HTML_BASE =
          @"<!DOCTYPE html>
@@ -102,7 +102,6 @@ namespace NppMarkdownPanel.Forms
         private void InitRenderingEngine(Settings settings)
         {
             panel1.Controls.Clear();
-          
 
             if (settings.IsRenderingEngineIE11())
             {

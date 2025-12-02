@@ -49,6 +49,17 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         }
 
         /// <summary>
+        /// @see https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-nmhdr
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct TagNMHDR
+        {
+            public IntPtr hwndFrom;
+            public UIntPtr idFrom;
+            public uint code;
+        }
+
+        /// <summary>
         /// Used for the ScrollInfo fMask
         /// SIF_ALL             => Combination of SIF_PAGE, SIF_POS, SIF_RANGE, and SIF_TRACKPOS.
         /// SIF_DISABLENOSCROLL => This value is used only when setting a scroll bar's parameters. If the scroll bar's new parameters make the scroll bar unnecessary, disable the scroll bar instead of removing it.
@@ -302,7 +313,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public static extern bool EnableMenuItem(IntPtr hMenu, int uIDEnableItem, int uEnable);
 
         public const int WM_CREATE = 1;
-
+        public const int WM_NOTIFY = 0x004e;
         public const int GWL_EXSTYLE = -20;
         public const int GWLP_HINSTANCE = -6;
         public const int GWLP_HWNDPARENT = -8;
@@ -338,6 +349,9 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         public const long WS_EX_TOPMOST = 0x00000008L;
         public const long WS_EX_TRANSPARENT = 0x00000020L;
         public const long WS_EX_WINDOWEDGE = 0x00000100L;
+
+        public delegate IntPtr WindowLongGetter(IntPtr hWnd, int nIndex);
+        public delegate IntPtr WindowLongSetter(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
         [DllImport("user32")]
         public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);

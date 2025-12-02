@@ -405,25 +405,6 @@ namespace NppMarkdownPanel
                 case (int)WindowsMessage.WM_NOTIFY:
                     var notify = (NMHDR)Marshal.PtrToStructure(m.LParam, typeof(NMHDR));
 
-                    var panel = (MarkdownPreviewForm)viewerInterface;
-
-                    // do not intercept Npp notifications like DMN_CLOSE, etc.
-                    if (notify.hwndFrom != PluginBase.nppData._nppHandle)
-                    {
-                        panel.Invalidate(true);
-                        if (IntPtr.Size == 8)
-                        {
-                            SetControlParent(panel, Win32.GetWindowLongPtr, Win32.SetWindowLongPtr);
-                        }
-                        else
-                        {
-                            SetControlParent(panel, Win32.GetWindowLong, Win32.SetWindowLong);
-                        }
-
-                        panel.Update();
-                        return;
-                    }
-
                     if (notify.code == (int)DockMgrMsg.DMN_CLOSE)
                     {
                         ToolWindowCloseAction();
