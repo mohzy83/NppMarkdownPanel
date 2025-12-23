@@ -24,7 +24,7 @@ body {
   line-height: 1.6;
   padding-top: 10px;
   padding-bottom: 10px;
-  background-color: #3F3F3F;
+  background-color: #202020;
   padding: 30px;
   color: #CCCCCC;
 }
@@ -237,6 +237,7 @@ blockquote > :last-child {
 
 table {
   padding: 0;
+  border-collapse: collapse;
 }
 table tr {
   border-top: 1px solid #cccccc;
@@ -246,7 +247,7 @@ table tr {
 }
 
 table tr:nth-child(2n) {
-  
+  background-color: #202834;
 }
 
 table tr th {
@@ -553,4 +554,5 @@ pre code, pre tt {
 .bold {
  font-weight: bold;
 }
+
 
