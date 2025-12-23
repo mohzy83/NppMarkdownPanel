@@ -237,6 +237,7 @@ blockquote > :last-child {
 
 table {
   padding: 0;
+  border-collapse: collapse;
 }
 table tr {
   border-top: 1px solid #cccccc;
