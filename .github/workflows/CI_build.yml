@@ -1,0 +1,33 @@
+name: CI_build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v6
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Build of plugin dll and zip
+      working-directory: .
+      run: |
+           ./build.ps1
+           ./makerelease.ps1
+
+    - name: Archive artifacts x86
+      uses: actions/upload-artifact@v6
+      with:
+          name: NppMarkdownPanel_win32
+          path: Release/*-x86.zip
+
+    - name: Archive artifacts x64
+      uses: actions/upload-artifact@v6
+      with:
+          name: NppMarkdownPanel_x64
+          path: Release/*-x64.zip
