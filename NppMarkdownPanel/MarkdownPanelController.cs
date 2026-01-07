@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace NppMarkdownPanel
 {
-    public class MarkdownPanelController
+    public class MarkdownPanelController : IDisposable
     {
         private IViewerInterface viewerInterface;
         private Timer renderTimer;
@@ -44,6 +44,10 @@ namespace NppMarkdownPanel
 
         private bool nppReady;
         private Settings settings;
+        private MarkdownPreviewForm previewForm;
+        private bool _disposedValue;
+        IntPtr _ptrNppTbData;
+        private Icon _icon;
 
         public MarkdownPanelController()
         {
@@ -54,6 +58,7 @@ namespace NppMarkdownPanel
             SetIniFilePath();
             settings = LoadSettingsFromIni();
             viewerInterface = MarkdownPreviewForm.InitViewer(settings, HandleWndProc);
+            previewForm = (MarkdownPreviewForm)viewerInterface;
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
@@ -175,7 +180,10 @@ namespace NppMarkdownPanel
 
         private void RenderMarkdownDirect(bool preserveVerticalScrollPosition = true)
         {
-            viewerInterface.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            if (!_disposedValue)
+            {
+                viewerInterface.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            }
         }
 
         private string GetCurrentEditorText()
@@ -317,9 +325,10 @@ namespace NppMarkdownPanel
                 _nppTbData.pszName = Main.PluginTitle;
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
-                _nppTbData.hIconTab = (uint)ConvertBitmapToIcon(Properties.Resources.markdown_16x16_solid_bmp).Handle;
+                _icon = ConvertBitmapToIcon(Properties.Resources.markdown_16x16_solid_bmp);
+                _nppTbData.hIconTab = (uint)_icon.Handle;
                 _nppTbData.pszModuleName = $"{Main.ModuleName}.dll";
-                IntPtr _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
+                _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
                 Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 
                 Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMREGASDCKDLG, 0, _ptrNppTbData);
@@ -437,6 +446,37 @@ namespace NppMarkdownPanel
                     SetControlParent(c, wndLongGetter, wndLongSetter);
                 }
             }
+        }
+
+        // Dispose
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                _disposedValue = true;
+                if (disposing)
+                {
+                    renderTimer.Enabled = false; //deactive timer
+                    _icon?.Dispose();
+                    _icon = null;
+                    if (_ptrNppTbData != IntPtr.Zero)
+                    {
+                        Marshal.DestroyStructure(_ptrNppTbData, typeof(NppTbData));
+                        Marshal.FreeHGlobal(_ptrNppTbData);
+                        _ptrNppTbData = IntPtr.Zero;
+                    }
+                    previewForm?.Cleanup();
+                }
+
+            }
+        }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
     }

@@ -42,6 +42,7 @@ namespace NppMarkdownPanel.Forms
         private IWebbrowserControl webbrowserControl;
         private IWebbrowserControl webview1Instance;
         private IWebbrowserControl webview2Instance;
+        private bool cleanupStarted;
 
         public void UpdateSettings(Settings settings)
         {
@@ -188,18 +189,21 @@ namespace NppMarkdownPanel.Forms
                 renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
-                    htmlContentForExport = renderedText.Result.ResultForExport;
-                    if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
+                    if (!cleanupStarted)
                     {
-                        bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
-                        if (valid)
+                        webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
+                        htmlContentForExport = renderedText.Result.ResultForExport;
+                        if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                         {
-                            settings.HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
-                            writeHtmlContentToFile(settings.HtmlFileName);
+                            bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
+                            if (valid)
+                            {
+                                settings.HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
+                                writeHtmlContentToFile(settings.HtmlFileName);
+                            }
                         }
+                        webbrowserControl.SetZoomLevel(settings.ZoomLevel);
                     }
-                    webbrowserControl.SetZoomLevel(settings.ZoomLevel);
 
                 }, context);
                 renderTask.Start();
@@ -285,5 +289,21 @@ namespace NppMarkdownPanel.Forms
         {
             currentFilePath = filepath;
         }
+
+        public void Cleanup()
+        {
+            cleanupStarted = true;
+            if (renderTask != null)
+            {
+                renderTask.Wait();
+                renderTask = null;
+            }
+            if (webview2Instance != null)
+            {
+                webview2Instance.Dispose();
+                webview2Instance = null;
+            }
+        }
+
     }
 }

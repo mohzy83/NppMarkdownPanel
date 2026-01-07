@@ -11,5 +11,6 @@ namespace NppMarkdownPanel.Forms
         void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true);
         void ScrollToElementWithLineNo(int lineNo);
         bool IsValidFileExtension(string filename);
+        void Cleanup();
     }
 }

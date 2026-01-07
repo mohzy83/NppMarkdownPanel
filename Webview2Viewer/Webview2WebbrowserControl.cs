@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Webview2Viewer
 {
-    public class Webview2WebbrowserControl : IWebbrowserControl
+    public class Webview2WebbrowserControl : IWebbrowserControl, IDisposable
     {
         const string virtualHostProtocol = "http://";
         const string virtualHostName = "markdownpanel-virtualhost";
@@ -34,6 +34,12 @@ namespace Webview2Viewer
 
         public Webview2WebbrowserControl()
         {
+            webView = null;
+        }
+
+        public void Dispose()
+        {
+            webView?.Dispose();
             webView = null;
         }
 
