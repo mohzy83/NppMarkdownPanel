@@ -236,6 +236,8 @@ Bugfix release
 | **Markdig.SyntaxHighlighting**    | 1.1.7       | Richard Slater                      | [https://github.com/RichardSlater/Markdig.SyntaxHighlighting](https://github.com/RichardSlater/Markdig.SyntaxHighlighting) |
 | **github-markdown-css**           | 3.0.1       | sindresorhus                        | [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)             |
 | **Markdown icon**                 |             | dcurtis                             | [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)                                   |
+| **markdown-it-github-alerts**     | 1.0.0       | antfu                               | [https://github.com/antfu/markdown-it-github-alerts](https://github.com/antfu/markdown-it-github-alerts)                                   |
+
 
 The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)
 
