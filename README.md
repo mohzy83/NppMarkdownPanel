@@ -123,6 +123,13 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 When this option is enabled, the plugin ensures that the first visible line in the 
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
+### Shortcut to toggle Panel
+It is possible to toggle the Panel with a shortcut. Therefore the Notepad++ "Shortcut Mapper" can be used.
+The Shortcut Mapper can be opened by "Settings" -> "Shortcut Mapper..." and switch to the tab "Plugin commands". 
+Than bind a shortcut (eg. CTRL + SHIFT + M) to the command "Toggle Markdown Panel".
+After that it's possible to use the shortcut to open or close the panel.
+![shortcut.png](help/shortcut.png "Bind shortcut to toggle function")
+
 ## Version History
 ### Version 0.9.0 (released 2025-06-20)
 - requirements
