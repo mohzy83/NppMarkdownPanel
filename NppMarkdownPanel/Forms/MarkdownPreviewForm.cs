@@ -37,6 +37,7 @@ namespace NppMarkdownPanel.Forms
         private Task<RenderResult> renderTask;
 
         private string htmlContentForExport;
+        private string htmlContentForExportWithLightTheme;
         private Settings settings;
         private string currentFilePath;
         private IWebbrowserControl webbrowserControl;
@@ -53,6 +54,7 @@ namespace NppMarkdownPanel.Forms
             {
                 tbPreview.BackColor = Color.Black;
                 btnSaveHtml.ForeColor = Color.White;
+                btnSaveWithLightTheme.ForeColor = Color.White;
                 statusStrip2.BackColor = Color.Black;
                 toolStripStatusLabel1.ForeColor = Color.White;
             }
@@ -60,6 +62,7 @@ namespace NppMarkdownPanel.Forms
             {
                 tbPreview.BackColor = SystemColors.Control;
                 btnSaveHtml.ForeColor = SystemColors.ControlText;
+                btnSaveWithLightTheme.ForeColor = SystemColors.ControlText;
                 statusStrip2.BackColor = SystemColors.Control;
                 toolStripStatusLabel1.ForeColor = SystemColors.ControlText;
             }
@@ -139,14 +142,14 @@ namespace NppMarkdownPanel.Forms
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
         {
             var defaultBodyStyle = "";
-            var markdownStyleContent = GetCssContent(filepath);
+            var markdownStyleContent = GetCssContent();
 
             if (!IsValidFileExtension(currentFilePath))
             {
                 var invalidExtensionMessageBody = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
                 var invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
 
-                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent);
+                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent, invalidExtensionMessage);
             }
 
             var resultForBrowser = markdownService.ConvertToHtml(currentText, filepath, true);
@@ -154,18 +157,20 @@ namespace NppMarkdownPanel.Forms
 
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
-            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent);
+            var markdownHtmlFileExportWithLightTheme = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), GetCssContent(true), defaultBodyStyle, resultForExport);
+
+            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent, markdownHtmlFileExportWithLightTheme);
         }
 
-        private string GetCssContent(string filepath)
+        private string GetCssContent(bool forceLightTheme = false)
         {
             // Path of plugin directory
             var cssContent = "";
 
             var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
 
-            var defaultCss = settings.IsDarkModeEnabled ? Settings.DefaultDarkModeCssFile : Settings.DefaultCssFile;
-            var customCssFile = settings.IsDarkModeEnabled ? settings.CssDarkModeFileName : settings.CssFileName;
+            var defaultCss = settings.IsDarkModeEnabled && !forceLightTheme ? Settings.DefaultDarkModeCssFile : Settings.DefaultCssFile;
+            var customCssFile = settings.IsDarkModeEnabled && !forceLightTheme ? settings.CssDarkModeFileName : settings.CssFileName;
             if (File.Exists(customCssFile))
             {
                 cssContent = File.ReadAllText(customCssFile);
@@ -193,6 +198,7 @@ namespace NppMarkdownPanel.Forms
                     {
                         webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
                         htmlContentForExport = renderedText.Result.ResultForExport;
+                        htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
                         if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                         {
                             bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -248,6 +254,17 @@ namespace NppMarkdownPanel.Forms
 
         private void btnSaveHtml_Click(object sender, EventArgs e)
         {
+            ShowSaveAs(false);
+        }
+
+
+        private void btnSaveLightTheme_Click(object sender, EventArgs e)
+        {
+            ShowSaveAs(true);
+        }
+
+        private void ShowSaveAs(bool overrideLightTheme)
+        {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.Filter = "html files (*.html, *.htm)|*.html;*.htm|All files (*.*)|*.*";
@@ -256,16 +273,16 @@ namespace NppMarkdownPanel.Forms
                 saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentFilePath);
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    writeHtmlContentToFile(saveFileDialog.FileName);
+                    writeHtmlContentToFile(saveFileDialog.FileName, overrideLightTheme);
                 }
             }
         }
 
-        private void writeHtmlContentToFile(string filename)
+        private void writeHtmlContentToFile(string filename, bool overrideLightTheme = false)
         {
             if (!string.IsNullOrEmpty(filename))
             {
-                File.WriteAllText(filename, htmlContentForExport);
+                File.WriteAllText(filename, overrideLightTheme ? htmlContentForExportWithLightTheme : htmlContentForExport);
             }
         }
 
