@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TheArtOfDev.HtmlRenderer.WinForms.Utilities;
 using Webview2Viewer;
 
 namespace NppMarkdownPanel.Forms
@@ -38,6 +39,7 @@ namespace NppMarkdownPanel.Forms
 
         private string htmlContentForExport;
         private string htmlContentForExportWithLightTheme;
+        private string currentMarkdownText;
         private Settings settings;
         private string currentFilePath;
         private IWebbrowserControl webbrowserControl;
@@ -199,6 +201,7 @@ namespace NppMarkdownPanel.Forms
                             webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
                             htmlContentForExport = renderedText.Result.ResultForExport;
                             htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
+                            currentMarkdownText = currentText;
                             if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                             {
                                 bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
@@ -330,5 +333,9 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
+        private void btnCopyToClipboard_Click(object sender, EventArgs e)
+        {
+            ClipboardHelper.CopyToClipboard(htmlContentForExport, htmlContentForExport);
+        }
     }
 }

@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MarkdownPreviewForm));
             this.panelPreview = new System.Windows.Forms.Panel();
             this.toolStripContainer1 = new System.Windows.Forms.ToolStripContainer();
             this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
@@ -36,6 +35,7 @@
             this.tbPreview = new System.Windows.Forms.ToolStrip();
             this.btnSaveHtml = new System.Windows.Forms.ToolStripSplitButton();
             this.btnSaveWithLightTheme = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnCopyToClipboard = new System.Windows.Forms.ToolStripButton();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelPreview.SuspendLayout();
@@ -104,7 +104,8 @@
             this.tbPreview.Dock = System.Windows.Forms.DockStyle.None;
             this.tbPreview.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tbPreview.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnSaveHtml});
+            this.btnSaveHtml,
+            this.btnCopyToClipboard});
             this.tbPreview.Location = new System.Drawing.Point(0, 0);
             this.tbPreview.Name = "tbPreview";
             this.tbPreview.Size = new System.Drawing.Size(811, 27);
@@ -115,8 +116,8 @@
             // 
             this.btnSaveHtml.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnSaveWithLightTheme});
-            this.btnSaveHtml.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveHtml.Image")));
-            this.btnSaveHtml.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSaveHtml.Image = global::NppMarkdownPanel.Properties.Resources.Save_16x_32;
+            this.btnSaveHtml.ImageTransparentColor = System.Drawing.Color.Black;
             this.btnSaveHtml.Name = "btnSaveHtml";
             this.btnSaveHtml.Size = new System.Drawing.Size(108, 24);
             this.btnSaveHtml.Text = "Save As...";
@@ -124,10 +125,21 @@
             // 
             // btnSaveWithLightTheme
             // 
+            this.btnSaveWithLightTheme.Image = global::NppMarkdownPanel.Properties.Resources.Save_16x_32;
+            this.btnSaveWithLightTheme.ImageTransparentColor = System.Drawing.Color.Black;
             this.btnSaveWithLightTheme.Name = "btnSaveWithLightTheme";
             this.btnSaveWithLightTheme.Size = new System.Drawing.Size(271, 26);
             this.btnSaveWithLightTheme.Text = "Save As (with Light Theme)";
             this.btnSaveWithLightTheme.Click += new System.EventHandler(this.btnSaveLightTheme_Click);
+            // 
+            // btnCopyToClipboard
+            // 
+            this.btnCopyToClipboard.Image = global::NppMarkdownPanel.Properties.Resources.Copy_16x_32;
+            this.btnCopyToClipboard.ImageTransparentColor = System.Drawing.Color.Black;
+            this.btnCopyToClipboard.Name = "btnCopyToClipboard";
+            this.btnCopyToClipboard.Size = new System.Drawing.Size(157, 24);
+            this.btnCopyToClipboard.Text = "Copy To Clipboard";
+            this.btnCopyToClipboard.Click += new System.EventHandler(this.btnCopyToClipboard_Click);
             // 
             // statusStrip2
             // 
@@ -183,5 +195,6 @@
         public System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripSplitButton btnSaveHtml;
         private System.Windows.Forms.ToolStripMenuItem btnSaveWithLightTheme;
+        private System.Windows.Forms.ToolStripButton btnCopyToClipboard;
     }
 }

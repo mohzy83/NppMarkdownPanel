@@ -120,15 +120,6 @@
   <metadata name="tbPreview.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnSaveHtml.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAB1SURBVDhPY/j27Vv4t2/f3nz79u0/iRikJ5wBxNAuWPOf
-        IXgOSRikB6QXZACGJLEYrBfZgA/vPxKFh7MBpOJBagC6f9Ex/QxA56OLww348uXLneL5xzA0oPPRxeEG
-        fP36VQbZEHSFBA0AAZghIAGQIhBNLAYAXmPqvOlZyIcAAAAASUVORK5CYII=
-</value>
-  </data>
   <metadata name="statusStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>238, 17</value>
   </metadata>

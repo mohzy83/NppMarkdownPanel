@@ -82,6 +82,7 @@
     <Compile Include="Forms\AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ClipboardHelper.cs" />
     <Compile Include="Forms\IViewerInterface.cs" />
     <Compile Include="Forms\MarkdownPreviewForm.cs">
       <SubType>Form</SubType>
@@ -96,7 +97,7 @@
     <Compile Include="Forms\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
-	    <Compile Include="Forms\DockingFormBase.cs">
+    <Compile Include="Forms\DockingFormBase.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\DockingFormBase.Designer.cs">
@@ -167,7 +168,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\markdown-16x16-solid-dark.png" />
+    <Content Include="Resources\Copy_16x_32.bmp" />
     <Content Include="Resources\md.ico" />
+    <Content Include="Resources\Save_16x_32.bmp" />
     <Content Include="style.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

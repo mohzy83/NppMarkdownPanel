@@ -244,6 +244,7 @@ Bugfix release
 | **github-markdown-css**           | 3.0.1       | sindresorhus                        | [https://github.com/sindresorhus/github-markdown-css](https://github.com/sindresorhus/github-markdown-css)             |
 | **Markdown icon**                 |             | dcurtis                             | [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)                                   |
 | **markdown-it-github-alerts**     | 1.0.0       | antfu                               | [https://github.com/antfu/markdown-it-github-alerts](https://github.com/antfu/markdown-it-github-alerts)                                   |
+| **ClipboardHelper (HTML Renderer)**	| 1.5.2       | Arthur Teplitzki                    | [https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs](https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs)                                   |
 
 
 The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)

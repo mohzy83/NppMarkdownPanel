@@ -63,6 +63,16 @@ namespace NppMarkdownPanel.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Copy_16x_32 {
+            get {
+                object obj = ResourceManager.GetObject("Copy_16x_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap markdown_16x16_solid {
             get {
                 object obj = ResourceManager.GetObject("markdown_16x16_solid", resourceCulture);
@@ -86,6 +96,16 @@ namespace NppMarkdownPanel.Properties {
         internal static System.Drawing.Bitmap markdown_16x16_solid_dark {
             get {
                 object obj = ResourceManager.GetObject("markdown_16x16_solid_dark", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Save_16x_32 {
+            get {
+                object obj = ResourceManager.GetObject("Save_16x_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
