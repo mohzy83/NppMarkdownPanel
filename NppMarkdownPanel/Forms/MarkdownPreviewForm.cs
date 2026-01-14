@@ -45,11 +45,11 @@ namespace NppMarkdownPanel.Forms
         private IWebbrowserControl webview2Instance;
         private bool cleanupStarted;
 
-        public void UpdateSettings(Settings settings)
+        public void UpdateSettings(Settings newSettings)
         {
-            this.settings = settings;
+            this.settings = newSettings;
 
-            var isDarkModeEnabled = settings.IsDarkModeEnabled;
+            var isDarkModeEnabled = newSettings.IsDarkModeEnabled;
             if (isDarkModeEnabled)
             {
                 tbPreview.BackColor = Color.Black;
@@ -67,16 +67,14 @@ namespace NppMarkdownPanel.Forms
                 toolStripStatusLabel1.ForeColor = SystemColors.ControlText;
             }
 
-            tbPreview.Visible = settings.ShowToolbar;
-            statusStrip2.Visible = settings.ShowStatusbar;
+            tbPreview.Visible = newSettings.ShowToolbar;
+            statusStrip2.Visible = newSettings.ShowStatusbar;
 
-            if (webbrowserControl != null)
+            if (webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
             {
-                if (webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
-                {
-                    InitRenderingEngine(settings);
-                }
+                InitRenderingEngine(settings);
             }
+
         }
 
         private MarkdownService markdownService;
@@ -103,16 +101,16 @@ namespace NppMarkdownPanel.Forms
             InitRenderingEngine(settings);
         }
 
-        private void InitRenderingEngine(Settings settings)
+        private void InitRenderingEngine(Settings newSettings)
         {
             panel1.Controls.Clear();
 
-            if (settings.IsRenderingEngineIE11())
+            if (newSettings.IsRenderingEngineIE11())
             {
                 if (webview1Instance == null)
                 {
                     webbrowserControl = new IE11WebbrowserControl();
-                    webbrowserControl.Initialize(settings.ZoomLevel);
+                    webbrowserControl.Initialize(newSettings.ZoomLevel);
                     webview1Instance = webbrowserControl;
                 }
                 else
@@ -120,12 +118,12 @@ namespace NppMarkdownPanel.Forms
                     webbrowserControl = webview1Instance;
                 }
             }
-            else if (settings.IsRenderingEngineEdge())
+            else if (newSettings.IsRenderingEngineEdge())
             {
                 if (webview2Instance == null)
                 {
                     webbrowserControl = new Webview2WebbrowserControl();
-                    webbrowserControl.Initialize(settings.ZoomLevel);
+                    webbrowserControl.Initialize(newSettings.ZoomLevel);
                     webview2Instance = webbrowserControl;
                 }
                 else
@@ -185,36 +183,46 @@ namespace NppMarkdownPanel.Forms
 
         public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
-            if (renderTask == null || renderTask.IsCompleted)
+            Action renderAction = () =>
             {
-                MakeAndDisplayScreenShot();
-                webbrowserControl.PrepareContentUpdate(preserveVerticalScrollPosition);
-
-                var context = TaskScheduler.FromCurrentSynchronizationContext();
-                renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
-                renderTask.ContinueWith((renderedText) =>
+                if (renderTask == null || renderTask.IsCompleted)
                 {
-                    if (!cleanupStarted)
-                    {
-                        webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
-                        htmlContentForExport = renderedText.Result.ResultForExport;
-                        htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
-                        if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
-                        {
-                            bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
-                            if (valid)
-                            {
-                                settings.HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
-                                writeHtmlContentToFile(settings.HtmlFileName);
-                            }
-                        }
-                        webbrowserControl.SetZoomLevel(settings.ZoomLevel);
-                    }
+                    MakeAndDisplayScreenShot();
+                    webbrowserControl.PrepareContentUpdate(preserveVerticalScrollPosition);
 
-                }, context);
-                renderTask.Start();
+                    var context = TaskScheduler.FromCurrentSynchronizationContext();
+                    renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
+                    renderTask.ContinueWith((renderedText) =>
+                    {
+                        if (!cleanupStarted)
+                        {
+                            webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
+                            htmlContentForExport = renderedText.Result.ResultForExport;
+                            htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
+                            if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
+                            {
+                                bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
+                                if (valid)
+                                {
+                                    settings.HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
+                                    writeHtmlContentToFile(settings.HtmlFileName);
+                                }
+                            }
+                            webbrowserControl.SetZoomLevel(settings.ZoomLevel);
+                        }
+
+                    }, context);
+                    renderTask.Start();
+                }
+            };
+            webbrowserControl.AfterInitCompletedAction = renderAction;
+            if (webbrowserControl.IsInitialized())
+            {
+                webbrowserControl.AfterInitCompletedAction = null;
+                renderAction();
             }
         }
+
         /// <summary>
         /// Makes and displays a screenshot of the current browser content to prevent it from flickering 
         /// while loading updated content

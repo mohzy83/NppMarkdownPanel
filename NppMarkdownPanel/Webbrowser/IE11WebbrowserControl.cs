@@ -20,7 +20,9 @@ namespace NppMarkdownPanel.Webbrowser
         private int lastVerticalScroll = 0;
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
+        public Action AfterInitCompletedAction { get; set; }
 
+        bool webViewInitialized = false;
 
         public void Initialize(int zoomLevel)
         {
@@ -36,6 +38,8 @@ namespace NppMarkdownPanel.Webbrowser
             this.webBrowserPreview.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowserPreview_DocumentCompleted);
             this.webBrowserPreview.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.webBrowserPreview_Navigating);
             this.webBrowserPreview.StatusTextChanged += new System.EventHandler(this.webBrowserPreview_StatusTextChanged);
+            webViewInitialized = true;
+            if (AfterInitCompletedAction != null) AfterInitCompletedAction();
         }
 
         public void Dispose()
@@ -185,6 +189,11 @@ namespace NppMarkdownPanel.Webbrowser
         public string GetRenderingEngineName()
         {
             return Settings.RENDERING_ENGINE_WEBVIEW1_IE11;
+        }
+
+        public bool IsInitialized()
+        {
+            return webViewInitialized && webBrowserPreview != null;
         }
 
     }

@@ -21,8 +21,10 @@ namespace PanelCommon
 
         Action<string> StatusTextChangedAction { get; set; }
         Action RenderingDoneAction { get; set; }
+        Action AfterInitCompletedAction { get; set; }
 
         void Dispose();
 
+        bool IsInitialized();
     }
 }
