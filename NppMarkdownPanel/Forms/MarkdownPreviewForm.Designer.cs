@@ -34,8 +34,8 @@
             this.pictureBoxScreenshot = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbPreview = new System.Windows.Forms.ToolStrip();
-            this.btnSaveHtml = new System.Windows.Forms.ToolStripButton();
-            this.btnSaveWithLightTheme = new System.Windows.Forms.ToolStripButton();
+            this.btnSaveHtml = new System.Windows.Forms.ToolStripSplitButton();
+            this.btnSaveWithLightTheme = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip2 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelPreview.SuspendLayout();
@@ -104,8 +104,7 @@
             this.tbPreview.Dock = System.Windows.Forms.DockStyle.None;
             this.tbPreview.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tbPreview.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnSaveHtml,
-            this.btnSaveWithLightTheme});
+            this.btnSaveHtml});
             this.tbPreview.Location = new System.Drawing.Point(0, 0);
             this.tbPreview.Name = "tbPreview";
             this.tbPreview.Size = new System.Drawing.Size(811, 27);
@@ -114,19 +113,19 @@
             // 
             // btnSaveHtml
             // 
+            this.btnSaveHtml.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.btnSaveWithLightTheme});
             this.btnSaveHtml.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveHtml.Image")));
             this.btnSaveHtml.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveHtml.Name = "btnSaveHtml";
-            this.btnSaveHtml.Size = new System.Drawing.Size(93, 24);
+            this.btnSaveHtml.Size = new System.Drawing.Size(108, 24);
             this.btnSaveHtml.Text = "Save As...";
-            this.btnSaveHtml.Click += new System.EventHandler(this.btnSaveHtml_Click);
+            this.btnSaveHtml.ButtonClick += new System.EventHandler(this.btnSaveHtml_Click);
             // 
             // btnSaveWithLightTheme
             // 
-            this.btnSaveWithLightTheme.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWithLightTheme.Image")));
-            this.btnSaveWithLightTheme.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnSaveWithLightTheme.Name = "btnSaveWithLightTheme";
-            this.btnSaveWithLightTheme.Size = new System.Drawing.Size(212, 24);
+            this.btnSaveWithLightTheme.Size = new System.Drawing.Size(271, 26);
             this.btnSaveWithLightTheme.Text = "Save As (with Light Theme)";
             this.btnSaveWithLightTheme.Click += new System.EventHandler(this.btnSaveLightTheme_Click);
             // 
@@ -179,10 +178,10 @@
         private System.Windows.Forms.PictureBox pictureBoxScreenshot;
         private System.Windows.Forms.ToolStripContainer toolStripContainer1;
         private System.Windows.Forms.ToolStrip tbPreview;
-        private System.Windows.Forms.ToolStripButton btnSaveHtml;
         private System.Windows.Forms.StatusStrip statusStrip2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         public System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.ToolStripButton btnSaveWithLightTheme;
+        private System.Windows.Forms.ToolStripSplitButton btnSaveHtml;
+        private System.Windows.Forms.ToolStripMenuItem btnSaveWithLightTheme;
     }
 }
