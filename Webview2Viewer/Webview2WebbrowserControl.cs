@@ -1,5 +1,4 @@
 ﻿using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.Wpf;
 using PanelCommon;
 using System;
 using System.Diagnostics;
