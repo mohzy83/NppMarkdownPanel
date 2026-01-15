@@ -1,4 +1,5 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.Wpf;
 using PanelCommon;
 using System;
 using System.Diagnostics;
@@ -80,8 +81,8 @@ namespace Webview2Viewer
                                 webView.NavigationStarting += OnWebBrowser_NavigationStarting;
                                 webView.NavigationCompleted += WebView_NavigationCompleted;
                                 webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
-                            }, scheduler); 
-                    }, scheduler); 
+                            }, scheduler);
+                    }, scheduler);
         }
 
         private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
@@ -261,7 +262,8 @@ namespace Webview2Viewer
         {
             try
             {
-                webView.Invoke(action);
+                if (webView != null)
+                    webView.Invoke(action);
             }
             catch (Exception ex)
             {

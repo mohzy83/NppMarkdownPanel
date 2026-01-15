@@ -305,6 +305,7 @@ namespace NppMarkdownPanel.Forms
             try
             {
                 matchExtensionList = settings.SupportedFileExt.Split(',').Any(ext => ext != null && currentExtension.Equals("." + ext.Trim().ToLower()));
+                if (currentExtension == "" && settings.SupportFilesWithNoExt) matchExtensionList = true;
             }
             catch (Exception)
             {

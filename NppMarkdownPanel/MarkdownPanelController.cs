@@ -92,6 +92,7 @@ namespace NppMarkdownPanel
             settings.ShowToolbar = PluginUtils.ReadIniBool("Options", "ShowToolbar", iniFilePath);
             settings.ShowStatusbar = PluginUtils.ReadIniBool("Options", "ShowStatusbar", iniFilePath);
             settings.SupportedFileExt = Win32.ReadIniValue("Options", "SupportedFileExt", iniFilePath, Settings.DEFAULT_SUPPORTED_FILE_EXT);
+            settings.SupportFilesWithNoExt = PluginUtils.ReadIniBool("Options", "SupportFilesWithNoExt", iniFilePath);
             settings.AllowAllExtensions = PluginUtils.ReadIniBool("Options", "AllowAllExtensions", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
@@ -223,6 +224,7 @@ namespace NppMarkdownPanel
                 settings.HtmlFileName = settingsForm.HtmlFileName;
                 settings.ShowToolbar = settingsForm.ShowToolbar;
                 settings.SupportedFileExt = settingsForm.SupportedFileExt;
+                settings.SupportFilesWithNoExt = settingsForm.SupportFilesWithNoExt;
                 settings.AllowAllExtensions = settingsForm.AllowAllExtensions;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
@@ -304,6 +306,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "ShowToolbar", settings.ShowToolbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "ShowStatusbar", settings.ShowStatusbar.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
+            Win32.WriteIniValue("Options", "SupportFilesWithNoExt", settings.SupportFilesWithNoExt.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
