@@ -152,7 +152,18 @@ namespace NppMarkdownPanel
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 AutoShowOrHidePanel(currentFilePath);
             }
+
+            if (notification.Header.Code == (uint)NppMsg.NPPN_FILERENAMED)
+            {
+                bufferIdForFilenameUpdate = notification.Header.IdFrom;
+                updateFilename = true;
+                lastTickCount = Environment.TickCount;
+                RenderMarkdownDeferred();
+            }
         }
+
+        bool updateFilename = false;
+        IntPtr bufferIdForFilenameUpdate;
 
         private void RenderMarkdownDeferred()
         {
@@ -172,6 +183,14 @@ namespace NppMarkdownPanel
             renderTimer.Stop();
             try
             {
+                if (updateFilename)
+                {
+                    updateFilename = false;
+                    var currentFilePath = notepadPPGateway.GetFilePathFromBufferId(bufferIdForFilenameUpdate);
+                    viewerInterface.SetMarkdownFilePath(currentFilePath);
+                    AutoShowOrHidePanel(currentFilePath);
+                }
+
                 RenderMarkdownDirect();
             }
             catch
