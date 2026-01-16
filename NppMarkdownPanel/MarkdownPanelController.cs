@@ -125,6 +125,7 @@ namespace NppMarkdownPanel
             }
             if (notification.Header.Code == (uint)NppMsg.NPPN_BUFFERACTIVATED)
             {
+                activeBufferId = notification.Header.IdFrom;
                 // Focus was switched to a new document
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 viewerInterface.SetMarkdownFilePath(currentFilePath);
@@ -153,17 +154,45 @@ namespace NppMarkdownPanel
                 AutoShowOrHidePanel(currentFilePath);
             }
 
+            if (notification.Header.Code == (uint)NppMsg.NPPN_FILEBEFORESAVE)
+            {
+                if (notification.Header.IdFrom == activeBufferId)
+                {
+                    beforeSafeFilename = notepadPPGateway.GetFilePathFromBufferId(notification.Header.IdFrom);
+                }
+            }
+
+            if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
+            {
+                if (notification.Header.IdFrom == activeBufferId)
+                {
+                    var savedFilename = notepadPPGateway.GetFilePathFromBufferId(notification.Header.IdFrom);
+                    if (!string.Equals(beforeSafeFilename, savedFilename))
+                    {
+                        HandleFilenameUpdate(notification.Header.IdFrom);
+                    }
+                    beforeSafeFilename = "";
+                }
+            }
+
             if (notification.Header.Code == (uint)NppMsg.NPPN_FILERENAMED)
             {
-                bufferIdForFilenameUpdate = notification.Header.IdFrom;
-                updateFilename = true;
-                lastTickCount = Environment.TickCount;
-                RenderMarkdownDeferred();
+                HandleFilenameUpdate(notification.Header.IdFrom);
             }
         }
 
+        string beforeSafeFilename = "";
         bool updateFilename = false;
         IntPtr bufferIdForFilenameUpdate;
+        IntPtr activeBufferId;
+
+        private void HandleFilenameUpdate(IntPtr bufferId)
+        {
+            bufferIdForFilenameUpdate = bufferId;
+            updateFilename = true;
+            lastTickCount = Environment.TickCount;
+            RenderMarkdownDeferred();
+        }
 
         private void RenderMarkdownDeferred()
         {
