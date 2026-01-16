@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace NppPlugin.DllExport
+namespace RGiesecke.DllExport
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     partial class DllExportAttribute : Attribute

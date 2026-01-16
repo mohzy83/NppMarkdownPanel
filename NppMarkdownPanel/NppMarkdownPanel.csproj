@@ -196,7 +196,7 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(MSBuildProjectDirectory)\PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />
+  <Import Project="$(MSBuildProjectDirectory)\..\packages\Unmanagedexports.Repack.Upgrade.1.2.1\build\UnmanagedExports.Repack.Upgrade.targets" />
   <PropertyGroup>
     <PostBuildEvent>
     </PostBuildEvent>
