@@ -64,6 +64,19 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     {
         private readonly int pos;
 
+        // TODO: support >2 GiB files (i.e, 64-bit character positions)
+        public Position(IntPtr pos)
+        {
+            try
+            {
+                this.pos = pos.ToInt32();
+            }
+            catch (OverflowException)
+            {
+                this.pos = -1;
+            }
+        }
+
         public Position(int pos)
         {
             this.pos = pos;
