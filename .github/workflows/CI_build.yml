@@ -21,13 +21,13 @@ jobs:
            ./makerelease.ps1
 
     - name: Archive artifacts x86
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
           name: NppMarkdownPanel_win32
           path: Release/*-x86.zip
 
     - name: Archive artifacts x64
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
           name: NppMarkdownPanel_x64
           path: Release/*-x64.zip
