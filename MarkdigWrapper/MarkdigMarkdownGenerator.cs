@@ -63,6 +63,7 @@ namespace MarkdigWrapper
 
             htmlWriter.Flush();
             var result = sb.ToString();
+            result = FixFragmentLinks(result);
             if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             return result;
@@ -77,7 +78,7 @@ namespace MarkdigWrapper
                     SetLineNoAttributeOnAllBlocks(childBlock as ContainerBlock);
                 }
                 var attributes = childBlock.GetAttributes();
-                attributes.Id = childBlock.Line.ToString();
+                attributes.AddProperty("data-line", childBlock.Line.ToString());
                 childBlock.SetAttributes(attributes);
             }
 
@@ -106,6 +107,19 @@ namespace MarkdigWrapper
             return regex.Replace(html, m =>
             {
                 return Uri.UnescapeDataString(m.Value);
+            });
+        }
+
+        /// <summary>
+        /// Markdig resolves fragment-only links (#anchor) against BaseUrl,
+        /// producing file:///path/%23anchor. Convert them back to #anchor.
+        /// </summary>
+        private string FixFragmentLinks(string html)
+        {
+            var regex = new Regex("href=\"file:///[^\"]*%23([^\"]+)\"");
+            return regex.Replace(html, m =>
+            {
+                return "href=\"#" + m.Groups[1].Value + "\"";
             });
         }
     }

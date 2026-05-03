@@ -149,7 +149,7 @@ namespace Webview2Viewer
         }
 
         const string scrollScript =
-            "var element = document.getElementById('{0}');\n" +
+            "var element = document.querySelector('[data-line=\"{0}\"]');\n" +
             "var headerOffset = 10;\n" +
             "var elementPosition = element.getBoundingClientRect().top;\n" +
             "var offsetPosition = elementPosition + window.pageYOffset - headerOffset;\n" +
@@ -243,6 +243,10 @@ namespace Webview2Viewer
 
         void OnWebBrowser_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
+            // Allow same-document fragment navigations (#anchor links)
+            if (e.Uri.ToString().Contains("#"))
+                return;
+
             if (e.Uri.ToString().StartsWith("about:blank"))
             {
                 e.Cancel = true;
