@@ -195,6 +195,7 @@ namespace Webview2Viewer
                     ExecuteWebviewAction(new Action(async () =>
                     {
                         await webView.ExecuteScriptAsync("document.body.innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "'");
+                        await webView.ExecuteScriptAsync("if(typeof mermaid!=='undefined'){mermaid.run();}");
                     }));
                 }
                 if (currentStyle != style)

@@ -35,11 +35,18 @@ namespace Markdig.SyntaxHighlighting
 
             var languageMoniker = fencedCodeBlock.Info.Replace(parser.InfoPrefix, string.Empty);
 
-            if (string.IsNullOrEmpty(languageMoniker)
-                // skip syntax highlighting for mermaid - leave block as pre tag which allows "mermaid JS" to render the codeblock as graph
-                || string.Equals(languageMoniker, LanguageTypeAdapter.LANGUAGE_KEY_MERMAID, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(languageMoniker))
             {
                 _underlyingRenderer.Write(renderer, obj);
+                return;
+            }
+
+            if (string.Equals(languageMoniker, LanguageTypeAdapter.LANGUAGE_KEY_MERMAID, StringComparison.OrdinalIgnoreCase))
+            {
+                var mermaidCode = GetCode(obj, out _);
+                renderer.Write("<pre class=\"mermaid\">");
+                renderer.WriteEscape(mermaidCode);
+                renderer.WriteLine("</pre>");
                 return;
             }
 
