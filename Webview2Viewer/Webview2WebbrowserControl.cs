@@ -194,7 +194,10 @@ namespace Webview2Viewer
                     currentBody = body;
                     ExecuteWebviewAction(new Action(async () =>
                     {
-                        await webView.ExecuteScriptAsync("document.body.innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "'");
+                        await webView.ExecuteScriptAsync(
+                            "document.getElementById('outline-main').innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "';" +
+                            "if (window.buildOutline) window.buildOutline();"
+                        );
                     }));
                 }
                 if (currentStyle != style)

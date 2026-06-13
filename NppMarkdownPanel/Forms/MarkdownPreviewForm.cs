@@ -27,11 +27,77 @@ namespace NppMarkdownPanel.Forms
                     {1}
                     </style>
                 </head>
-                <body class=""markdown-body"" style=""{2}"">
-                {3}
+                <body style=""{2}"">
+                    <nav id=""outline-sidebar"" class=""outline-sidebar"">
+                        <div class=""outline-header"">Outline</div>
+                        <div id=""outline-content"" class=""outline-content""></div>
+                    </nav>
+                    <div id=""outline-main"" class=""outline-main markdown-body"">{3}</div>
+                    <button id=""outline-toggle"" class=""outline-toggle"" title=""Toggle Outline"" onclick=""document.getElementById('outline-sidebar').classList.toggle('collapsed');this.classList.toggle('collapsed');"">&#9776;</button>
+OUTLINE_SCRIPT_PLACEHOLDER
                 </body>
             </html>
             ";
+
+        const string OUTLINE_SCRIPT = @"<script>
+(function(){
+    var content = document.getElementById('outline-content');
+    var main = document.getElementById('outline-main');
+    var sidebar = document.getElementById('outline-sidebar');
+    var toggle = document.getElementById('outline-toggle');
+
+    window.buildOutline = function() {
+        content.innerHTML = '';
+        var hs = main.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (hs.length === 0) {
+            sidebar.style.display = 'none';
+            toggle.style.display = 'none';
+            return;
+        }
+        sidebar.style.display = '';
+        toggle.style.display = '';
+        var min = 7;
+        for (var i = 0; i < hs.length; i++) {
+            var lvl = parseInt(hs[i].tagName.substring(1));
+            if (lvl < min) min = lvl;
+        }
+        for (var i = 0; i < hs.length; i++) {
+            var h = hs[i];
+            var lvl = parseInt(h.tagName.substring(1)) - min + 1;
+            var txt = h.textContent || h.innerText || '';
+            var ln = h.getAttribute('data-line') || '';
+            var a = document.createElement('a');
+            a.className = 'outline-item outline-l' + lvl;
+            a.setAttribute('data-line', ln);
+            a.textContent = txt;
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                var t = main.querySelector('[data-line=""' + this.getAttribute('data-line') + '""]');
+                if (t) t.scrollIntoView({behavior:'smooth',block:'start'});
+            });
+            content.appendChild(a);
+        }
+    };
+
+    window.addEventListener('scroll', function() {
+        var items = content.querySelectorAll('.outline-item');
+        if (items.length === 0) return;
+        var hs = main.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        var sp = window.scrollY + 140;
+        var fl = null;
+        for (var i = 0; i < hs.length; i++) {
+            if (hs[i].getBoundingClientRect().top + window.scrollY <= sp) fl = hs[i].getAttribute('data-line');
+        }
+        for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+        if (fl) {
+            var m = content.querySelector('[data-line=""' + fl + '""]');
+            if (m) m.classList.add('active');
+        }
+    });
+
+    buildOutline();
+})();
+</script>";
 
         const string MSG_NO_SUPPORTED_FILE_EXT = "<h3>The current file <u>{0}</u> has no valid Markdown file extension.</h3><div>Valid file extensions:{1}</div>";
 
@@ -148,6 +214,7 @@ namespace NppMarkdownPanel.Forms
             {
                 var invalidExtensionMessageBody = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
                 var invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
+                invalidExtensionMessage = InjectOutlineScript(invalidExtensionMessage);
 
                 return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent, invalidExtensionMessage);
             }
@@ -158,6 +225,10 @@ namespace NppMarkdownPanel.Forms
             var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
             var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
             var markdownHtmlFileExportWithLightTheme = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), GetCssContent(true), defaultBodyStyle, resultForExport);
+
+            markdownHtmlBrowser = InjectOutlineScript(markdownHtmlBrowser);
+            markdownHtmlFileExport = InjectOutlineScript(markdownHtmlFileExport);
+            markdownHtmlFileExportWithLightTheme = InjectOutlineScript(markdownHtmlFileExportWithLightTheme);
 
             return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent, markdownHtmlFileExportWithLightTheme);
         }
@@ -347,6 +418,11 @@ namespace NppMarkdownPanel.Forms
                 webview2Instance.Dispose();
                 webview2Instance = null;
             }
+        }
+
+        private static string InjectOutlineScript(string html)
+        {
+            return html.Replace("OUTLINE_SCRIPT_PLACEHOLDER", OUTLINE_SCRIPT);
         }
 
         private void btnCopyToClipboard_Click(object sender, EventArgs e)
