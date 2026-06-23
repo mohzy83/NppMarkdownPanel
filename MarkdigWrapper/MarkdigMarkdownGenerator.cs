@@ -68,6 +68,7 @@ namespace MarkdigWrapper
                 htmlWriter.Flush();
                 result = sb.ToString();
                 result = FixFragmentLinks(result);
+                if (filepath != null) result = ResolveRelativePaths(result, filepath);
             }
             catch (Exception e)
             {
@@ -130,6 +131,46 @@ namespace MarkdigWrapper
             return regex.Replace(html, m =>
             {
                 return "href=\"#" + m.Groups[1].Value + "\"";
+            });
+        }
+
+        private string ResolveRelativePaths(string html, string baseFilePath)
+        {
+            if (string.IsNullOrEmpty(baseFilePath)) return html;
+
+            string baseDir;
+            try
+            {
+                baseDir = Path.GetDirectoryName(baseFilePath);
+                if (string.IsNullOrEmpty(baseDir)) return html;
+            }
+            catch
+            {
+                return html;
+            }
+
+            var regex = new Regex(
+                @"(src|href)\s*=\s*[""']((?!\s*(?:https?|ftp|file|data|about|mailto|javascript):|//)[^""']+)[""']",
+                RegexOptions.IgnoreCase
+            );
+
+            return regex.Replace(html, match =>
+            {
+                var attribute = match.Groups[1].Value;
+                var relativePath = match.Groups[2].Value;
+
+                if (string.IsNullOrWhiteSpace(relativePath) || relativePath.StartsWith("#"))
+                    return match.Value;
+
+                try
+                {
+                    var absolutePath = Path.GetFullPath(Path.Combine(baseDir, relativePath));
+                    return attribute + "=\"file:///" + absolutePath.Replace('\\', '/') + "\"";
+                }
+                catch
+                {
+                    return match.Value;
+                }
             });
         }
     }
