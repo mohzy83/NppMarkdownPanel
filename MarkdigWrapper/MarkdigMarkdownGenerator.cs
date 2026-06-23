@@ -54,16 +54,26 @@ namespace MarkdigWrapper
             }
             sb.Clear();
 
-            var document = Markdown.Parse(markDownText, pipeline, null);
+            var result = "";
 
-            SetLineNoAttributeOnAllBlocks(document);
+            try
+            {
+                var document = Markdown.Parse(markDownText, pipeline, null);
 
-            pipeline.Setup(htmlRenderer);
-            htmlRenderer.Render(document);
+                SetLineNoAttributeOnAllBlocks(document);
 
-            htmlWriter.Flush();
-            var result = sb.ToString();
-            result = FixFragmentLinks(result);
+                pipeline.Setup(htmlRenderer);
+                htmlRenderer.Render(document);
+
+                htmlWriter.Flush();
+                result = sb.ToString();
+                result = FixFragmentLinks(result);
+            }
+            catch (Exception e)
+            {
+                result = e.Message;
+            }
+
             if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             return result;
