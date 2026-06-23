@@ -26,9 +26,16 @@ namespace NppMarkdownPanel.Forms
                     <style type=""text/css"">
                     {1}
                     </style>
+                    <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
+                    <script>
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    </script>
                 </head>
                 <body class=""markdown-body"" style=""{2}"">
                 {3}
+                <script>
+                if(typeof mermaid!=='undefined'){{mermaid.run();}}
+                </script>
                 </body>
             </html>
             ";
