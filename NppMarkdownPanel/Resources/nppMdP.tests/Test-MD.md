@@ -74,6 +74,18 @@ def f_ąćęł(ńóśźż):
   return ńóśźż
 ````
 
+#### Mermaid graph
+
+```mermaid
+
+graph TD;
+            A-->B;
+            A-->C;
+            B-->D;
+            C-->D;
+```
+
+
 #### details ... summary
 
 Does not work in NppMdP but useful in markdown (run SaveAs...).
@@ -92,7 +104,6 @@ def expensive(arg1, arg2, *, _cache={}):
 ````
 
 </details>
-
 
 
 
