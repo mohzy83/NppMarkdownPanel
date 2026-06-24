@@ -59,6 +59,8 @@ namespace NppMarkdownPanel
             settings = LoadSettingsFromIni();
             viewerInterface = MarkdownPreviewForm.InitViewer(settings, HandleWndProc);
             previewForm = (MarkdownPreviewForm)viewerInterface;
+            previewForm.SetCheckboxToggleHandler(ToggleCheckboxAtLine);
+            previewForm.SetRadioToggleHandler(ToggleRadioAtLine);
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
@@ -244,6 +246,108 @@ namespace NppMarkdownPanel
         private void ScrollToElementAtLineNo(int lineNo)
         {
             viewerInterface.ScrollToElementWithLineNo(lineNo);
+        }
+
+        private void ToggleCheckboxAtLine(int lineNo)
+        {
+            var gw = scintillaGatewayFactory();
+            string lineText = gw.GetLine(lineNo);
+
+            var idxEmpty = lineText.IndexOf("[ ]");
+            if (idxEmpty >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxEmpty + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel("x");
+                RenderAfterToggle();
+                return;
+            }
+
+            var idxChecked = lineText.IndexOf("[x]", StringComparison.OrdinalIgnoreCase);
+            if (idxChecked >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxChecked + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel(" ");
+                RenderAfterToggle();
+            }
+        }
+
+        private void RenderAfterToggle()
+        {
+            renderTimer.Stop();
+            RenderMarkdownDirect();
+        }
+
+        private void ToggleRadioAtLine(int lineNo)
+        {
+            var gw = scintillaGatewayFactory();
+            string lineText = gw.GetLine(lineNo);
+
+            var hasEmpty = lineText.IndexOf("( )") >= 0;
+            var idxChecked = lineText.IndexOf("(x)", StringComparison.OrdinalIgnoreCase);
+
+            if (hasEmpty)
+            {
+                int pos = gw.PositionFromLine(lineNo) + lineText.IndexOf("( )") + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel("x");
+                UncheckRadioGroup(gw, lineNo);
+            }
+            else if (idxChecked >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxChecked + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel(" ");
+            }
+
+            RenderAfterToggle();
+        }
+
+        private void UncheckRadioGroup(IScintillaGateway gw, int excludeLine)
+        {
+            int totalLines = gw.GetLineCount();
+            int startLine = excludeLine;
+            int endLine = excludeLine;
+
+            for (int i = excludeLine - 1; i >= 0; i--)
+            {
+                string text = gw.GetLine(i).TrimStart();
+                if (IsRadioLine(text))
+                    startLine = i;
+                else
+                    break;
+            }
+
+            for (int i = excludeLine + 1; i < totalLines; i++)
+            {
+                string text = gw.GetLine(i).TrimStart();
+                if (IsRadioLine(text))
+                    endLine = i;
+                else
+                    break;
+            }
+
+            for (int i = startLine; i <= endLine; i++)
+            {
+                if (i == excludeLine) continue;
+                string text = gw.GetLine(i);
+                int idx = text.IndexOf("(x)", StringComparison.OrdinalIgnoreCase);
+                if (idx >= 0)
+                {
+                    int pos = gw.PositionFromLine(i) + idx + 1;
+                    gw.SetSelection(pos, pos + 1);
+                    gw.ReplaceSel(" ");
+                }
+            }
+        }
+
+        private static bool IsRadioLine(string text)
+        {
+            if (!(text.StartsWith("- ") || text.StartsWith("* ") || text.StartsWith("+ ")))
+                return false;
+            int p = text.IndexOf('(');
+            return p >= 0 && p <= 3 && (text.Substring(p).StartsWith("( )") || text.Substring(p).StartsWith("(x)", StringComparison.OrdinalIgnoreCase));
         }
 
         public void InitCommandMenu()

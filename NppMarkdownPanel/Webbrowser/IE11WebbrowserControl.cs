@@ -21,6 +21,8 @@ namespace NppMarkdownPanel.Webbrowser
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
         public Action AfterInitCompletedAction { get; set; }
+        public Action<int> CheckboxToggleAction { get; set; }
+        public Action<int> RadioToggleAction { get; set; }
 
         bool webViewInitialized = false;
 
