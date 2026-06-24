@@ -29,5 +29,7 @@ namespace PanelCommon
         bool IsInitialized();
 
         void StopScrollPositionTracking();
+
+        void ExportToPdf(string filePath);
     }
 }
