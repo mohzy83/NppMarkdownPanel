@@ -258,6 +258,8 @@ namespace NppMarkdownPanel
             PluginBase.SetCommand(5, "&Settings", EditSettings);
             PluginBase.SetCommand(6, "&Help", ShowHelp);
             PluginBase.SetCommand(7, "&About", ShowAboutDialog);
+            PluginBase.SetCommand(8, "---", null);
+            PluginBase.SetCommand(9, "Export to &PDF", ExportToPdf);
             idMyDlg = 0;
         }
 
@@ -363,6 +365,11 @@ namespace NppMarkdownPanel
         {
             var aboutDialog = new AboutForm();
             aboutDialog.ShowDialog();
+        }
+
+        private void ExportToPdf()
+        {
+            viewerInterface.ExportToPdf();
         }
 
         private bool initDialog;

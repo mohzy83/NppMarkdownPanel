@@ -216,5 +216,16 @@ namespace NppMarkdownPanel.Webbrowser
         {
 
         }
+
+        public void ExportToPdf(string filePath)
+        {
+            if (!IsInitialized()) return;
+            try
+            {
+                var browser = (SHDocVw.IWebBrowser2)webBrowserPreview.ActiveXInstance;
+                browser.ExecWB(OLECMDID.OLECMDID_PRINT, OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER, IntPtr.Zero, IntPtr.Zero);
+            }
+            catch { }
+        }
     }
 }

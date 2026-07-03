@@ -298,7 +298,6 @@ namespace Webview2Viewer
         {
             string message = e.TryGetWebMessageAsString();
 
-            // Parse die JSON-Nachricht
             var splittedParams = message.Split(';');
             if (splittedParams.Length > 1)
             {
@@ -340,6 +339,14 @@ namespace Webview2Viewer
             blockScrollUpdates = true;
         }
 
+        public async void ExportToPdf(string filePath)
+        {
+            if (!IsInitialized()) return;
+            ExecuteWebviewAction(new Action(async () =>
+            {
+                await webView.CoreWebView2.PrintToPdfAsync(filePath);
+            }));
+        }
 
     }
 }

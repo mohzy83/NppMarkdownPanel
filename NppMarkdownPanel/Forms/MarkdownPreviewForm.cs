@@ -360,5 +360,20 @@ namespace NppMarkdownPanel.Forms
         {
             ClipboardHelper.CopyToClipboard(htmlContentForExport, htmlContentForExport);
         }
+
+        public void ExportToPdf()
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
+                saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(currentFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    webbrowserControl.ExportToPdf(saveFileDialog.FileName);
+                }
+            }
+        }
     }
 }
