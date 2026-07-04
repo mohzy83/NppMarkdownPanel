@@ -23,6 +23,8 @@ namespace Webview2Viewer
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
         public Action AfterInitCompletedAction { get; set; }
+        public Action<int> CheckboxToggleAction { get; set; }
+        public Action<int> RadioToggleAction { get; set; }
 
         private string currentBody;
         private string currentStyle;
@@ -132,6 +134,16 @@ namespace Webview2Viewer
                     await webView.ExecuteScriptAsync(jsScript);
                 }));
 
+                ExecuteWebviewAction(new Action(async () =>
+                {
+                    await webView.ExecuteScriptAsync(checkboxToggleScript);
+                }));
+
+                ExecuteWebviewAction(new Action(async () =>
+                {
+                    await webView.ExecuteScriptAsync(radioToggleScript);
+                }));
+
                 blockScrollUpdates = false;
             }
 
@@ -154,6 +166,54 @@ namespace Webview2Viewer
             "var elementPosition = element.getBoundingClientRect().top;\n" +
             "var offsetPosition = elementPosition + window.pageYOffset - headerOffset;\n" +
             "window.scrollTo({{top: offsetPosition}});";
+
+        const string checkboxToggleScript = @"
+            var checkboxes = document.querySelectorAll('input[type=""checkbox""]');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].disabled = false;
+            }
+            if (!window.__checkboxToggleHandlerInstalled) {
+                window.__checkboxToggleHandlerInstalled = true;
+                document.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'INPUT' && e.target.type === 'checkbox') {
+                        e.preventDefault();
+                        var line = e.target.closest('[data-line]');
+                        if (line) {
+                            window.chrome.webview.postMessage('checkboxToggle;' + line.getAttribute('data-line'));
+                        }
+                    }
+                }, true);
+            }";
+
+        const string radioToggleScript = @"
+            var lis = document.querySelectorAll('li[data-line]');
+            for (var i = 0; i < lis.length; i++) {
+                var li = lis[i];
+                var text = li.innerHTML;
+                if (/^\([ xX]\)\s/.test(text)) {
+                    li.innerHTML = text.replace(/^\([ xX]\)/, '<span class=""md-radio"">$&</span>');
+                }
+            }
+            if (!window.__radioToggleHandlerInstalled) {
+                window.__radioToggleHandlerInstalled = true;
+                document.addEventListener('click', function(e) {
+                    if (e.target.classList && e.target.classList.contains('md-radio')) {
+                        e.preventDefault();
+                        var line = e.target.closest('[data-line]');
+                        if (line) {
+                            var parentList = e.target.closest('ul, ol');
+                            if (parentList) {
+                                var radios = parentList.querySelectorAll('.md-radio');
+                                for (var j = 0; j < radios.length; j++) {
+                                    radios[j].textContent = '( )';
+                                }
+                            }
+                            e.target.textContent = '(x)';
+                            window.chrome.webview.postMessage('radioToggle;' + line.getAttribute('data-line'));
+                        }
+                    }
+                }, true);
+            }";
 
 
         public void ScrollToElementWithLineNo(int lineNo)
@@ -196,6 +256,8 @@ namespace Webview2Viewer
                     {
                         await webView.ExecuteScriptAsync("document.body.innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "'");
                         await webView.ExecuteScriptAsync("if(typeof mermaid!=='undefined'){mermaid.run();}");
+                        await webView.ExecuteScriptAsync(checkboxToggleScript);
+                        await webView.ExecuteScriptAsync(radioToggleScript);
                     }));
                 }
                 if (currentStyle != style)
@@ -314,6 +376,34 @@ namespace Webview2Viewer
                         else
                         {
                             scrollYForFilename.Add(currentDocumentPath, scrolly);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+                else if (action == "checkboxToggle")
+                {
+                    try
+                    {
+                        int lineNo = int.Parse(splittedParams[1]);
+                        if (CheckboxToggleAction != null)
+                        {
+                            CheckboxToggleAction(lineNo);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                }
+                else if (action == "radioToggle")
+                {
+                    try
+                    {
+                        int lineNo = int.Parse(splittedParams[1]);
+                        if (RadioToggleAction != null)
+                        {
+                            RadioToggleAction(lineNo);
                         }
                     }
                     catch (Exception ex)

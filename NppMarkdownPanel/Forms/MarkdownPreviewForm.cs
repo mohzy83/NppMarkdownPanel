@@ -53,6 +53,26 @@ namespace NppMarkdownPanel.Forms
         private IWebbrowserControl webview1Instance;
         private IWebbrowserControl webview2Instance;
         private bool cleanupStarted;
+        private Action<int> checkboxToggleHandler;
+        private Action<int> radioToggleHandler;
+
+        public void SetCheckboxToggleHandler(Action<int> handler)
+        {
+            checkboxToggleHandler = handler;
+            if (webbrowserControl != null)
+            {
+                webbrowserControl.CheckboxToggleAction = handler;
+            }
+        }
+
+        public void SetRadioToggleHandler(Action<int> handler)
+        {
+            radioToggleHandler = handler;
+            if (webbrowserControl != null)
+            {
+                webbrowserControl.RadioToggleAction = handler;
+            }
+        }
 
         public void UpdateSettings(Settings newSettings)
         {
@@ -144,6 +164,8 @@ namespace NppMarkdownPanel.Forms
             webbrowserControl.AddToHost(panel1);
             webbrowserControl.RenderingDoneAction = () => { HideScreenshotAndShowBrowser(); };
             webbrowserControl.StatusTextChangedAction = (status) => { toolStripStatusLabel1.Text = status; };
+            webbrowserControl.CheckboxToggleAction = checkboxToggleHandler;
+            webbrowserControl.RadioToggleAction = radioToggleHandler;
         }
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
