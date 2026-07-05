@@ -12,5 +12,6 @@ namespace NppMarkdownPanel.Forms
         void ScrollToElementWithLineNo(int lineNo);
         bool IsValidFileExtension(string filename);
         void Cleanup();
+        void ExportToPdf();
     }
 }

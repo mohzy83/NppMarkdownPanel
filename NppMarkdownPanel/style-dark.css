@@ -274,6 +274,8 @@ table tr th :last-child, table tr td :last-child {
 }
 
 img {
+    width: auto;
+    height: auto;
     max-width: 100%;
 }
 

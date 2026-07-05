@@ -42,6 +42,8 @@ text `and code ` . . .
  `![tst (1).png](test%20nonAscii%20path\tst%20(1).png?raw=1  "tst (1).png" ){width="20px"}`
 (`?raw=1` works in some clouds)
 
+<img src="./test%20nonAscii%20path/tst%20(1).png" width="10%" height="5%" alt="Some text"/>
+
 #### HTTP image
 
 ![uUSB for power only](https://andrzejq.github.io/El_Prog/assets/img/Mikro-USB.png "uUSB for power only"){style="width:33%;"}  
@@ -49,7 +51,7 @@ text `and code ` . . .
 
 - - - - -
 
-#### Tabels
+#### Tables
 
 header | _Pipe_ | table
 -------|-------:|:-----:
@@ -72,6 +74,18 @@ def f_ąćęł(ńóśźż):
   return ńóśźż
 ````
 
+#### Mermaid graph
+
+```mermaid
+
+graph TD;
+            A-->B;
+            A-->C;
+            B-->D;
+            C-->D;
+```
+
+
 #### details ... summary
 
 Does not work in NppMdP but useful in markdown (run SaveAs...).
@@ -90,7 +104,6 @@ def expensive(arg1, arg2, *, _cache={}):
 ````
 
 </details>
-
 
 
 

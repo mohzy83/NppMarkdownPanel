@@ -54,15 +54,27 @@ namespace MarkdigWrapper
             }
             sb.Clear();
 
-            var document = Markdown.Parse(markDownText, pipeline, null);
+            var result = "";
 
-            SetLineNoAttributeOnAllBlocks(document);
+            try
+            {
+                var document = Markdown.Parse(markDownText, pipeline, null);
 
-            pipeline.Setup(htmlRenderer);
-            htmlRenderer.Render(document);
+                SetLineNoAttributeOnAllBlocks(document);
 
-            htmlWriter.Flush();
-            var result = sb.ToString();
+                pipeline.Setup(htmlRenderer);
+                htmlRenderer.Render(document);
+
+                htmlWriter.Flush();
+                result = sb.ToString();
+                result = FixFragmentLinks(result);
+                if (filepath != null) result = ResolveRelativePaths(result, filepath);
+            }
+            catch (Exception e)
+            {
+                result = e.Message;
+            }
+
             if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             return result;
@@ -77,7 +89,7 @@ namespace MarkdigWrapper
                     SetLineNoAttributeOnAllBlocks(childBlock as ContainerBlock);
                 }
                 var attributes = childBlock.GetAttributes();
-                attributes.Id = childBlock.Line.ToString();
+                attributes.AddProperty("data-line", childBlock.Line.ToString());
                 childBlock.SetAttributes(attributes);
             }
 
@@ -106,6 +118,59 @@ namespace MarkdigWrapper
             return regex.Replace(html, m =>
             {
                 return Uri.UnescapeDataString(m.Value);
+            });
+        }
+
+        /// <summary>
+        /// Markdig resolves fragment-only links (#anchor) against BaseUrl,
+        /// producing file:///path/%23anchor. Convert them back to #anchor.
+        /// </summary>
+        private string FixFragmentLinks(string html)
+        {
+            var regex = new Regex("href=\"file:///[^\"]*%23([^\"]+)\"");
+            return regex.Replace(html, m =>
+            {
+                return "href=\"#" + m.Groups[1].Value + "\"";
+            });
+        }
+
+        private string ResolveRelativePaths(string html, string baseFilePath)
+        {
+            if (string.IsNullOrEmpty(baseFilePath)) return html;
+
+            string baseDir;
+            try
+            {
+                baseDir = Path.GetDirectoryName(baseFilePath);
+                if (string.IsNullOrEmpty(baseDir)) return html;
+            }
+            catch
+            {
+                return html;
+            }
+
+            var regex = new Regex(
+                @"(src|href)\s*=\s*[""']((?!\s*(?:https?|ftp|file|data|about|mailto|javascript):|//)[^""']+)[""']",
+                RegexOptions.IgnoreCase
+            );
+
+            return regex.Replace(html, match =>
+            {
+                var attribute = match.Groups[1].Value;
+                var relativePath = match.Groups[2].Value;
+
+                if (string.IsNullOrWhiteSpace(relativePath) || relativePath.StartsWith("#"))
+                    return match.Value;
+
+                try
+                {
+                    var absolutePath = Path.GetFullPath(Path.Combine(baseDir, relativePath));
+                    return attribute + "=\"file:///" + absolutePath.Replace('\\', '/') + "\"";
+                }
+                catch
+                {
+                    return match.Value;
+                }
             });
         }
     }

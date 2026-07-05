@@ -144,6 +144,26 @@ OUTLINE_SCRIPT_PLACEHOLDER
         private IWebbrowserControl webview1Instance;
         private IWebbrowserControl webview2Instance;
         private bool cleanupStarted;
+        private Action<int> checkboxToggleHandler;
+        private Action<int> radioToggleHandler;
+
+        public void SetCheckboxToggleHandler(Action<int> handler)
+        {
+            checkboxToggleHandler = handler;
+            if (webbrowserControl != null)
+            {
+                webbrowserControl.CheckboxToggleAction = handler;
+            }
+        }
+
+        public void SetRadioToggleHandler(Action<int> handler)
+        {
+            radioToggleHandler = handler;
+            if (webbrowserControl != null)
+            {
+                webbrowserControl.RadioToggleAction = handler;
+            }
+        }
 
         public void UpdateSettings(Settings newSettings)
         {
@@ -235,6 +255,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
             webbrowserControl.AddToHost(panel1);
             webbrowserControl.RenderingDoneAction = () => { HideScreenshotAndShowBrowser(); };
             webbrowserControl.StatusTextChangedAction = (status) => { toolStripStatusLabel1.Text = status; };
+            webbrowserControl.CheckboxToggleAction = checkboxToggleHandler;
+            webbrowserControl.RadioToggleAction = radioToggleHandler;
         }
 
         private RenderResult RenderHtmlInternal(string currentText, string filepath)
@@ -463,6 +485,21 @@ OUTLINE_SCRIPT_PLACEHOLDER
         private void btnCopyToClipboard_Click(object sender, EventArgs e)
         {
             ClipboardHelper.CopyToClipboard(htmlContentForExport, htmlContentForExport);
+        }
+
+        public void ExportToPdf()
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
+                saveFileDialog.RestoreDirectory = true;
+                saveFileDialog.InitialDirectory = Path.GetDirectoryName(currentFilePath);
+                saveFileDialog.FileName = Path.GetFileNameWithoutExtension(currentFilePath);
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    webbrowserControl.ExportToPdf(saveFileDialog.FileName);
+                }
+            }
         }
     }
 }
