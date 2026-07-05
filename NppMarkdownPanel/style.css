@@ -682,7 +682,7 @@ pre {
         }
 
 /* Outline sidebar */
-body {
+body.outline-enabled {
     display: flex;
     padding: 0;
     margin: 0;

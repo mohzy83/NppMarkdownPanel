@@ -33,7 +33,11 @@ namespace NppMarkdownPanel
         {
             try
             {
-                return bool.TryParse(Win32.ReadIniValue(section, key, filename), out bool b) ? b : fallback;
+                var value = Win32.ReadIniValue(section, key, filename);
+                if (bool.TryParse(value, out bool b)) return b;
+                // Also accept the legacy "1"/"0" representation some options are persisted with.
+                if (int.TryParse(value, out int i)) return i != 0;
+                return fallback;
             }
             catch (Exception)
             {
