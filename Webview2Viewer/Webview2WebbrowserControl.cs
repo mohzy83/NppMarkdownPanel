@@ -444,7 +444,7 @@ namespace Webview2Viewer
             blockScrollUpdates = true;
         }
 
-        public async void ExportToPdf(string filePath)
+        public void ExportToPdf(string filePath)
         {
             if (!IsInitialized()) return;
             ExecuteWebviewAction(new Action(async () =>
