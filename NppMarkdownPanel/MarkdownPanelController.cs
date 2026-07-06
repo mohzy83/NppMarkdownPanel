@@ -101,7 +101,7 @@ namespace NppMarkdownPanel
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
-            settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, true);
+            settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
             return settings;
         }
 
@@ -357,7 +357,7 @@ namespace NppMarkdownPanel
         {
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
-            showOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, true);
+            showOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
