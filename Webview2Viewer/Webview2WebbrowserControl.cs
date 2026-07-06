@@ -31,6 +31,8 @@ namespace Webview2Viewer
 
         private string currentDocumentPath;
 
+        private bool currentPageHasOutline;
+
         private CoreWebView2Environment environment = null;
 
         public Webview2WebbrowserControl()
@@ -247,6 +249,17 @@ namespace Webview2Viewer
                 fullReload = true;
             }
 
+            // Detect the actual outline DOM element, not the string "outline-sidebar":
+            // the outline CSS rules (.outline-sidebar {...}) are embedded in every page via
+            // the style placeholder, so a bare substring check is always true and the toggle
+            // would never force a full reload.
+            var pageHasOutline = content.Contains("<nav id=\"outline-sidebar\"");
+            if (!fullReload && this.currentPageHasOutline != pageHasOutline)
+            {
+                fullReload = true;
+            }
+            this.currentPageHasOutline = pageHasOutline;
+
             if (!fullReload && currentBody != null && currentStyle != null)
             {
                 if (currentBody != body)
@@ -254,8 +267,10 @@ namespace Webview2Viewer
                     currentBody = body;
                     ExecuteWebviewAction(new Action(async () =>
                     {
-                        await webView.ExecuteScriptAsync("document.body.innerHTML = '" + HttpUtility.JavaScriptStringEncode(currentBody) + "'");
-                        await webView.ExecuteScriptAsync("if(typeof mermaid!=='undefined'){mermaid.run();}");
+                        await webView.ExecuteScriptAsync(
+                            "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}})();" +
+                            "if(typeof mermaid!=='undefined'){mermaid.run();}"
+                        );
                         await webView.ExecuteScriptAsync(checkboxToggleScript);
                         await webView.ExecuteScriptAsync(radioToggleScript);
                     }));

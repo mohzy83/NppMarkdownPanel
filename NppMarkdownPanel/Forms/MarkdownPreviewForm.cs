@@ -40,9 +40,100 @@ namespace NppMarkdownPanel.Forms
             </html>
             ";
 
+        const string OUTLINE_HTML_BASE =
+         @"<!DOCTYPE html>
+            <html>
+                <head>                    
+                    <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
+                    <meta http-equiv=""content-type"" content=""text/html; charset=utf-8""></meta>
+                    <title>{0}</title>
+                    <style type=""text/css"">
+                    {1}
+                    </style>
+                    <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
+                    <script>
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    </script>
+                </head>
+                <body class=""outline-enabled"" style=""{2}"">
+                    <nav id=""outline-sidebar"" class=""outline-sidebar"">
+                        <div class=""outline-header"">Outline</div>
+                        <div id=""outline-content"" class=""outline-content""></div>
+                    </nav>
+                    <div id=""outline-main"" class=""outline-main markdown-body"">{3}</div>
+                    <button id=""outline-toggle"" class=""outline-toggle"" title=""Toggle Outline"" onclick=""document.getElementById('outline-sidebar').classList.toggle('collapsed');this.classList.toggle('collapsed');"">&#9776;</button>
+OUTLINE_SCRIPT_PLACEHOLDER
+                    <script>
+                    if(typeof mermaid!=='undefined'){{mermaid.run();}}
+                    </script>
+                </body>
+            </html>
+            ";
+
+        const string OUTLINE_SCRIPT = @"<script>
+(function(){
+    var content = document.getElementById('outline-content');
+    var main = document.getElementById('outline-main');
+    var sidebar = document.getElementById('outline-sidebar');
+    var toggle = document.getElementById('outline-toggle');
+
+    window.buildOutline = function() {
+        content.innerHTML = '';
+        var hs = main.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (hs.length === 0) {
+            sidebar.style.display = 'none';
+            toggle.style.display = 'none';
+            return;
+        }
+        sidebar.style.display = '';
+        toggle.style.display = '';
+        var min = 7;
+        for (var i = 0; i < hs.length; i++) {
+            var lvl = parseInt(hs[i].tagName.substring(1));
+            if (lvl < min) min = lvl;
+        }
+        for (var i = 0; i < hs.length; i++) {
+            var h = hs[i];
+            var lvl = parseInt(h.tagName.substring(1)) - min + 1;
+            var txt = h.textContent || h.innerText || '';
+            var ln = h.getAttribute('data-line') || '';
+            var a = document.createElement('a');
+            a.className = 'outline-item outline-l' + lvl;
+            a.setAttribute('data-line', ln);
+            a.textContent = txt;
+            a.addEventListener('click', function(e) {
+                e.preventDefault();
+                var t = main.querySelector('[data-line=""' + this.getAttribute('data-line') + '""]');
+                if (t) t.scrollIntoView({behavior:'smooth',block:'start'});
+            });
+            content.appendChild(a);
+        }
+    };
+
+    window.addEventListener('scroll', function() {
+        var items = content.querySelectorAll('.outline-item');
+        if (items.length === 0) return;
+        var hs = main.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        var sp = window.scrollY + 140;
+        var fl = null;
+        for (var i = 0; i < hs.length; i++) {
+            if (hs[i].getBoundingClientRect().top + window.scrollY <= sp) fl = hs[i].getAttribute('data-line');
+        }
+        for (var i = 0; i < items.length; i++) items[i].classList.remove('active');
+        if (fl) {
+            var m = content.querySelector('[data-line=""' + fl + '""]');
+            if (m) m.classList.add('active');
+        }
+    });
+
+    buildOutline();
+})();
+</script>";
+
         const string MSG_NO_SUPPORTED_FILE_EXT = "<h3>The current file <u>{0}</u> has no valid Markdown file extension.</h3><div>Valid file extensions:{1}</div>";
 
         private Task<RenderResult> renderTask;
+        private int renderGeneration;
 
         private string htmlContentForExport;
         private string htmlContentForExportWithLightTheme;
@@ -172,11 +263,14 @@ namespace NppMarkdownPanel.Forms
         {
             var defaultBodyStyle = "";
             var markdownStyleContent = GetCssContent();
+            var htmlTemplate = settings.ShowOutline ? OUTLINE_HTML_BASE : DEFAULT_HTML_BASE;
 
             if (!IsValidFileExtension(currentFilePath))
             {
                 var invalidExtensionMessageBody = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
-                var invalidExtensionMessage = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
+                var invalidExtensionMessage = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
+                if (settings.ShowOutline)
+                    invalidExtensionMessage = InjectOutlineScript(invalidExtensionMessage);
 
                 return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent, invalidExtensionMessage);
             }
@@ -184,9 +278,16 @@ namespace NppMarkdownPanel.Forms
             var resultForBrowser = markdownService.ConvertToHtml(currentText, filepath, true);
             var resultForExport = markdownService.ConvertToHtml(currentText, null, false);
 
-            var markdownHtmlBrowser = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
-            var markdownHtmlFileExport = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
-            var markdownHtmlFileExportWithLightTheme = string.Format(DEFAULT_HTML_BASE, Path.GetFileName(filepath), GetCssContent(true), defaultBodyStyle, resultForExport);
+            var markdownHtmlBrowser = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
+            var markdownHtmlFileExport = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
+            var markdownHtmlFileExportWithLightTheme = string.Format(htmlTemplate, Path.GetFileName(filepath), GetCssContent(true), defaultBodyStyle, resultForExport);
+
+            if (settings.ShowOutline)
+            {
+                markdownHtmlBrowser = InjectOutlineScript(markdownHtmlBrowser);
+                markdownHtmlFileExport = InjectOutlineScript(markdownHtmlFileExport);
+                markdownHtmlFileExportWithLightTheme = InjectOutlineScript(markdownHtmlFileExportWithLightTheme);
+            }
 
             return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent, markdownHtmlFileExportWithLightTheme);
         }
@@ -216,36 +317,34 @@ namespace NppMarkdownPanel.Forms
         {
             Action renderAction = () =>
             {
-                if (renderTask == null || renderTask.IsCompleted)
+                int myGeneration = ++renderGeneration;
+                MakeAndDisplayScreenShot();
+                webbrowserControl.PrepareContentUpdate(preserveVerticalScrollPosition);
+
+                var context = TaskScheduler.FromCurrentSynchronizationContext();
+                renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
+                renderTask.ContinueWith((renderedText) =>
                 {
-                    MakeAndDisplayScreenShot();
-                    webbrowserControl.PrepareContentUpdate(preserveVerticalScrollPosition);
-
-                    var context = TaskScheduler.FromCurrentSynchronizationContext();
-                    renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
-                    renderTask.ContinueWith((renderedText) =>
+                    if (!cleanupStarted && myGeneration == renderGeneration)
                     {
-                        if (!cleanupStarted)
+                        webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
+                        htmlContentForExport = renderedText.Result.ResultForExport;
+                        htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
+                        currentMarkdownText = currentText;
+                        if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
                         {
-                            webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
-                            htmlContentForExport = renderedText.Result.ResultForExport;
-                            htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
-                            currentMarkdownText = currentText;
-                            if (!String.IsNullOrWhiteSpace(settings.HtmlFileName))
+                            bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
+                            if (valid)
                             {
-                                bool valid = Utils.ValidateFileSelection(settings.HtmlFileName, out string fullPath, out string error, "HTML Output");
-                                if (valid)
-                                {
-                                    settings.HtmlFileName = fullPath; // the validation was run against this path, so we want to make sure the state of the preview matches that
-                                    writeHtmlContentToFile(settings.HtmlFileName);
-                                }
+                                settings.HtmlFileName = fullPath;
+                                writeHtmlContentToFile(settings.HtmlFileName);
                             }
-                            webbrowserControl.SetZoomLevel(settings.ZoomLevel);
                         }
+                        webbrowserControl.SetZoomLevel(settings.ZoomLevel);
+                    }
 
-                    }, context);
-                    renderTask.Start();
-                }
+                }, context);
+                renderTask.Start();
             };
             webbrowserControl.AfterInitCompletedAction = renderAction;
             if (webbrowserControl.IsInitialized())
@@ -376,6 +475,11 @@ namespace NppMarkdownPanel.Forms
                 webview2Instance.Dispose();
                 webview2Instance = null;
             }
+        }
+
+        private static string InjectOutlineScript(string html)
+        {
+            return html.Replace("OUTLINE_SCRIPT_PLACEHOLDER", OUTLINE_SCRIPT);
         }
 
         private void btnCopyToClipboard_Click(object sender, EventArgs e)

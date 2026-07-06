@@ -42,6 +42,8 @@ namespace NppMarkdownPanel
         private int currentFirstVisibleLine;
         private bool syncViewWithFirstVisibleLine;
 
+        private bool showOutline;
+
         private bool nppReady;
         private Settings settings;
         private MarkdownPreviewForm previewForm;
@@ -99,6 +101,7 @@ namespace NppMarkdownPanel
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
+            settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, true);
             return settings;
         }
 
@@ -354,16 +357,18 @@ namespace NppMarkdownPanel
         {
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
+            showOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, true);
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
             PluginBase.SetCommand(3, "Synchronize with &first visible line in editor", SyncViewWithFirstVisibleLine, syncViewWithFirstVisibleLine);
-            PluginBase.SetCommand(4, "---", null);
-            PluginBase.SetCommand(5, "&Settings", EditSettings);
-            PluginBase.SetCommand(6, "&Help", ShowHelp);
-            PluginBase.SetCommand(7, "&About", ShowAboutDialog);
-            PluginBase.SetCommand(8, "---", null);
-            PluginBase.SetCommand(9, "Export to &PDF", ExportToPdf);
+            PluginBase.SetCommand(4, "Show &outline", ToggleShowOutline, showOutline);
+            PluginBase.SetCommand(5, "---", null);
+            PluginBase.SetCommand(6, "&Settings", EditSettings);
+            PluginBase.SetCommand(7, "&Help", ShowHelp);
+            PluginBase.SetCommand(8, "&About", ShowAboutDialog);
+            PluginBase.SetCommand(9, "---", null);
+            PluginBase.SetCommand(10, "Export to &PDF", ExportToPdf);
             idMyDlg = 0;
         }
 
@@ -433,6 +438,14 @@ namespace NppMarkdownPanel
             if (syncViewWithFirstVisibleLine) ScrollToElementAtLineNo(scintillaGateway.GetFirstVisibleLine());
         }
 
+        private void ToggleShowOutline()
+        {
+            showOutline = !showOutline;
+            settings.ShowOutline = showOutline;
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[4]._cmdID, Win32.MF_BYCOMMAND | (showOutline ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            if (isPanelVisible) RenderMarkdownDirect();
+        }
+
         public void SetToolBarIcon()
         {
             toolbarIcons tbIconsOld = new toolbarIcons();
@@ -464,6 +477,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
+            Win32.WriteIniValue("Options", "ShowOutline", settings.ShowOutline.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
         {
