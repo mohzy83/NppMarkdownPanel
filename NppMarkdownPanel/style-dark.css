@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (c) 2017 Chris Patuzzo
 https://twitter.com/chrispatuzzo
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -681,3 +681,99 @@ pre {
         .markdown-alert.markdown-alert-caution .markdown-alert-title {
             color: var(--color-caution);
         }
+
+/* Outline sidebar */
+body.outline-enabled {
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+.outline-sidebar {
+    width: 220px;
+    min-width: 220px;
+    height: 100vh;
+    overflow-y: auto;
+    border-right: 1px solid #3a3a3a;
+    background-color: #252525;
+    position: sticky;
+    top: 0;
+}
+
+.outline-header {
+    padding: 10px 42px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #999;
+    border-bottom: 1px solid #3a3a3a;
+    position: sticky;
+    top: 0;
+    background-color: #252525;
+    z-index: 1;
+}
+
+.outline-content {
+    padding: 8px 0;
+}
+
+.outline-item {
+    display: block;
+    padding: 4px 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #999;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+}
+
+.outline-item:hover {
+    color: #ddd;
+    background-color: #333;
+}
+
+.outline-item.active {
+    color: #ddd;
+    background-color: #1a3350;
+    border-left-color: #58a6ff;
+    font-weight: 600;
+}
+
+.outline-l1 { padding-left: 12px; font-weight: 600; font-size: 13px; }
+.outline-l2 { padding-left: 24px; }
+.outline-l3 { padding-left: 36px; }
+.outline-l4 { padding-left: 48px; }
+.outline-l5 { padding-left: 60px; }
+.outline-l6 { padding-left: 72px; }
+
+.outline-main {
+    flex: 1;
+    min-width: 0;
+    padding: 30px;
+}
+
+.outline-toggle {
+    position: fixed;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    background: #252525;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+    color: #999;
+}
+
+.outline-toggle:hover {
+    background: #333;
+}
+
+.outline-sidebar.collapsed {
+    display: none;
+}

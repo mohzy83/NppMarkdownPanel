@@ -23,11 +23,15 @@ namespace PanelCommon
         Action<string> StatusTextChangedAction { get; set; }
         Action RenderingDoneAction { get; set; }
         Action AfterInitCompletedAction { get; set; }
+        Action<int> CheckboxToggleAction { get; set; }
+        Action<int> RadioToggleAction { get; set; }
 
         void Dispose();
 
         bool IsInitialized();
 
         void StopScrollPositionTracking();
+
+        void ExportToPdf(string filePath);
     }
 }

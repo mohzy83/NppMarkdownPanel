@@ -44,6 +44,8 @@ namespace NppMarkdownPanel
         private int currentFirstVisibleLine;
         private bool syncViewWithFirstVisibleLine;
 
+        private bool showOutline;
+
         private bool nppReady;
         private Settings settings;
         private MarkdownPreviewForm previewForm;
@@ -63,6 +65,8 @@ namespace NppMarkdownPanel
             settings = LoadSettingsFromIni();
             viewerInterface = MarkdownPreviewForm.InitViewer(settings, HandleWndProc);
             previewForm = (MarkdownPreviewForm)viewerInterface;
+            previewForm.SetCheckboxToggleHandler(ToggleCheckboxAtLine);
+            previewForm.SetRadioToggleHandler(ToggleRadioAtLine);
             renderTimer = new Timer();
             renderTimer.Interval = renderRefreshRateMilliSeconds;
             renderTimer.Tick += OnRenderTimerElapsed;
@@ -102,6 +106,7 @@ namespace NppMarkdownPanel
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
             settings.EnableThreeStateToggle = PluginUtils.ReadIniBool("Options", "EnableThreeStateToggle", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
+            settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
             return settings;
         }
 
@@ -251,18 +256,124 @@ namespace NppMarkdownPanel
             viewerInterface.ScrollToElementWithLineNo(lineNo);
         }
 
+        private void ToggleCheckboxAtLine(int lineNo)
+        {
+            var gw = scintillaGatewayFactory();
+            string lineText = gw.GetLine(lineNo);
+
+            var idxEmpty = lineText.IndexOf("[ ]");
+            if (idxEmpty >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxEmpty + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel("x");
+                RenderAfterToggle();
+                return;
+            }
+
+            var idxChecked = lineText.IndexOf("[x]", StringComparison.OrdinalIgnoreCase);
+            if (idxChecked >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxChecked + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel(" ");
+                RenderAfterToggle();
+            }
+        }
+
+        private void RenderAfterToggle()
+        {
+            renderTimer.Stop();
+            RenderMarkdownDirect();
+        }
+
+        private void ToggleRadioAtLine(int lineNo)
+        {
+            var gw = scintillaGatewayFactory();
+            string lineText = gw.GetLine(lineNo);
+
+            var hasEmpty = lineText.IndexOf("( )") >= 0;
+            var idxChecked = lineText.IndexOf("(x)", StringComparison.OrdinalIgnoreCase);
+
+            if (hasEmpty)
+            {
+                int pos = gw.PositionFromLine(lineNo) + lineText.IndexOf("( )") + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel("x");
+                UncheckRadioGroup(gw, lineNo);
+            }
+            else if (idxChecked >= 0)
+            {
+                int pos = gw.PositionFromLine(lineNo) + idxChecked + 1;
+                gw.SetSelection(pos, pos + 1);
+                gw.ReplaceSel(" ");
+            }
+
+            RenderAfterToggle();
+        }
+
+        private void UncheckRadioGroup(IScintillaGateway gw, int excludeLine)
+        {
+            int totalLines = gw.GetLineCount();
+            int startLine = excludeLine;
+            int endLine = excludeLine;
+
+            for (int i = excludeLine - 1; i >= 0; i--)
+            {
+                string text = gw.GetLine(i).TrimStart();
+                if (IsRadioLine(text))
+                    startLine = i;
+                else
+                    break;
+            }
+
+            for (int i = excludeLine + 1; i < totalLines; i++)
+            {
+                string text = gw.GetLine(i).TrimStart();
+                if (IsRadioLine(text))
+                    endLine = i;
+                else
+                    break;
+            }
+
+            for (int i = startLine; i <= endLine; i++)
+            {
+                if (i == excludeLine) continue;
+                string text = gw.GetLine(i);
+                int idx = text.IndexOf("(x)", StringComparison.OrdinalIgnoreCase);
+                if (idx >= 0)
+                {
+                    int pos = gw.PositionFromLine(i) + idx + 1;
+                    gw.SetSelection(pos, pos + 1);
+                    gw.ReplaceSel(" ");
+                }
+            }
+        }
+
+        private static bool IsRadioLine(string text)
+        {
+            if (!(text.StartsWith("- ") || text.StartsWith("* ") || text.StartsWith("+ ")))
+                return false;
+            int p = text.IndexOf('(');
+            return p >= 0 && p <= 3 && (text.Substring(p).StartsWith("( )") || text.Substring(p).StartsWith("(x)", StringComparison.OrdinalIgnoreCase));
+        }
+
         public void InitCommandMenu()
         {
             syncViewWithCaretPosition = (Win32.GetPrivateProfileInt("Options", "SyncViewWithCaretPosition", 0, iniFilePath) != 0);
             syncViewWithFirstVisibleLine = (Win32.GetPrivateProfileInt("Options", "SyncWithFirstVisibleLine", 0, iniFilePath) != 0);
+            showOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
             PluginBase.SetCommand(0, "Toggle &Markdown Panel", TogglePanelVisible);
             PluginBase.SetCommand(1, "---", null);
             PluginBase.SetCommand(2, "Synchronize with &caret position", SyncViewWithCaret, syncViewWithCaretPosition);
             PluginBase.SetCommand(3, "Synchronize with &first visible line in editor", SyncViewWithFirstVisibleLine, syncViewWithFirstVisibleLine);
-            PluginBase.SetCommand(4, "---", null);
-            PluginBase.SetCommand(5, "&Settings", EditSettings);
-            PluginBase.SetCommand(6, "&Help", ShowHelp);
-            PluginBase.SetCommand(7, "&About", ShowAboutDialog);
+            PluginBase.SetCommand(4, "Show &outline", ToggleShowOutline, showOutline);
+            PluginBase.SetCommand(5, "---", null);
+            PluginBase.SetCommand(6, "&Settings", EditSettings);
+            PluginBase.SetCommand(7, "&Help", ShowHelp);
+            PluginBase.SetCommand(8, "&About", ShowAboutDialog);
+            PluginBase.SetCommand(9, "---", null);
+            PluginBase.SetCommand(10, "Export to &PDF", ExportToPdf);
             idMyDlg = 0;
         }
 
@@ -333,6 +444,14 @@ namespace NppMarkdownPanel
             if (syncViewWithFirstVisibleLine) ScrollToElementAtLineNo(scintillaGateway.GetFirstVisibleLine());
         }
 
+        private void ToggleShowOutline()
+        {
+            showOutline = !showOutline;
+            settings.ShowOutline = showOutline;
+            Win32.CheckMenuItem(Win32.GetMenu(PluginBase.nppData._nppHandle), PluginBase._funcItems.Items[4]._cmdID, Win32.MF_BYCOMMAND | (showOutline ? Win32.MF_CHECKED : Win32.MF_UNCHECKED));
+            if (isPanelVisible) RenderMarkdownDirect();
+        }
+
         public void SetToolBarIcon()
         {
             toolbarIcons tbIconsOld = new toolbarIcons();
@@ -365,11 +484,17 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "EnableThreeStateToggle", settings.EnableThreeStateToggle.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
+            Win32.WriteIniValue("Options", "ShowOutline", settings.ShowOutline.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
         {
             var aboutDialog = new AboutForm();
             aboutDialog.ShowDialog();
+        }
+
+        private void ExportToPdf()
+        {
+            viewerInterface.ExportToPdf();
         }
 
         private bool initDialog;
@@ -426,6 +551,8 @@ namespace NppMarkdownPanel
         {
             if (!initDialog)
             {
+                viewerInterface.InitRenderingEngine(settings);
+
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = viewerInterface.Handle;
                 _nppTbData.pszName = Main.PluginTitle;

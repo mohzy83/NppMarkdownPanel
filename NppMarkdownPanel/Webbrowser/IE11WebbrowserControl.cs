@@ -21,6 +21,8 @@ namespace NppMarkdownPanel.Webbrowser
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
         public Action AfterInitCompletedAction { get; set; }
+        public Action<int> CheckboxToggleAction { get; set; }
+        public Action<int> RadioToggleAction { get; set; }
 
         bool webViewInitialized = false;
 
@@ -215,6 +217,17 @@ namespace NppMarkdownPanel.Webbrowser
         public void StopScrollPositionTracking()
         {
 
+        }
+
+        public void ExportToPdf(string filePath)
+        {
+            if (!IsInitialized()) return;
+            try
+            {
+                var browser = (SHDocVw.IWebBrowser2)webBrowserPreview.ActiveXInstance;
+                browser.ExecWB(OLECMDID.OLECMDID_PRINT, OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER, IntPtr.Zero, IntPtr.Zero);
+            }
+            catch { }
         }
     }
 }
