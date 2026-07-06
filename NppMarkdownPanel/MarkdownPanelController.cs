@@ -100,6 +100,7 @@ namespace NppMarkdownPanel
             settings.AllowAllExtensions = PluginUtils.ReadIniBool("Options", "AllowAllExtensions", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
+            settings.EnableThreeStateToggle = PluginUtils.ReadIniBool("Options", "EnableThreeStateToggle", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
             return settings;
         }
@@ -280,6 +281,7 @@ namespace NppMarkdownPanel
                 settings.AllowAllExtensions = settingsForm.AllowAllExtensions;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
+                settings.EnableThreeStateToggle = settingsForm.EnableThreeStateToggle;
                 settings.RenderingEngine = settingsForm.RenderingEngine;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
@@ -360,6 +362,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "SupportFilesWithNoExt", settings.SupportFilesWithNoExt.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "EnableThreeStateToggle", settings.EnableThreeStateToggle.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
         }
@@ -373,20 +376,41 @@ namespace NppMarkdownPanel
 
         private void TogglePanelVisible()
         {
-            switch (_panelState)
+            if (settings.EnableThreeStateToggle)
             {
-                case PanelState.Hidden:
-                    ShowDocked();
-                    _panelState = PanelState.Docked;
-                    break;
-                case PanelState.Docked:
-                    GoFullscreen();
-                    _panelState = PanelState.FullScreen;
-                    break;
-                case PanelState.FullScreen:
+                switch (_panelState)
+                {
+                    case PanelState.Hidden:
+                        ShowDocked();
+                        _panelState = PanelState.Docked;
+                        break;
+                    case PanelState.Docked:
+                        GoFullscreen();
+                        _panelState = PanelState.FullScreen;
+                        break;
+                    case PanelState.FullScreen:
+                        RestoreFromFullscreen();
+                        _panelState = PanelState.Hidden;
+                        break;
+                }
+            }
+            else
+            {
+                if (_panelState == PanelState.FullScreen)
+                {
                     RestoreFromFullscreen();
                     _panelState = PanelState.Hidden;
-                    break;
+                }
+                else if (_panelState == PanelState.Hidden)
+                {
+                    ShowDocked();
+                    _panelState = PanelState.Docked;
+                }
+                else
+                {
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
+                    _panelState = PanelState.Hidden;
+                }
             }
 
             if (isPanelVisible)
