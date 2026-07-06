@@ -496,6 +496,8 @@ namespace NppMarkdownPanel
         {
             if (!initDialog)
             {
+                viewerInterface.InitRenderingEngine(settings);
+
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = viewerInterface.Handle;
                 _nppTbData.pszName = Main.PluginTitle;

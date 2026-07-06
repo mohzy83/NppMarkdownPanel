@@ -190,7 +190,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
             tbPreview.Visible = newSettings.ShowToolbar;
             statusStrip2.Visible = newSettings.ShowStatusbar;
 
-            if (webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
+            if (webbrowserControl != null && webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
             {
                 InitRenderingEngine(settings);
             }
@@ -218,10 +218,10 @@ OUTLINE_SCRIPT_PLACEHOLDER
             this.settings = settings;
             panel1.Visible = true;
 
-            InitRenderingEngine(settings);
+            //InitRenderingEngine(settings);
         }
 
-        private void InitRenderingEngine(Settings newSettings)
+        public void InitRenderingEngine(Settings newSettings)
         {
             panel1.Controls.Clear();
 
@@ -315,6 +315,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
         public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)
         {
+            if (webbrowserControl == null) return;
+
             Action renderAction = () =>
             {
                 int myGeneration = ++renderGeneration;
@@ -360,6 +362,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
         /// </summary>
         private void MakeAndDisplayScreenShot()
         {
+            if (webbrowserControl == null) return;
+
             Bitmap bm = webbrowserControl.MakeScreenshot();
             if (bm != null)
             {
@@ -371,6 +375,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
         private void HideScreenshotAndShowBrowser()
         {
+            if (webbrowserControl == null) return;
+
             if (pictureBoxScreenshot.Image != null)
             {
                 pictureBoxScreenshot.Visible = false;
@@ -380,6 +386,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
         public void ScrollToElementWithLineNo(int lineNo)
         {
+            if (webbrowserControl == null) return;
+
             webbrowserControl.ScrollToElementWithLineNo((int)lineNo);
         }
 
@@ -444,6 +452,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
         public void SetMarkdownFilePath(string filepath, bool isRename = false)
         {
+            if (webbrowserControl == null) return;
 
             if (isRename)
             {
@@ -451,7 +460,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
             }
             else
             {
-                if (currentFilePath!= filepath)
+                if (currentFilePath != filepath)
                 {
                     // We're about to switch to a new file. Stop tracking the current scolly value, as we can get unexpected results now...
                     webbrowserControl.StopScrollPositionTracking();
@@ -489,6 +498,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
         public void ExportToPdf()
         {
+            if (webbrowserControl == null) return;
+
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
