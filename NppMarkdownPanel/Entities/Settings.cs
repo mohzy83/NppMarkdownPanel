@@ -28,6 +28,7 @@ namespace NppMarkdownPanel.Entities
         public bool ShowToolbar { get; set; }
         public bool ShowStatusbar { get; set; }
         public bool AutoShowPanel { get; set; }
+        public bool EnableThreeStateToggle { get; set; }
         public bool ShowOutline { get; set; }
 
         public string PreProcessorCommandFilename { get; set; }

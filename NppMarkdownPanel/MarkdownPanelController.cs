@@ -29,7 +29,9 @@ namespace NppMarkdownPanel
         private const int inputUpdateThresholdMiliseconds = 400;
         private int lastTickCount = 0;
 
-        private bool isPanelVisible;
+        private enum PanelState { Hidden, Docked, FullScreen }
+        private PanelState _panelState;
+        private bool isPanelVisible => _panelState != PanelState.Hidden;
 
         private readonly Func<IScintillaGateway> scintillaGatewayFactory;
         private readonly INotepadPPGateway notepadPPGateway;
@@ -50,6 +52,8 @@ namespace NppMarkdownPanel
         private bool _disposedValue;
         IntPtr _ptrNppTbData;
         private Icon _icon;
+        private IntPtr _fullScreenSplitterHandle;
+        private double _savedWidthRatio;
 
         public MarkdownPanelController()
         {
@@ -100,6 +104,7 @@ namespace NppMarkdownPanel
             settings.AllowAllExtensions = PluginUtils.ReadIniBool("Options", "AllowAllExtensions", iniFilePath);
             settings.IsDarkModeEnabled = IsDarkModeEnabled();
             settings.AutoShowPanel = PluginUtils.ReadIniBool("Options", "AutoShowPanel", iniFilePath);
+            settings.EnableThreeStateToggle = PluginUtils.ReadIniBool("Options", "EnableThreeStateToggle", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
             settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
             return settings;
@@ -387,6 +392,7 @@ namespace NppMarkdownPanel
                 settings.AllowAllExtensions = settingsForm.AllowAllExtensions;
                 settings.ShowStatusbar = settingsForm.ShowStatusbar;
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
+                settings.EnableThreeStateToggle = settingsForm.EnableThreeStateToggle;
                 settings.RenderingEngine = settingsForm.RenderingEngine;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
@@ -475,6 +481,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "SupportedFileExt", settings.SupportedFileExt, iniFilePath);
             Win32.WriteIniValue("Options", "SupportFilesWithNoExt", settings.SupportFilesWithNoExt.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AutoShowPanel", settings.AutoShowPanel.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "EnableThreeStateToggle", settings.EnableThreeStateToggle.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
             Win32.WriteIniValue("Options", "ShowOutline", settings.ShowOutline.ToString(), iniFilePath);
@@ -493,6 +500,54 @@ namespace NppMarkdownPanel
         private bool initDialog;
 
         private void TogglePanelVisible()
+        {
+            if (settings.EnableThreeStateToggle)
+            {
+                switch (_panelState)
+                {
+                    case PanelState.Hidden:
+                        ShowDocked();
+                        _panelState = PanelState.Docked;
+                        break;
+                    case PanelState.Docked:
+                        GoFullscreen();
+                        _panelState = PanelState.FullScreen;
+                        break;
+                    case PanelState.FullScreen:
+                        RestoreFromFullscreen();
+                        _panelState = PanelState.Hidden;
+                        break;
+                }
+            }
+            else
+            {
+                if (_panelState == PanelState.FullScreen)
+                {
+                    RestoreFromFullscreen();
+                    _panelState = PanelState.Hidden;
+                }
+                else if (_panelState == PanelState.Hidden)
+                {
+                    ShowDocked();
+                    _panelState = PanelState.Docked;
+                }
+                else
+                {
+                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
+                    _panelState = PanelState.Hidden;
+                }
+            }
+
+            if (isPanelVisible)
+            {
+                var currentFilePath = notepadPPGateway.GetCurrentFilePath();
+                viewerInterface.SetMarkdownFilePath(currentFilePath);
+                viewerInterface.UpdateSettings(settings);
+                RenderMarkdownDirect(false);
+            }
+        }
+
+        private void ShowDocked()
         {
             if (!initDialog)
             {
@@ -514,15 +569,122 @@ namespace NppMarkdownPanel
             }
             else
             {
-                Win32.SendMessage(PluginBase.nppData._nppHandle, !isPanelVisible ? (uint)NppMsg.NPPM_DMMSHOW : (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
+                Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMSHOW, 0, viewerInterface.Handle);
             }
-            isPanelVisible = !isPanelVisible;
-            if (isPanelVisible)
+        }
+
+        private void GoFullscreen()
+        {
+            var containerHandle = Win32.GetParent(viewerInterface.Handle);
+            var nppHandle = PluginBase.nppData._nppHandle;
+
+            _fullScreenSplitterHandle = FindRightSplitter(nppHandle, containerHandle);
+
+            var dockMgrHandle = Win32.FindWindowEx(nppHandle, IntPtr.Zero, Win32.DOCKING_MANAGER_CLASS, null);
+
+            if (dockMgrHandle != IntPtr.Zero && _fullScreenSplitterHandle != IntPtr.Zero)
             {
-                var currentFilePath = notepadPPGateway.GetCurrentFilePath();
-                viewerInterface.SetMarkdownFilePath(currentFilePath);
-                viewerInterface.UpdateSettings(settings);
-                RenderMarkdownDirect(false);
+                Win32.GetClientRect(nppHandle, out RECT nppClient);
+                Win32.GetWindowRect(containerHandle, out RECT containerScreenRect);
+
+                var clientOrigin = new Point(0, 0);
+                Win32.ClientToScreen(nppHandle, ref clientOrigin);
+
+                int currentWidth = containerScreenRect.Right - containerScreenRect.Left;
+                _savedWidthRatio = (double)currentWidth / nppClient.Right;
+                int targetOffset = nppClient.Right - currentWidth - 4;
+
+                Win32.SendMessage(dockMgrHandle, (uint)DockMgrMsg.DMM_MOVE_SPLITTER, targetOffset, _fullScreenSplitterHandle);
+            }
+        }
+
+        private IntPtr FindRightSplitter(IntPtr nppHandle, IntPtr containerHandle)
+        {
+            Win32.GetWindowRect(containerHandle, out RECT containerScreenRect);
+
+            IntPtr hwnd = IntPtr.Zero;
+            while ((hwnd = Win32.FindWindowEx(nppHandle, hwnd, Win32.VERT_SPLITTER_CLASS, null)) != IntPtr.Zero)
+            {
+                Win32.GetWindowRect(hwnd, out RECT splitterRect);
+                if (splitterRect.Right >= containerScreenRect.Left - 10 && splitterRect.Right <= containerScreenRect.Left + 5)
+                    return hwnd;
+            }
+            return IntPtr.Zero;
+        }
+
+        private void RestoreFromFullscreen()
+        {
+            var nppHandle = PluginBase.nppData._nppHandle;
+            var dockMgrHandle = Win32.FindWindowEx(nppHandle, IntPtr.Zero, Win32.DOCKING_MANAGER_CLASS, null);
+
+            if (dockMgrHandle != IntPtr.Zero && _fullScreenSplitterHandle != IntPtr.Zero && _savedWidthRatio > 0)
+            {
+                Win32.GetClientRect(nppHandle, out RECT nppClient);
+                var containerHandle = Win32.GetParent(viewerInterface.Handle);
+                Win32.GetWindowRect(containerHandle, out RECT containerScreenRect);
+
+                var clientOrigin = new Point(0, 0);
+                Win32.ClientToScreen(nppHandle, ref clientOrigin);
+
+                int currentWidth = containerScreenRect.Right - containerScreenRect.Left;
+                int targetWidth = (int)(nppClient.Right * _savedWidthRatio);
+                int restoreOffset = targetWidth - currentWidth;
+
+                Win32.SendMessage(dockMgrHandle, (uint)DockMgrMsg.DMM_MOVE_SPLITTER, restoreOffset, _fullScreenSplitterHandle);
+            }
+            _savedWidthRatio = 0;
+            _fullScreenSplitterHandle = IntPtr.Zero;
+
+            Win32.SendMessage(nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
+        }
+
+        private void ToolWindowCloseAction()
+        {
+            if (_panelState == PanelState.FullScreen)
+            {
+                var nppHandle = PluginBase.nppData._nppHandle;
+                var dockMgrHandle = Win32.FindWindowEx(nppHandle, IntPtr.Zero, Win32.DOCKING_MANAGER_CLASS, null);
+
+                if (dockMgrHandle != IntPtr.Zero && _fullScreenSplitterHandle != IntPtr.Zero && _savedWidthRatio > 0)
+                {
+                    Win32.GetClientRect(nppHandle, out RECT nppClient);
+                    var containerHandle = Win32.GetParent(viewerInterface.Handle);
+                    Win32.GetWindowRect(containerHandle, out RECT containerScreenRect);
+
+                    var clientOrigin = new Point(0, 0);
+                    Win32.ClientToScreen(nppHandle, ref clientOrigin);
+
+                    int currentWidth = containerScreenRect.Right - containerScreenRect.Left;
+                    int targetWidth = (int)(nppClient.Right * _savedWidthRatio);
+                    int restoreOffset = targetWidth - currentWidth;
+
+                    Win32.SendMessage(dockMgrHandle, (uint)DockMgrMsg.DMM_MOVE_SPLITTER, restoreOffset, _fullScreenSplitterHandle);
+                }
+                _savedWidthRatio = 0;
+                _fullScreenSplitterHandle = IntPtr.Zero;
+            }
+            _panelState = PanelState.Hidden;
+        }
+
+        private void AutoShowOrHidePanel(string currentFilePath)
+        {
+            if (nppReady && settings.AutoShowPanel)
+            {
+                if (_panelState == PanelState.FullScreen)
+                {
+                    if (!viewerInterface.IsValidFileExtension(currentFilePath))
+                    {
+                        RestoreFromFullscreen();
+                        _panelState = PanelState.Hidden;
+                    }
+                    return;
+                }
+
+                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath)) ||
+                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath)))
+                {
+                    TogglePanelVisible();
+                }
             }
         }
 
@@ -542,33 +704,11 @@ namespace NppMarkdownPanel
             }
         }
 
-        /// <summary>
-        /// Actions to do after the tool window was closed
-        /// </summary>
-        private void ToolWindowCloseAction()
-        {
-            TogglePanelVisible();
-        }
-
         private bool IsDarkModeEnabled()
         {
             // NPPM_ISDARKMODEENABLED (NPPMSG + 107)
             IntPtr ret = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)(Constants.NPPMSG + 107), Unused, Unused);
             return ret.ToInt32() == 1;
-        }
-
-
-        private void AutoShowOrHidePanel(string currentFilePath)
-        {
-            if (nppReady && settings.AutoShowPanel)
-            {
-                // automatically show panel for supported file types
-                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath)) ||
-                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath)))
-                {
-                    TogglePanelVisible();
-                }
-            }
         }
 
         [StructLayout(LayoutKind.Sequential)]

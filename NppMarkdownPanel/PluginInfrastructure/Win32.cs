@@ -394,5 +394,20 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         {
             WritePrivateProfileString(section, key, value, iniFileName);
         }
+
+        [DllImport("user32")]
+        public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32")]
+        public static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [DllImport("user32")]
+        public static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport("user32")]
+        public static extern IntPtr FindWindowEx(IntPtr hWndParent, IntPtr hWndChildAfter, string lpszClass, string lpszWindow);
+
+        public const string DOCKING_MANAGER_CLASS = "dockingManager";
+        public const string VERT_SPLITTER_CLASS = "wedockspliter";
     }
 }
