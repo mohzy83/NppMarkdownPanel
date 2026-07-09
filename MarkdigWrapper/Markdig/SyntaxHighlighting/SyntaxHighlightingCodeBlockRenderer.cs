@@ -74,7 +74,7 @@ namespace Markdig.SyntaxHighlighting
             var language = languageTypeAdapter.Parse(languageMoniker, firstLine);
 
             if (language?.Id == null)
-            { // TODO: handle unrecognised language formats
+            { // TODO: handle unrecognised language formats, e.g. when using mermaid diagrams
                 return code;
             }
 
