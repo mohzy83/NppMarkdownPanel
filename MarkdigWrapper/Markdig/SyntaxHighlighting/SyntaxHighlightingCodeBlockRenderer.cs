@@ -41,11 +41,12 @@ namespace Markdig.SyntaxHighlighting
                 return;
             }
 
-            if (_underlyingRenderer != null
-                && ((_underlyingRenderer.BlockMapping != null && _underlyingRenderer.BlockMapping.ContainsKey(languageMoniker))
-                    || (_underlyingRenderer.BlocksAsDiv != null && _underlyingRenderer.BlocksAsDiv.Contains(languageMoniker))))
+            if (string.Equals(languageMoniker, LanguageTypeAdapter.LANGUAGE_KEY_MERMAID, StringComparison.OrdinalIgnoreCase))
             {
-                _underlyingRenderer.Write(renderer, obj);
+                var mermaidCode = GetCode(obj, out _);
+                renderer.Write("<pre class=\"mermaid\">");
+                renderer.WriteEscape(mermaidCode);
+                renderer.WriteLine("</pre>");
                 return;
             }
 
