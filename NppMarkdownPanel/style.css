@@ -27,6 +27,7 @@ body {
     background-color: white;
     padding: 30px;
     color: #333;
+    min-width: 250px;
 }
 
     body > *:first-child {

@@ -19,14 +19,15 @@ SOFTWARE.
 */
 
 body {
-  font-family: Helvetica, arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.6;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: #202020;
-  padding: 30px;
-  color: #CCCCCC;
+    font-family: Helvetica, arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #202020;
+    padding: 30px;
+    color: #CCCCCC;
+    min-width: 250px;
 }
 
     body > *:first-child {
