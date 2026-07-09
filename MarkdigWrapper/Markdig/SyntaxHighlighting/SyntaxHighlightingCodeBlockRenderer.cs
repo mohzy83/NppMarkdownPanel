@@ -41,12 +41,11 @@ namespace Markdig.SyntaxHighlighting
                 return;
             }
 
-            if (string.Equals(languageMoniker, LanguageTypeAdapter.LANGUAGE_KEY_MERMAID, StringComparison.OrdinalIgnoreCase))
+            if (_underlyingRenderer != null
+                && ((_underlyingRenderer.BlockMapping != null && _underlyingRenderer.BlockMapping.ContainsKey(languageMoniker))
+                    || (_underlyingRenderer.BlocksAsDiv != null && _underlyingRenderer.BlocksAsDiv.Contains(languageMoniker))))
             {
-                var mermaidCode = GetCode(obj, out _);
-                renderer.Write("<pre class=\"mermaid\">");
-                renderer.WriteEscape(mermaidCode);
-                renderer.WriteLine("</pre>");
+                _underlyingRenderer.Write(renderer, obj);
                 return;
             }
 
@@ -75,7 +74,7 @@ namespace Markdig.SyntaxHighlighting
             var language = languageTypeAdapter.Parse(languageMoniker, firstLine);
 
             if (language?.Id == null)
-            { // TODO: handle unrecognised language formats, e.g. when using mermaid diagrams
+            { // TODO: handle unrecognised language formats
                 return code;
             }
 
