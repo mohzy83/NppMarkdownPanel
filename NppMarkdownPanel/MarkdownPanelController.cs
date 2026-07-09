@@ -515,6 +515,7 @@ namespace NppMarkdownPanel
                         break;
                     case PanelState.FullScreen:
                         RestoreFromFullscreen();
+                        ClosePanel();
                         _panelState = PanelState.Hidden;
                         break;
                 }
@@ -524,6 +525,7 @@ namespace NppMarkdownPanel
                 if (_panelState == PanelState.FullScreen)
                 {
                     RestoreFromFullscreen();
+                    ClosePanel();
                     _panelState = PanelState.Hidden;
                 }
                 else if (_panelState == PanelState.Hidden)
@@ -533,8 +535,7 @@ namespace NppMarkdownPanel
                 }
                 else
                 {
-                    Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
-                    _panelState = PanelState.Hidden;
+                    ClosePanel();
                 }
             }
 
@@ -545,6 +546,12 @@ namespace NppMarkdownPanel
                 viewerInterface.UpdateSettings(settings);
                 RenderMarkdownDirect(false);
             }
+        }
+
+        private void ClosePanel()
+        {
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
+            _panelState = PanelState.Hidden;
         }
 
         private void ShowDocked()
@@ -635,33 +642,13 @@ namespace NppMarkdownPanel
             _savedWidthRatio = 0;
             _fullScreenSplitterHandle = IntPtr.Zero;
 
-            Win32.SendMessage(nppHandle, (uint)NppMsg.NPPM_DMMHIDE, 0, viewerInterface.Handle);
         }
 
         private void ToolWindowCloseAction()
         {
             if (_panelState == PanelState.FullScreen)
             {
-                var nppHandle = PluginBase.nppData._nppHandle;
-                var dockMgrHandle = Win32.FindWindowEx(nppHandle, IntPtr.Zero, Win32.DOCKING_MANAGER_CLASS, null);
-
-                if (dockMgrHandle != IntPtr.Zero && _fullScreenSplitterHandle != IntPtr.Zero && _savedWidthRatio > 0)
-                {
-                    Win32.GetClientRect(nppHandle, out RECT nppClient);
-                    var containerHandle = Win32.GetParent(viewerInterface.Handle);
-                    Win32.GetWindowRect(containerHandle, out RECT containerScreenRect);
-
-                    var clientOrigin = new Point(0, 0);
-                    Win32.ClientToScreen(nppHandle, ref clientOrigin);
-
-                    int currentWidth = containerScreenRect.Right - containerScreenRect.Left;
-                    int targetWidth = (int)(nppClient.Right * _savedWidthRatio);
-                    int restoreOffset = targetWidth - currentWidth;
-
-                    Win32.SendMessage(dockMgrHandle, (uint)DockMgrMsg.DMM_MOVE_SPLITTER, restoreOffset, _fullScreenSplitterHandle);
-                }
-                _savedWidthRatio = 0;
-                _fullScreenSplitterHandle = IntPtr.Zero;
+                RestoreFromFullscreen();
             }
             _panelState = PanelState.Hidden;
         }
@@ -675,13 +662,19 @@ namespace NppMarkdownPanel
                     if (!viewerInterface.IsValidFileExtension(currentFilePath))
                     {
                         RestoreFromFullscreen();
+                        ClosePanel();
                         _panelState = PanelState.Hidden;
                     }
                     return;
                 }
 
-                if ((!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath)) ||
-                    (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath)))
+                if (isPanelVisible && !viewerInterface.IsValidFileExtension(currentFilePath))
+                {
+                    ClosePanel();
+                    return;
+                }
+
+                if (!isPanelVisible && viewerInterface.IsValidFileExtension(currentFilePath))
                 {
                     TogglePanelVisible();
                 }
