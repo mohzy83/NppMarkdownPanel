@@ -4,6 +4,7 @@ using ColorCode;
 
 namespace Markdig.SyntaxHighlighting {
     public class LanguageTypeAdapter {
+        public const string LANGUAGE_KEY_MERMAID = "mermaid";
         private readonly Dictionary<string, ILanguage> languageMap = new Dictionary<string, ILanguage> {
             {"csharp", Languages.CSharp},
             {"cplusplus", Languages.Cpp}
