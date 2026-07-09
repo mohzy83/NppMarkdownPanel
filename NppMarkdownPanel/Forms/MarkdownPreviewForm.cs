@@ -512,5 +512,10 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 }
             }
         }
+
+        private void btnExportToPdf_Click(object sender, EventArgs e)
+        {
+            ExportToPdf();
+        }
     }
 }
