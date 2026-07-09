@@ -16,7 +16,7 @@ namespace NppMarkdownPanel.Forms
 
         private const string AboutDialogText =
                 "NppMarkdownPanel for Notepad++\r\n\r\nVersion {0}\r\n\r\nCreated by Mohzy 2019-2026\r\n\r\nGithub: https://github.com/mohzy83/NppMarkdownPanel\r\n\r\nUsed Libs and Resources:\r\n\r\n" +
-                "Markdig 0.41.3 by xoofx - https://github.com/lunet-io/markdig\r\n\r\n" +
+                "Markdig 1.3.2 by xoofx - https://github.com/xoofx/markdig\r\n\r\n" +
                 "NotepadPlusPlusPluginPack.Net 0.95.00 by kbilsted - https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net\t\r\n\r\n" +
                 "WebView2 Edge 1.0.3650.58 by Microsoft - https://developer.microsoft.com/de-de/microsoft-edge/webview2?form=MA13LH\r\n\r\n" +
                 "ColorCode (Portable) 1.0.3 by Bashir Souid and  Richard Slater\r\nhttps://github.com/RichardSlater/ColorCodePortable\r\n\r\n" +
