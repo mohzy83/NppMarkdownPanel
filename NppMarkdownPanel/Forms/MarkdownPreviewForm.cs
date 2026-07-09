@@ -173,22 +173,36 @@ OUTLINE_SCRIPT_PLACEHOLDER
             if (isDarkModeEnabled)
             {
                 tbPreview.BackColor = Color.Black;
-                btnSaveHtml.ForeColor = Color.White;
-                btnSaveWithLightTheme.ForeColor = Color.White;
-                statusStrip2.BackColor = Color.Black;
+
+                foreach (ToolStripItem tsItem in tbPreview.Items)
+                {
+                    tsItem.ForeColor = Color.White;
+                }
+
+                //btnSaveWithLightTheme.ForeColor = Color.White;
+
+                // Footer
                 toolStripStatusLabel1.ForeColor = Color.White;
+                footerStatusStrip.BackColor = Color.Black;
             }
             else
             {
                 tbPreview.BackColor = SystemColors.Control;
-                btnSaveHtml.ForeColor = SystemColors.ControlText;
-                btnSaveWithLightTheme.ForeColor = SystemColors.ControlText;
-                statusStrip2.BackColor = SystemColors.Control;
+
+                foreach (ToolStripItem tsItem in tbPreview.Items)
+                {
+                    tsItem.ForeColor = SystemColors.ControlText;
+                }
+
+                //btnSaveWithLightTheme.ForeColor = SystemColors.ControlText;
+
+                // Footer
+                footerStatusStrip.BackColor = SystemColors.Control;
                 toolStripStatusLabel1.ForeColor = SystemColors.ControlText;
             }
 
             tbPreview.Visible = newSettings.ShowToolbar;
-            statusStrip2.Visible = newSettings.ShowStatusbar;
+            footerStatusStrip.Visible = newSettings.ShowStatusbar;
 
             if (webbrowserControl != null && webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
             {
