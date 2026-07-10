@@ -8,7 +8,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.9.1** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.9.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 
 ## Prerequisites
@@ -111,6 +111,9 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 * #### Show Statusbar in Preview Window (Preview Links)
     Checking this box will show the status bar, which previews urls for links. By default, this is unchecked.
 
+* #### Enable three-state toggle (docked → fullscreen → hidden)
+	This option changes the behaviour of the "Toggle Markdown Panel" function. When this option is checked, the panel can be
+	switched between the states hidden, docked and fullscreen. When this option in not checked, the panel toggles between the states docked and hidden.
 
 ### Preview Window Toolbar
 
@@ -120,10 +123,13 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 * #### Save As (with Light Theme)
     Saves the rendered preview as an HTML document using the light theme (even if the darkmode is enabled).
 
-![/saveas_lighttheme](help/saveas_lighttheme.png "Save As Light Theme")	
+![saveas_lighttheme](help/saveas_lighttheme.png "Save As Light Theme")	
 
 * #### Copy to clipboard
     Copies the current preview to the clipboard (formatted in HTML). 
+	
+* #### Export to PDF
+    Exports the current preview as PDF file. 
 
 ### Synchronize viewer with caret position
 
@@ -135,6 +141,13 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 When this option is enabled, the plugin ensures that the first visible line in the 
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
+### Show Outline
+
+When this option is enabled, an outline of the document is displayed. 
+You can toggle the full outline with the burger menu switch.
+The outline is disabled by default.
+![npp-outline.png](help/npp-outline.png "Outline")	
+
 ### Shortcut to toggle Panel
 It is possible to toggle the Panel with a shortcut. Therefore the Notepad++ "Shortcut Mapper" can be used.
 The Shortcut Mapper can be opened by "Settings" -> "Shortcut Mapper..." and switch to the tab "Plugin commands". 
@@ -143,6 +156,25 @@ After that it's possible to use the shortcut to open or close the panel.
 ![shortcut.png](help/shortcut.png "Bind shortcut to toggle function")
 
 ## Version History
+
+### Version 0.9.2 (released 2026-07-10)
+- Features
+	- Allow show/hide of source pane and not just rendered view pane [#138](https://github.com/mohzy83/NppMarkdownPanel/issues/138) (contributed by letreset)
+		-  see three state toggle
+	- PDF Export [#153](https://github.com/mohzy83/NppMarkdownPanel/issues/153) (contributed by letreset)
+	- Disable wrapping text [#132](https://github.com/mohzy83/NppMarkdownPanel/issues/132)
+		- min width of 250px introduced
+	- Improved Mermaid Support [#108](https://github.com/mohzy83/NppMarkdownPanel/issues/108) (contributed by letreset)
+	- Display document outline [#167](https://github.com/mohzy83/NppMarkdownPanel/issues/167) (contributed by letreset)
+		- see "Show Outline" option
+	- Defer WebView2 initialization (just initialize WebView2 when preview is actually shown) [#164](https://github.com/mohzy83/NppMarkdownPanel/issues/164)
+    - Add checkbox and radio toggle in preview pane [#7](https://github.com/mohzy83/NppMarkdownPanel/issues/7) (contributed by letreset)
+	- Markdig updated to version 1.3.2
+- Bug fixes
+	- Fixed: Local relative path not working with img tag [#84](https://github.com/mohzy83/NppMarkdownPanel/issues/84) (contributed by letreset)
+	- Fixed: same-document anchor links [#86](https://github.com/mohzy83/NppMarkdownPanel/issues/86) (contributed by letreset)
+	- Fixed: Markdown panel black when loading a large table in a detail element [#158](https://github.com/mohzy83/NppMarkdownPanel/issues/158)
+	- Fixed: Add mermaid graph markdown setting pre tag class [#115](https://github.com/mohzy83/NppMarkdownPanel/issues/115) (contributed by letreset)
 
 ### Version 0.9.1 (released 2026-01-19)
 
@@ -287,7 +319,7 @@ The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [http
 ### Contributors
 
 Thanks to the contributors: 
-
+[letreset](https://github.com/letreset), 
 [vinsworldcom](https://github.com/vinsworldcom), 
 [rdipardo](https://github.com/rdipardo), 
 [andrzejQ](https://github.com/andrzejQ),
