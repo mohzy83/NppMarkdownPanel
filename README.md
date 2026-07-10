@@ -159,21 +159,22 @@ After that it's possible to use the shortcut to open or close the panel.
 
 ### Version 0.9.2 (released 2026-07-10)
 - Features
-	- Allow show/hide of source pane and not just rendered view pane [#138](https://github.com/mohzy83/NppMarkdownPanel/issues/138)) (implemented by letreset)
+	- Allow show/hide of source pane and not just rendered view pane [#138](https://github.com/mohzy83/NppMarkdownPanel/issues/138) (contributed by letreset)
 		-  see three state toggle
-	- PDF Export [#153](https://github.com/mohzy83/NppMarkdownPanel/issues/153)) (implemented by letreset)
-	- Disable wrapping text [#132](https://github.com/mohzy83/NppMarkdownPanel/issues/132))
+	- PDF Export [#153](https://github.com/mohzy83/NppMarkdownPanel/issues/153) (contributed by letreset)
+	- Disable wrapping text [#132](https://github.com/mohzy83/NppMarkdownPanel/issues/132)
 		- min width of 250px introduced
-	- Support of Mermaid [#108](https://github.com/mohzy83/NppMarkdownPanel/issues/108)) (implemented by letreset)
-	- Display document outline [#167](https://github.com/mohzy83/NppMarkdownPanel/issues/167)) (implemented by letreset)
-		- see "Show Outline"
+	- Improved Mermaid Support [#108](https://github.com/mohzy83/NppMarkdownPanel/issues/108) (contributed by letreset)
+	- Display document outline [#167](https://github.com/mohzy83/NppMarkdownPanel/issues/167) (contributed by letreset)
+		- see "Show Outline" option
+	- Defer WebView2 initialization (just initialize WebView2 when preview is actually shown) [#164](https://github.com/mohzy83/NppMarkdownPanel/issues/164)
+    - Add checkbox and radio toggle in preview pane [#7](https://github.com/mohzy83/NppMarkdownPanel/issues/7) (contributed by letreset)
 	- Markdig updated to version 1.3.2
-	- Defer WebView2 initialization (just initialize WebView2 when preview is actually shown) [#164](https://github.com/mohzy83/NppMarkdownPanel/issues/164))
-
 - Bug fixes
-	- Fixed: Local relative path not working with img tag [#84](https://github.com/mohzy83/NppMarkdownPanel/issues/84))
-	- Fixed: Markdown panel black when loading a large table in a detail element [#158](https://github.com/mohzy83/NppMarkdownPanel/issues/158))
-	- Fixed: Add mermaid graph markdown setting pre tag class [#115](https://github.com/mohzy83/NppMarkdownPanel/issues/115))
+	- Fixed: Local relative path not working with img tag [#84](https://github.com/mohzy83/NppMarkdownPanel/issues/84) (contributed by letreset)
+	- Fixed: same-document anchor links [#86](https://github.com/mohzy83/NppMarkdownPanel/issues/86) (contributed by letreset)
+	- Fixed: Markdown panel black when loading a large table in a detail element [#158](https://github.com/mohzy83/NppMarkdownPanel/issues/158)
+	- Fixed: Add mermaid graph markdown setting pre tag class [#115](https://github.com/mohzy83/NppMarkdownPanel/issues/115) (contributed by letreset)
 
 ### Version 0.9.1 (released 2026-01-19)
 
