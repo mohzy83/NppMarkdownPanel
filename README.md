@@ -123,7 +123,7 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 * #### Save As (with Light Theme)
     Saves the rendered preview as an HTML document using the light theme (even if the darkmode is enabled).
 
-![/saveas_lighttheme](help/saveas_lighttheme.png "Save As Light Theme")	
+![saveas_lighttheme](help/saveas_lighttheme.png "Save As Light Theme")	
 
 * #### Copy to clipboard
     Copies the current preview to the clipboard (formatted in HTML). 
@@ -146,7 +146,7 @@ editor is also visible in the preview. (This is an alternative to _Synchronize v
 When this option is enabled, an outline of the document is displayed. 
 You can toggle the full outline with the burger menu switch.
 The outline is disabled by default.
-![/npp-outline.png](help/npp-outline.png "Outline")	
+![npp-outline.png](help/npp-outline.png "Outline")	
 
 ### Shortcut to toggle Panel
 It is possible to toggle the Panel with a shortcut. Therefore the Notepad++ "Shortcut Mapper" can be used.
