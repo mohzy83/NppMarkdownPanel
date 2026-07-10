@@ -8,7 +8,7 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.9.1** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.9.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
 
 ## Prerequisites
@@ -111,6 +111,9 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 * #### Show Statusbar in Preview Window (Preview Links)
     Checking this box will show the status bar, which previews urls for links. By default, this is unchecked.
 
+* #### Enable three-state toggle (docked → fullscreen → hidden)
+	This option changes the behaviour of the "Toggle Markdown Panel" function. When this option is checked, the panel can be
+	switched between the states hidden, docked and fullscreen. When this option in not checked, the panel toggles between the states docked and hidden.
 
 ### Preview Window Toolbar
 
@@ -124,6 +127,9 @@ To open the settings for this plugin: Plugins -> MarkdownPanel -> Settings
 
 * #### Copy to clipboard
     Copies the current preview to the clipboard (formatted in HTML). 
+	
+* #### Export to PDF
+    Exports the current preview as PDF file. 
 
 ### Synchronize viewer with caret position
 
@@ -135,6 +141,13 @@ This is similar to the _Synchronize Vertical Scrolling_ option of Notepad++ for 
 When this option is enabled, the plugin ensures that the first visible line in the 
 editor is also visible in the preview. (This is an alternative to _Synchronize viewer with caret position_)
 
+### Show Outline
+
+When this option is enabled, an outline of the document is displayed. 
+You can toggle the full outline with the burger menu switch.
+The outline is disabled by default.
+![/npp-outline.png](help/npp-outline.png "Outline")	
+
 ### Shortcut to toggle Panel
 It is possible to toggle the Panel with a shortcut. Therefore the Notepad++ "Shortcut Mapper" can be used.
 The Shortcut Mapper can be opened by "Settings" -> "Shortcut Mapper..." and switch to the tab "Plugin commands". 
@@ -143,6 +156,16 @@ After that it's possible to use the shortcut to open or close the panel.
 ![shortcut.png](help/shortcut.png "Bind shortcut to toggle function")
 
 ## Version History
+
+### Version 0.9.2 (released 2026-07-10)
+- Features
+	- Preserve preview scroll position when switching to another file #96
+	- Support (preview) files without an extension #133
+	- Copy to clipboard as formatted text / HTML #128
+	- Text Callouts #141
+
+- Bug fixes
+	- Fixed: Undocking the main (preview) window eventually freezes NPP++ #106
 
 ### Version 0.9.1 (released 2026-01-19)
 
@@ -287,7 +310,7 @@ The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [http
 ### Contributors
 
 Thanks to the contributors: 
-
+[letreset](https://github.com/letreset), 
 [vinsworldcom](https://github.com/vinsworldcom), 
 [rdipardo](https://github.com/rdipardo), 
 [andrzejQ](https://github.com/andrzejQ),
