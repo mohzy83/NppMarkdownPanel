@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("NppMarkdownPanel MarkdigWrapper")]
+[assembly: AssemblyTitle("NppMarkdownPanel Webview2Viewer")]
 [assembly: AssemblyDescription("Plugin to preview markdown files")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("NppMarkdownPanel MarkdigWrapper")]
+[assembly: AssemblyProduct("NppMarkdownPanel Webview2Viewer")]
 [assembly: AssemblyCopyright("Copyright © Moritz Hasse 2019-2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5b497612-55aa-4130-a0af-6d46b31a34eb")]
+[assembly: Guid("3c937d06-1210-4958-b48d-6d68149f8e66")]
 
 // Version information for an assembly consists of the following four values:
 //

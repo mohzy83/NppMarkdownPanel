@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="InterfaceProvider.cs" />
     <Compile Include="Webview2WebbrowserControl.cs" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PanelCommon\PanelCommon.csproj">
