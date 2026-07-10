@@ -159,13 +159,21 @@ After that it's possible to use the shortcut to open or close the panel.
 
 ### Version 0.9.2 (released 2026-07-10)
 - Features
-	- Preserve preview scroll position when switching to another file #96
-	- Support (preview) files without an extension #133
-	- Copy to clipboard as formatted text / HTML #128
-	- Text Callouts #141
+	- Allow show/hide of source pane and not just rendered view pane [#138](https://github.com/mohzy83/NppMarkdownPanel/issues/138)) (implemented by letreset)
+		-  see three state toggle
+	- PDF Export [#153](https://github.com/mohzy83/NppMarkdownPanel/issues/153)) (implemented by letreset)
+	- Disable wrapping text [#132](https://github.com/mohzy83/NppMarkdownPanel/issues/132))
+		- min width of 250px introduced
+	- Support of Mermaid [#108](https://github.com/mohzy83/NppMarkdownPanel/issues/108)) (implemented by letreset)
+	- Display document outline [#167](https://github.com/mohzy83/NppMarkdownPanel/issues/167)) (implemented by letreset)
+		- see "Show Outline"
+	- Markdig updated to version 1.3.2
+	- Defer WebView2 initialization (just initialize WebView2 when preview is actually shown) [#164](https://github.com/mohzy83/NppMarkdownPanel/issues/164))
 
 - Bug fixes
-	- Fixed: Undocking the main (preview) window eventually freezes NPP++ #106
+	- Fixed: Local relative path not working with img tag [#84](https://github.com/mohzy83/NppMarkdownPanel/issues/84))
+	- Fixed: Markdown panel black when loading a large table in a detail element [#158](https://github.com/mohzy83/NppMarkdownPanel/issues/158))
+	- Fixed: Add mermaid graph markdown setting pre tag class [#115](https://github.com/mohzy83/NppMarkdownPanel/issues/115))
 
 ### Version 0.9.1 (released 2026-01-19)
 
