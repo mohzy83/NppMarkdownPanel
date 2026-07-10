@@ -269,7 +269,7 @@ Bugfix release
 
 | Name                              | Version | Authors                             | Link                                                                                                                   |
 |-----------------------------------|---------|-------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| **Markdig**                       | 0.41.1      | xoofx                               | [https://github.com/lunet-io/markdig](https://github.com/lunet-io/markdig)                                             |
+| **Markdig**                       | 1.3.2      | xoofx                               | [https://github.com/xoofx/markdig](https://github.com/xoofx/markdig)                                             |
 | **NotepadPlusPlusPluginPack.Net** | 0.95    	  | kbilsted                            | [https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net](https://github.com/kbilsted/NotepadPlusPlusPluginPack.Net) |
 | **WebView2 Edge** 				| 1.0.3650.58 | Microsoft                           | [https://developer.microsoft.com/de-de/microsoft-edge/webview2?form=MA13LH](https://developer.microsoft.com/de-de/microsoft-edge/webview2?form=MA13LH) |
 | **ColorCode (Portable)**          | 1.0.3       | Bashir Souid and Richard Slater     | [https://github.com/RichardSlater/ColorCodePortable](https://github.com/RichardSlater/ColorCodePortable)               |
