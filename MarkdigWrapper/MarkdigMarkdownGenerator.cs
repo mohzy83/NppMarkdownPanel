@@ -11,14 +11,18 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.SyntaxHighlighting;
 using MarkdigWrapper.Markdig.YamlFrontMatter;
+using Ganss.Xss;
 
 namespace MarkdigWrapper
 {
     public class MarkdigMarkdownGenerator
     {
+        private static readonly HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
 
         public MarkdigMarkdownGenerator()
         {
+            htmlSanitizer.AllowedAttributes.Add("data-line");
+            htmlSanitizer.AllowedAttributes.Add("class");
         }
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
@@ -77,6 +81,7 @@ namespace MarkdigWrapper
 
             if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
+            result = htmlSanitizer.Sanitize(result);
             return result;
         }
 
