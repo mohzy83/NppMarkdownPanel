@@ -32,6 +32,9 @@ namespace Webview2Viewer
         private string currentDocumentPath;
 
         private bool currentPageHasOutline;
+        private bool forceFullReload;
+
+        private Action<string> openLocalFileInNppAction;
 
         private CoreWebView2Environment environment = null;
 
@@ -46,8 +49,9 @@ namespace Webview2Viewer
             webView = null;
         }
 
-        public void Initialize(int zoomLevel)
+        public void Initialize(int zoomLevel, Action<string> openLocalFileInNppAction)
         {
+            this.openLocalFileInNppAction = openLocalFileInNppAction;
             var cacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CONFIG_FOLDER_NAME, "webview2");
             //var props = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties();
             //props.UserDataFolder = cacheDir;
@@ -239,6 +243,11 @@ namespace Webview2Viewer
             body = body.Replace(replaceFileMapping, virtualHostProtocol + virtualHostName);
 
             var fullReload = false;
+            if (forceFullReload)
+            {
+                forceFullReload = false;
+                fullReload = true;
+            }
             if (this.currentDocumentPath != currentDocumentPath)
             {
                 ExecuteWebviewAction(new Action(() =>
@@ -331,17 +340,18 @@ namespace Webview2Viewer
             }
             else if (!e.Uri.ToString().StartsWith("data:"))
             {
-                e.Cancel = true;
-                var p = new Process();
                 var navUri = e.Uri.ToString();
                 if (navUri.StartsWith(virtualHostProtocol + virtualHostName))
                 {
+                    e.Cancel = true;
                     var currentPath = Path.GetDirectoryName(currentDocumentPath);
                     navUri = navUri.Replace(virtualHostProtocol + virtualHostName, currentPath);
                     navUri = Uri.UnescapeDataString(navUri);
+                    openLocalFileInNppAction(navUri); 
+                } else
+                {
+                    forceFullReload = true;
                 }
-                p.StartInfo = new ProcessStartInfo(navUri);
-                p.Start();
             }
         }
 

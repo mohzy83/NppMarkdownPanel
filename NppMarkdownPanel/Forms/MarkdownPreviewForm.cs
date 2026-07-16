@@ -165,7 +165,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
             }
         }
 
-        public void UpdateSettings(Settings newSettings)
+        public void UpdateSettings(Settings newSettings, Action<string> openLocalFileInNppAction)
         {
             this.settings = newSettings;
 
@@ -206,7 +206,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
             if (webbrowserControl != null && webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
             {
-                InitRenderingEngine(settings);
+                InitRenderingEngine(settings, openLocalFileInNppAction);
             }
 
         }
@@ -235,7 +235,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
             //InitRenderingEngine(settings);
         }
 
-        public void InitRenderingEngine(Settings newSettings)
+        public void InitRenderingEngine(Settings newSettings, Action<string> openLocalFileInNppAction)
         {
             panel1.Controls.Clear();
 
@@ -244,7 +244,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 if (webview1Instance == null)
                 {
                     webbrowserControl = new IE11WebbrowserControl();
-                    webbrowserControl.Initialize(newSettings.ZoomLevel);
+                    webbrowserControl.Initialize(newSettings.ZoomLevel, openLocalFileInNppAction);
                     webview1Instance = webbrowserControl;
                 }
                 else
@@ -257,7 +257,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 if (webview2Instance == null)
                 {
                     webbrowserControl = new Webview2WebbrowserControl();
-                    webbrowserControl.Initialize(newSettings.ZoomLevel);
+                    webbrowserControl.Initialize(newSettings.ZoomLevel, openLocalFileInNppAction);
                     webview2Instance = webbrowserControl;
                 }
                 else

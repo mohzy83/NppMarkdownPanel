@@ -149,7 +149,7 @@ namespace NppMarkdownPanel
             if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST + 27))
             {
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
-                viewerInterface.UpdateSettings(settings);
+                viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
                 if (isPanelVisible) RenderMarkdownDirect();
             }
             if (isPanelVisible && notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
@@ -396,7 +396,7 @@ namespace NppMarkdownPanel
                 settings.RenderingEngine = settingsForm.RenderingEngine;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
-                viewerInterface.UpdateSettings(settings);
+                viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
                 SaveSettings();
                 //Update Preview
                 if (isPanelVisible) RenderMarkdownDirect();
@@ -543,7 +543,7 @@ namespace NppMarkdownPanel
             {
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 viewerInterface.SetMarkdownFilePath(currentFilePath);
-                viewerInterface.UpdateSettings(settings);
+                viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
                 RenderMarkdownDirect(false);
             }
         }
@@ -558,7 +558,7 @@ namespace NppMarkdownPanel
         {
             if (!initDialog)
             {
-                viewerInterface.InitRenderingEngine(settings);
+                viewerInterface.InitRenderingEngine(settings, OpenLocalFileInNpp);
 
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = viewerInterface.Handle;
@@ -788,6 +788,12 @@ namespace NppMarkdownPanel
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        private void OpenLocalFileInNpp(string filename)
+        {
+          // Opens any local file in new NPP Tab. Even a binary file (e.g. executable file) is interpreted as chars and shouldnt be a problem
+            notepadPPGateway.OpenFile(filename);
         }
 
     }

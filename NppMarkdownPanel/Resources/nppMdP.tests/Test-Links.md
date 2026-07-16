@@ -68,3 +68,7 @@ This header has special characters. [Link to it](#header-with-code-and-bold).
 # Multiple    Spaces
 
 [Link to multiple spaces header](#multiple-spaces).
+
+# Local MD File Link
+
+[Link to local Md File - Test-Checkbox.md](Test-Checkbox.md)

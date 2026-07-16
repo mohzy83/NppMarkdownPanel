@@ -24,10 +24,13 @@ namespace NppMarkdownPanel.Webbrowser
         public Action<int> CheckboxToggleAction { get; set; }
         public Action<int> RadioToggleAction { get; set; }
 
+        private Action<string> openLocalFileInNppAction;
+
         bool webViewInitialized = false;
 
-        public void Initialize(int zoomLevel)
+        public void Initialize(int zoomLevel, Action<string> openLocalFileInNppAction)
         {
+            this.openLocalFileInNppAction = openLocalFileInNppAction;
             this.webBrowserPreview = new System.Windows.Forms.WebBrowser();
             this.webBrowserPreview.AllowWebBrowserDrop = false;
             this.webBrowserPreview.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -164,10 +167,7 @@ namespace NppMarkdownPanel.Webbrowser
         {
             if (!e.Url.ToString().StartsWith("about:blank"))
             {
-                e.Cancel = true;
-                var p = new Process();
-                p.StartInfo = new ProcessStartInfo(e.Url.ToString());
-                p.Start();
+
             }
             else
             {

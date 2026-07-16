@@ -9,7 +9,7 @@ namespace PanelCommon
 {
     public interface IWebbrowserControl
     {
-        void Initialize(int zoomLevel);
+        void Initialize(int zoomLevel, Action<string> openLocalFileInNppAction);
         void AddToHost(Control host);
         void PrepareContentUpdate(bool preserveVerticalScrollPosition);
         void SetContent(string content, string body, string style, string currentDocumentPath);
