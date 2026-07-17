@@ -8,8 +8,9 @@ Plugin to preview Markdown files in Notepad++
 
 ### Current Version
 
-The current version is **0.9.2** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
+The current version is **0.9.3** it can be found [here](https://github.com/mohzy83/NppMarkdownPanel/releases)
 
+**Please update to version 0.9.3 due to security issuses with all previous versions of the plugin! (see Version-History for mor details)**
 
 ## Prerequisites
 - .NET 4.7.2 or higher
@@ -156,6 +157,10 @@ After that it's possible to use the shortcut to open or close the panel.
 ![shortcut.png](help/shortcut.png "Bind shortcut to toggle function")
 
 ## Version History
+
+### Version 0.9.3 (released 2026-07-17)
+- Security Issue
+	- Fixed: Bug in NppMarkdownPanel that leads to Arbitrary Code Execution [#180](https://github.com/mohzy83/NppMarkdownPanel/issues/180)
 
 ### Version 0.9.2 (released 2026-07-10)
 - Features
@@ -310,6 +315,8 @@ Bugfix release
 | **Markdown icon**                 |             | dcurtis                             | [https://github.com/dcurtis/markdown-mark](https://github.com/dcurtis/markdown-mark)                                   |
 | **markdown-it-github-alerts**     | 1.0.0       | antfu                               | [https://github.com/antfu/markdown-it-github-alerts](https://github.com/antfu/markdown-it-github-alerts)                                   |
 | **ClipboardHelper (HTML Renderer)**	| 1.5.2       | Arthur Teplitzki                    | [https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs](https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs)                                   |
+| **HtmlSanitizer**					| 9.0.892       | Michael Ganss                    | [https://github.com/mganss/htmlsanitizer](https://github.com/mganss/htmlsanitizer)                                   |
+| **AngleSharp**					| 0.17.1       | AngleSharp                   | [https://github.com/anglesharp/anglesharp](https://github.com/anglesharp/anglesharp)                                   |
 
 
 The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)
