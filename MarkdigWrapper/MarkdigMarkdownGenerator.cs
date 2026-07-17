@@ -23,6 +23,8 @@ namespace MarkdigWrapper
         {
             htmlSanitizer.AllowedAttributes.Add("data-line");
             htmlSanitizer.AllowedAttributes.Add("class");
+            htmlSanitizer.AllowedAttributes.Add("id");
+            htmlSanitizer.AllowedSchemes.Add("file");
         }
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
