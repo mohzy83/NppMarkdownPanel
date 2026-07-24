@@ -16,17 +16,29 @@ namespace NppMarkdownPanel.Forms
 {
     public partial class MarkdownPreviewForm : DockingFormBase, IViewerInterface
     {
+        private const string MermaidScriptPlaceholder =
+            "<!-- MERMAID_SCRIPT_PLACEHOLDER -->";
+        private const string OfflineContentSecurityPolicyPlaceholder =
+            "<!-- OFFLINE_CSP_PLACEHOLDER -->";
+
+        private const string MermaidCdnScriptTag =
+            @"<script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>";
+
+        private const string OfflineContentSecurityPolicyMetaTag =
+            @"<meta http-equiv=""Content-Security-Policy"" content=""default-src 'none'; img-src data: file: http://markdownpanel-virtualhost; media-src file: http://markdownpanel-virtualhost; style-src 'unsafe-inline' file: http://markdownpanel-virtualhost; script-src 'unsafe-inline' file: https://markdownpanel-offline.local; font-src data: file: http://markdownpanel-virtualhost; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'""></meta>";
+
         const string DEFAULT_HTML_BASE =
          @"<!DOCTYPE html>
             <html>
                 <head>                    
                     <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
                     <meta http-equiv=""content-type"" content=""text/html; charset=utf-8""></meta>
+                    <!-- OFFLINE_CSP_PLACEHOLDER -->
                     <title>{0}</title>
                     <style type=""text/css"">
                     {1}
                     </style>
-                    <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
+                    <!-- MERMAID_SCRIPT_PLACEHOLDER -->
                     <script>
                     if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
                     </script>
@@ -46,11 +58,12 @@ namespace NppMarkdownPanel.Forms
                 <head>                    
                     <meta http-equiv=""X-UA-Compatible"" content=""IE=edge""></meta>
                     <meta http-equiv=""content-type"" content=""text/html; charset=utf-8""></meta>
+                    <!-- OFFLINE_CSP_PLACEHOLDER -->
                     <title>{0}</title>
                     <style type=""text/css"">
                     {1}
                     </style>
-                    <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
+                    <!-- MERMAID_SCRIPT_PLACEHOLDER -->
                     <script>
                     if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
                     </script>
@@ -143,6 +156,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
         private IWebbrowserControl webbrowserControl;
         private IWebbrowserControl webview1Instance;
         private IWebbrowserControl webview2Instance;
+        private bool? webview2OfflineMode;
+        private string webview2OfflineMermaidScriptFileName;
         private bool cleanupStarted;
         private Action<int> checkboxToggleHandler;
         private Action<int> radioToggleHandler;
@@ -165,8 +180,30 @@ OUTLINE_SCRIPT_PLACEHOLDER
             }
         }
 
-        public void UpdateSettings(Settings newSettings, Action<string> openLocalFileInNppAction)
+        public void UpdateSettings(
+            Settings newSettings,
+            Action<string> openLocalFileInNppAction)
         {
+            bool edgeSettingsChanged =
+                webview2Instance != null &&
+                (webview2OfflineMode != newSettings.OfflineMode ||
+                 !String.Equals(
+                     webview2OfflineMermaidScriptFileName,
+                     newSettings.OfflineMermaidScriptFileName,
+                     StringComparison.OrdinalIgnoreCase));
+
+            if (edgeSettingsChanged)
+            {
+                IWebbrowserControl oldEdgeInstance = webview2Instance;
+                oldEdgeInstance.Dispose();
+                webview2Instance = null;
+                webview2OfflineMode = null;
+                webview2OfflineMermaidScriptFileName = null;
+
+                if (ReferenceEquals(webbrowserControl, oldEdgeInstance))
+                    webbrowserControl = null;
+            }
+
             this.settings = newSettings;
 
             var isDarkModeEnabled = newSettings.IsDarkModeEnabled;
@@ -179,9 +216,6 @@ OUTLINE_SCRIPT_PLACEHOLDER
                     tsItem.ForeColor = Color.White;
                 }
 
-                //btnSaveWithLightTheme.ForeColor = Color.White;
-
-                // Footer
                 toolStripStatusLabel1.ForeColor = Color.White;
                 footerStatusStrip.BackColor = Color.Black;
             }
@@ -194,9 +228,6 @@ OUTLINE_SCRIPT_PLACEHOLDER
                     tsItem.ForeColor = SystemColors.ControlText;
                 }
 
-                //btnSaveWithLightTheme.ForeColor = SystemColors.ControlText;
-
-                // Footer
                 footerStatusStrip.BackColor = SystemColors.Control;
                 toolStripStatusLabel1.ForeColor = SystemColors.ControlText;
             }
@@ -204,11 +235,12 @@ OUTLINE_SCRIPT_PLACEHOLDER
             tbPreview.Visible = newSettings.ShowToolbar;
             footerStatusStrip.Visible = newSettings.ShowStatusbar;
 
-            if (webbrowserControl != null && webbrowserControl.GetRenderingEngineName() != settings.RenderingEngine)
+            if (webbrowserControl == null ||
+                webbrowserControl.GetRenderingEngineName() !=
+                    settings.RenderingEngine)
             {
                 InitRenderingEngine(settings, openLocalFileInNppAction);
             }
-
         }
 
         private MarkdownService markdownService;
@@ -256,9 +288,16 @@ OUTLINE_SCRIPT_PLACEHOLDER
             {
                 if (webview2Instance == null)
                 {
-                    webbrowserControl = new Webview2WebbrowserControl();
-                    webbrowserControl.Initialize(newSettings.ZoomLevel, openLocalFileInNppAction);
+                    webbrowserControl = new Webview2WebbrowserControl(
+                        newSettings.OfflineMode,
+                        newSettings.OfflineMermaidScriptFileName);
+                    webbrowserControl.Initialize(
+                        newSettings.ZoomLevel,
+                        openLocalFileInNppAction);
                     webview2Instance = webbrowserControl;
+                    webview2OfflineMode = newSettings.OfflineMode;
+                    webview2OfflineMermaidScriptFileName =
+                        newSettings.OfflineMermaidScriptFileName;
                 }
                 else
                 {
@@ -273,37 +312,140 @@ OUTLINE_SCRIPT_PLACEHOLDER
             webbrowserControl.RadioToggleAction = radioToggleHandler;
         }
 
-        private RenderResult RenderHtmlInternal(string currentText, string filepath)
+        private RenderResult RenderHtmlInternal(
+            string currentText,
+            string filepath)
         {
             var defaultBodyStyle = "";
             var markdownStyleContent = GetCssContent();
-            var htmlTemplate = settings.ShowOutline ? OUTLINE_HTML_BASE : DEFAULT_HTML_BASE;
+            var htmlTemplate =
+                settings.ShowOutline ? OUTLINE_HTML_BASE : DEFAULT_HTML_BASE;
 
             if (!IsValidFileExtension(currentFilePath))
             {
-                var invalidExtensionMessageBody = string.Format(MSG_NO_SUPPORTED_FILE_EXT, Path.GetFileName(filepath), settings.SupportedFileExt);
-                var invalidExtensionMessage = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, invalidExtensionMessageBody);
-                if (settings.ShowOutline)
-                    invalidExtensionMessage = InjectOutlineScript(invalidExtensionMessage);
+                var invalidExtensionMessageBody = string.Format(
+                    MSG_NO_SUPPORTED_FILE_EXT,
+                    Path.GetFileName(filepath),
+                    settings.SupportedFileExt);
+                var invalidExtensionHtml = string.Format(
+                    htmlTemplate,
+                    Path.GetFileName(filepath),
+                    markdownStyleContent,
+                    defaultBodyStyle,
+                    invalidExtensionMessageBody);
 
-                return new RenderResult(invalidExtensionMessage, invalidExtensionMessage, invalidExtensionMessageBody, markdownStyleContent, invalidExtensionMessage);
+                if (settings.ShowOutline)
+                    invalidExtensionHtml =
+                        InjectOutlineScript(invalidExtensionHtml);
+
+                var invalidExtensionBrowser =
+                    ApplyWebResources(invalidExtensionHtml, true);
+                var invalidExtensionExport =
+                    ApplyWebResources(invalidExtensionHtml, false);
+
+                return new RenderResult(
+                    invalidExtensionBrowser,
+                    invalidExtensionExport,
+                    invalidExtensionMessageBody,
+                    markdownStyleContent,
+                    invalidExtensionExport);
             }
 
-            var resultForBrowser = markdownService.ConvertToHtml(currentText, filepath, true);
-            var resultForExport = markdownService.ConvertToHtml(currentText, null, false);
+            var resultForBrowser =
+                markdownService.ConvertToHtml(currentText, filepath, true);
+            var resultForExport =
+                markdownService.ConvertToHtml(currentText, null, false);
 
-            var markdownHtmlBrowser = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForBrowser);
-            var markdownHtmlFileExport = string.Format(htmlTemplate, Path.GetFileName(filepath), markdownStyleContent, defaultBodyStyle, resultForExport);
-            var markdownHtmlFileExportWithLightTheme = string.Format(htmlTemplate, Path.GetFileName(filepath), GetCssContent(true), defaultBodyStyle, resultForExport);
+            var markdownHtmlBrowser = string.Format(
+                htmlTemplate,
+                Path.GetFileName(filepath),
+                markdownStyleContent,
+                defaultBodyStyle,
+                resultForBrowser);
+            var markdownHtmlFileExport = string.Format(
+                htmlTemplate,
+                Path.GetFileName(filepath),
+                markdownStyleContent,
+                defaultBodyStyle,
+                resultForExport);
+            var markdownHtmlFileExportWithLightTheme = string.Format(
+                htmlTemplate,
+                Path.GetFileName(filepath),
+                GetCssContent(true),
+                defaultBodyStyle,
+                resultForExport);
 
             if (settings.ShowOutline)
             {
-                markdownHtmlBrowser = InjectOutlineScript(markdownHtmlBrowser);
-                markdownHtmlFileExport = InjectOutlineScript(markdownHtmlFileExport);
-                markdownHtmlFileExportWithLightTheme = InjectOutlineScript(markdownHtmlFileExportWithLightTheme);
+                markdownHtmlBrowser =
+                    InjectOutlineScript(markdownHtmlBrowser);
+                markdownHtmlFileExport =
+                    InjectOutlineScript(markdownHtmlFileExport);
+                markdownHtmlFileExportWithLightTheme =
+                    InjectOutlineScript(
+                        markdownHtmlFileExportWithLightTheme);
             }
 
-            return new RenderResult(markdownHtmlBrowser, markdownHtmlFileExport, resultForBrowser, markdownStyleContent, markdownHtmlFileExportWithLightTheme);
+            markdownHtmlBrowser =
+                ApplyWebResources(markdownHtmlBrowser, true);
+            markdownHtmlFileExport =
+                ApplyWebResources(markdownHtmlFileExport, false);
+            markdownHtmlFileExportWithLightTheme =
+                ApplyWebResources(
+                    markdownHtmlFileExportWithLightTheme,
+                    false);
+
+            return new RenderResult(
+                markdownHtmlBrowser,
+                markdownHtmlFileExport,
+                resultForBrowser,
+                markdownStyleContent,
+                markdownHtmlFileExportWithLightTheme);
+        }
+
+        private string ApplyWebResources(
+            string html,
+            bool forBrowserPreview)
+        {
+            string mermaidScriptTag =
+                GetMermaidScriptTag(forBrowserPreview);
+            string contentSecurityPolicy =
+                settings.OfflineMode
+                    ? OfflineContentSecurityPolicyMetaTag
+                    : String.Empty;
+
+            return html
+                .Replace(
+                    MermaidScriptPlaceholder,
+                    mermaidScriptTag)
+                .Replace(
+                    OfflineContentSecurityPolicyPlaceholder,
+                    contentSecurityPolicy);
+        }
+
+        private string GetMermaidScriptTag(bool forBrowserPreview)
+        {
+            if (!settings.OfflineMode)
+                return MermaidCdnScriptTag;
+
+            string localMermaidScript;
+            if (!WebviewResourceConstants.TryGetExistingLocalFile(
+                settings.OfflineMermaidScriptFileName,
+                out localMermaidScript))
+            {
+                return "<!-- Mermaid disabled: no safe local script " +
+                    "configured for Offline-mode. -->";
+            }
+
+            string scriptUrl = forBrowserPreview
+                ? WebviewResourceConstants.GetOfflineMermaidVirtualUrl(
+                    localMermaidScript)
+                : new Uri(
+                    localMermaidScript,
+                    UriKind.Absolute).AbsoluteUri;
+
+            return "<script src=\"" + scriptUrl +
+                "\" onerror=\"this.remove();\"></script>";
         }
 
         private string GetCssContent(bool forceLightTheme = false)
@@ -497,6 +639,8 @@ OUTLINE_SCRIPT_PLACEHOLDER
             {
                 webview2Instance.Dispose();
                 webview2Instance = null;
+                webview2OfflineMode = null;
+                webview2OfflineMermaidScriptFileName = null;
             }
         }
 
