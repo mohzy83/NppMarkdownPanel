@@ -30,6 +30,8 @@ namespace NppMarkdownPanel.Entities
         public bool AutoShowPanel { get; set; }
         public bool EnableThreeStateToggle { get; set; }
         public bool ShowOutline { get; set; }
+        public bool OfflineMode { get; set; }
+        public string OfflineMermaidScriptFileName { get; set; }
 
         public string PreProcessorCommandFilename { get; set; }
         public string PreProcessorArguments { get; set; }

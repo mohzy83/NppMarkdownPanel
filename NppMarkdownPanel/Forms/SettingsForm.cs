@@ -1,5 +1,8 @@
 ﻿using NppMarkdownPanel.Entities;
+using PanelCommon;
 using System;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace NppMarkdownPanel.Forms
@@ -18,6 +21,14 @@ namespace NppMarkdownPanel.Forms
         public bool ShowStatusbar { get; set; }
         public bool EnableThreeStateToggle { get; set; }
         public string RenderingEngine { get; set; }
+        public bool OfflineMode { get; set; }
+        public string OfflineMermaidScriptFileName { get; set; }
+
+        private GroupBox gbOfflineMode;
+        private CheckBox cbOfflineMode;
+        private Label lblOfflineMermaidScript;
+        private TextBox tbOfflineMermaidScript;
+        private Button btnChooseOfflineMermaidScript;
 
 
         public SettingsForm(Settings settings)
@@ -34,8 +45,12 @@ namespace NppMarkdownPanel.Forms
             AllowAllExtensions = settings.AllowAllExtensions;
             SupportFilesWithNoExt = settings.SupportFilesWithNoExt;
             EnableThreeStateToggle = settings.EnableThreeStateToggle;
+            OfflineMode = settings.OfflineMode;
+            OfflineMermaidScriptFileName =
+                settings.OfflineMermaidScriptFileName ?? String.Empty;
 
             InitializeComponent();
+            InitializeOfflineModeControls();
 
             trackBar1.Value = ZoomLevel;
             lblZoomValue.Text = $"{ZoomLevel}%";
@@ -60,6 +75,161 @@ namespace NppMarkdownPanel.Forms
             }
         }
 
+        private void InitializeOfflineModeControls()
+        {
+            const int addedHeight = 110;
+
+            SuspendLayout();
+            ClientSize = new Size(ClientSize.Width, ClientSize.Height + addedHeight);
+
+            gbOfflineMode = new GroupBox();
+            gbOfflineMode.Anchor =
+                AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            gbOfflineMode.Location = new Point(12, 583);
+            gbOfflineMode.Name = "gbOfflineMode";
+            gbOfflineMode.Size = new Size(672, 98);
+            gbOfflineMode.TabIndex = 29;
+            gbOfflineMode.TabStop = false;
+            gbOfflineMode.Text = "WebView2 Offline-mode";
+
+            cbOfflineMode = new CheckBox();
+            cbOfflineMode.AutoSize = true;
+            cbOfflineMode.Location = new Point(12, 23);
+            cbOfflineMode.Name = "cbOfflineMode";
+            cbOfflineMode.Size = new Size(399, 21);
+            cbOfflineMode.TabIndex = 0;
+            cbOfflineMode.Text =
+                "Block non-local WebView2 requests and background networking";
+            cbOfflineMode.UseVisualStyleBackColor = true;
+            cbOfflineMode.CheckedChanged += cbOfflineMode_CheckedChanged;
+
+            lblOfflineMermaidScript = new Label();
+            lblOfflineMermaidScript.AutoSize = true;
+            lblOfflineMermaidScript.Location = new Point(12, 62);
+            lblOfflineMermaidScript.Name = "lblOfflineMermaidScript";
+            lblOfflineMermaidScript.Size = new Size(151, 17);
+            lblOfflineMermaidScript.TabIndex = 1;
+            lblOfflineMermaidScript.Text = "Local Mermaid JS file:";
+
+            tbOfflineMermaidScript = new TextBox();
+            tbOfflineMermaidScript.Anchor =
+                AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            tbOfflineMermaidScript.Location = new Point(170, 59);
+            tbOfflineMermaidScript.Name = "tbOfflineMermaidScript";
+            tbOfflineMermaidScript.Size = new Size(444, 25);
+            tbOfflineMermaidScript.TabIndex = 2;
+            tbOfflineMermaidScript.TextChanged +=
+                tbOfflineMermaidScript_TextChanged;
+
+            btnChooseOfflineMermaidScript = new Button();
+            btnChooseOfflineMermaidScript.Anchor =
+                AnchorStyles.Right | AnchorStyles.Top;
+            btnChooseOfflineMermaidScript.Location = new Point(620, 57);
+            btnChooseOfflineMermaidScript.Name =
+                "btnChooseOfflineMermaidScript";
+            btnChooseOfflineMermaidScript.Size = new Size(39, 27);
+            btnChooseOfflineMermaidScript.TabIndex = 3;
+            btnChooseOfflineMermaidScript.Text = "...";
+            btnChooseOfflineMermaidScript.UseVisualStyleBackColor = true;
+            btnChooseOfflineMermaidScript.Click +=
+                btnChooseOfflineMermaidScript_Click;
+
+            gbOfflineMode.Controls.Add(cbOfflineMode);
+            gbOfflineMode.Controls.Add(lblOfflineMermaidScript);
+            gbOfflineMode.Controls.Add(tbOfflineMermaidScript);
+            gbOfflineMode.Controls.Add(btnChooseOfflineMermaidScript);
+            Controls.Add(gbOfflineMode);
+
+            cbOfflineMode.Checked = OfflineMode;
+            tbOfflineMermaidScript.Text = OfflineMermaidScriptFileName;
+            UpdateOfflineModeControls();
+
+            ResumeLayout(false);
+            PerformLayout();
+        }
+
+        private void cbOfflineMode_CheckedChanged(object sender, EventArgs e)
+        {
+            OfflineMode = cbOfflineMode.Checked;
+            UpdateOfflineModeControls();
+        }
+
+        private void tbOfflineMermaidScript_TextChanged(
+            object sender,
+            EventArgs e)
+        {
+            OfflineMermaidScriptFileName = tbOfflineMermaidScript.Text;
+        }
+
+        private void btnChooseOfflineMermaidScript_Click(
+            object sender,
+            EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter =
+                    "JavaScript files (*.js)|*.js|All files (*.*)|*.*";
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    tbOfflineMermaidScript.Text = openFileDialog.FileName;
+                }
+            }
+        }
+
+        private void UpdateOfflineModeControls()
+        {
+            bool localScriptEnabled = OfflineMode;
+
+            lblOfflineMermaidScript.Enabled = localScriptEnabled;
+            tbOfflineMermaidScript.Enabled = localScriptEnabled;
+            btnChooseOfflineMermaidScript.Enabled = localScriptEnabled;
+        }
+
+        private bool ValidateOfflineModeSettings()
+        {
+            if (!OfflineMode ||
+                String.IsNullOrWhiteSpace(tbOfflineMermaidScript.Text))
+            {
+                OfflineMermaidScriptFileName =
+                    tbOfflineMermaidScript.Text.Trim();
+                return true;
+            }
+
+            string fullPath;
+            if (!WebviewResourceConstants.TryGetExistingLocalFile(
+                tbOfflineMermaidScript.Text,
+                out fullPath))
+            {
+                MessageBox.Show(
+                    "The local Mermaid JavaScript file must be an existing " +
+                    "file on a local drive. UNC paths and mapped network " +
+                    "drives are not allowed in Offline-mode.",
+                    "Invalid Offline-mode Mermaid File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (!String.Equals(
+                Path.GetExtension(fullPath),
+                ".js",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show(
+                    "The local Mermaid file must have a .js extension.",
+                    "Invalid Offline-mode Mermaid File",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return false;
+            }
+
+            OfflineMermaidScriptFileName = fullPath;
+            tbOfflineMermaidScript.Text = fullPath;
+            return true;
+        }
+
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             ZoomLevel = trackBar1.Value;
@@ -77,6 +247,9 @@ namespace NppMarkdownPanel.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (!ValidateOfflineModeSettings())
+                return;
+
             if (!String.IsNullOrEmpty(tbHtmlFile.Text) && String.IsNullOrEmpty(sblInvalidHtmlPath.Text))
             {
                 bool validHtmlPath = Utils.ValidateFileSelection(tbHtmlFile.Text, out string validPath, out string error, "HTML Output");
@@ -221,6 +394,9 @@ namespace NppMarkdownPanel.Forms
             {
                 throw new NotSupportedException("Rendering Engine with id " + comboRenderingEngine.SelectedIndex + " not supported!");
             }
+
+            if (cbOfflineMode != null)
+                UpdateOfflineModeControls();
         }
 
         private void cbAllowAllExtensions_CheckedChanged(object sender, EventArgs e)
