@@ -107,6 +107,8 @@ namespace NppMarkdownPanel
             settings.EnableThreeStateToggle = PluginUtils.ReadIniBool("Options", "EnableThreeStateToggle", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
             settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
+            settings.OfflineMode = PluginUtils.ReadIniBool("Options", "OfflineMode", iniFilePath, false);
+            settings.OfflineMermaidScriptFileName = Win32.ReadIniValue("Options", "OfflineMermaidScriptFileName", iniFilePath, "");
             return settings;
         }
 
@@ -394,6 +396,8 @@ namespace NppMarkdownPanel
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
                 settings.EnableThreeStateToggle = settingsForm.EnableThreeStateToggle;
                 settings.RenderingEngine = settingsForm.RenderingEngine;
+                settings.OfflineMode = settingsForm.OfflineMode;
+                settings.OfflineMermaidScriptFileName = settingsForm.OfflineMermaidScriptFileName;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
                 viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
@@ -485,6 +489,8 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
             Win32.WriteIniValue("Options", "ShowOutline", settings.ShowOutline.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "OfflineMode", settings.OfflineMode.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "OfflineMermaidScriptFileName", settings.OfflineMermaidScriptFileName, iniFilePath);
         }
         private void ShowAboutDialog()
         {
