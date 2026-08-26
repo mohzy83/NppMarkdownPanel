@@ -48,6 +48,11 @@ namespace Webview2Viewer
         private string currentBody;
         private string currentStyle;
 
+        // Set right before a "shell" NavigateToString (see SetContent) when the
+        // real body was stripped out of it for size reasons; consumed by
+        // WebView_NavigationCompleted once the shell has actually loaded.
+        private string pendingBodyInjection;
+
         private string currentDocumentPath;
 
         private bool currentPageHasOutline;
@@ -221,7 +226,7 @@ namespace Webview2Viewer
 
             if (!String.IsNullOrEmpty(currentDocumentPath) && scrollYForFilename.ContainsKey(currentDocumentPath) && scrollYForFilename[currentDocumentPath] > 0)
             {
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync("window.scrollBy(0, " + scrollYForFilename[currentDocumentPath] + " )");
                     if (RenderingDoneAction != null) RenderingDoneAction();
@@ -230,7 +235,17 @@ namespace Webview2Viewer
 
             if (e.IsSuccess)
             {
-                ExecuteWebviewAction(new Action(async () =>
+                if (pendingBodyInjection != null)
+                {
+                    string bodyToInject = pendingBodyInjection;
+                    pendingBodyInjection = null;
+                    ExecuteWebviewAction(new Func<Task>(async () =>
+                    {
+                        await webView.ExecuteScriptAsync(BuildBodyInjectionScript(bodyToInject));
+                    }));
+                }
+
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     // inject JS to listen to the "Scrollend" event
                     string jsScript = @"
@@ -242,17 +257,21 @@ namespace Webview2Viewer
                     await webView.ExecuteScriptAsync(jsScript);
                 }));
 
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync(checkboxToggleScript);
                 }));
 
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync(radioToggleScript);
                 }));
 
                 blockScrollUpdates = false;
+            }
+            else if (pendingBodyInjection != null)
+            {
+                pendingBodyInjection = null;
             }
 
         }
@@ -328,7 +347,7 @@ namespace Webview2Viewer
         {
             if (!IsInitialized()) return;
             if (lineNo <= 0) lineNo = 0;
-            ExecuteWebviewAction(new Action(async () =>
+            ExecuteWebviewAction(new Func<Task>(async () =>
             {
                 await webView.ExecuteScriptAsync(string.Format(scrollScript, lineNo));
             }));
@@ -415,12 +434,10 @@ namespace Webview2Viewer
                 if (currentBody != body)
                 {
                     currentBody = body;
-                    ExecuteWebviewAction(new Action(async () =>
+                    string bodyToInject = currentBody;
+                    ExecuteWebviewAction(new Func<Task>(async () =>
                     {
-                        await webView.ExecuteScriptAsync(
-                            "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}})();" +
-                            "if(typeof mermaid!=='undefined'){mermaid.run();}"
-                        );
+                        await webView.ExecuteScriptAsync(BuildBodyInjectionScript(bodyToInject));
                         await webView.ExecuteScriptAsync(checkboxToggleScript);
                         await webView.ExecuteScriptAsync(radioToggleScript);
                     }));
@@ -428,7 +445,7 @@ namespace Webview2Viewer
                 if (currentStyle != style)
                 {
                     currentStyle = style;
-                    ExecuteWebviewAction(new Action(async () =>
+                    ExecuteWebviewAction(new Func<Task>(async () =>
                     {
                         await webView.ExecuteScriptAsync(
                             "document.head.removeChild(document.head.lastElementChild);\n" +
@@ -444,11 +461,42 @@ namespace Webview2Viewer
             {
                 currentBody = body;
                 currentStyle = style;
+
+                // NavigateToString appears to have an internal size limit: WebView2
+                // silently cancels the navigation (NavigationCompleted fires with
+                // WebErrorStatus == OperationCanceled) once the document gets large
+                // enough - observed right around 32K characters, suspiciously close
+                // to Int16.MaxValue. Once that happens nothing ever retries it, since
+                // currentBody/currentStyle are already updated to the "new" values,
+                // so a later render of the same unchanged text sees no diff and does
+                // nothing - the page is stuck on its previous content permanently.
+                // Route around the limit: navigate to a small shell (everything the
+                // real page has except the body, which is what's actually large) and
+                // inject the body via the same ExecuteScriptAsync mechanism the
+                // in-place update path above uses - already proven to handle bodies
+                // this size without issue.
+                string shellContent = content;
+                if (!String.IsNullOrEmpty(body) && content.Contains(body))
+                {
+                    shellContent = content.Replace(body, "");
+                    pendingBodyInjection = body;
+                }
+                else
+                {
+                    pendingBodyInjection = null;
+                }
+
                 ExecuteWebviewAction(new Action(() =>
                 {
-                    webView.NavigateToString(content);
+                    webView.NavigateToString(shellContent);
                 }));
             }
+        }
+
+        private string BuildBodyInjectionScript(string bodyContent)
+        {
+            return "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(bodyContent) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(bodyContent) + "';}})();" +
+                "if(typeof mermaid!=='undefined'){mermaid.run();}";
         }
 
         public void SetZoomLevel(int zoomLevel)
@@ -682,7 +730,39 @@ namespace Webview2Viewer
             }
             catch (Exception ex)
             {
+                ReportWebviewActionError(ex);
             }
+        }
+
+        // Overload for the (majority of) call sites that pass an async lambda.
+        // An async lambda assigned to a plain Action compiles as "async void":
+        // exceptions thrown after the first await escape the synchronous
+        // Invoke(...) call above entirely (they surface later as unobserved
+        // exceptions on the message loop instead), so the try/catch there
+        // never sees them. Awaiting the Task here means failures in these
+        // WebView2 calls (e.g. ExecuteScriptAsync, NavigateToString) are
+        // actually caught and reported instead of silently doing nothing.
+        private void ExecuteWebviewAction(Func<Task> asyncAction)
+        {
+            if (webView == null) return;
+            webView.Invoke(new Action(async () =>
+            {
+                try
+                {
+                    await asyncAction();
+                }
+                catch (Exception ex)
+                {
+                    ReportWebviewActionError(ex);
+                }
+            }));
+        }
+
+        private void ReportWebviewActionError(Exception ex)
+        {
+            Debug.WriteLine("NppMarkdownPanel WebView2 action failed: " + ex);
+            if (StatusTextChangedAction != null)
+                StatusTextChangedAction("Preview update failed: " + ex.Message);
         }
 
         public bool IsInitialized()
@@ -769,7 +849,7 @@ namespace Webview2Viewer
         public void ExportToPdf(string filePath)
         {
             if (!IsInitialized()) return;
-            ExecuteWebviewAction(new Action(async () =>
+            ExecuteWebviewAction(new Func<Task>(async () =>
             {
                 await webView.CoreWebView2.PrintToPdfAsync(filePath);
             }));

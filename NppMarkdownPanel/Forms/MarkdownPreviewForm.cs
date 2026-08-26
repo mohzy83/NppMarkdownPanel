@@ -321,7 +321,7 @@ OUTLINE_SCRIPT_PLACEHOLDER
             var htmlTemplate =
                 settings.ShowOutline ? OUTLINE_HTML_BASE : DEFAULT_HTML_BASE;
 
-            if (!IsValidFileExtension(currentFilePath))
+            if (!IsValidFileExtension(filepath))
             {
                 var invalidExtensionMessageBody = string.Format(
                     MSG_NO_SUPPORTED_FILE_EXT,
@@ -483,9 +483,15 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    if (!cleanupStarted && myGeneration == renderGeneration)
+                    // Beyond the generation check (which only guards against this task's
+                    // own result being superseded by a later-started render), also require
+                    // that filepath still matches the active file: currentFilePath is a
+                    // mutable field that can be updated (via SetMarkdownFilePath) by a tab
+                    // switch while this background render was still running, independently
+                    // of whether a new render generation has started yet.
+                    if (!cleanupStarted && myGeneration == renderGeneration && filepath == currentFilePath)
                     {
-                        webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
+                        webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, filepath);
                         htmlContentForExport = renderedText.Result.ResultForExport;
                         htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
                         currentMarkdownText = currentText;
