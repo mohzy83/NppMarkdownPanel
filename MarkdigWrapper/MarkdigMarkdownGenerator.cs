@@ -19,6 +19,16 @@ namespace MarkdigWrapper
     {
         private static readonly HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
 
+        // Markdig only treats a line as "blank" (and so ends an open HTML block,
+        // e.g. <details>...</details>) when it has zero characters. A line containing
+        // only spaces/tabs (with an optional trailing \r from a CRLF file) does not
+        // count, so a heading placed right after such a line gets swallowed as raw text
+        // inside the still-open HTML block instead of being parsed as a heading.
+        // Clearing the whitespace keeps line numbers (and therefore data-line/#anchors)
+        // unchanged while making these lines genuinely blank.
+        private static readonly Regex WhitespaceOnlyLineRegex =
+            new Regex(@"(?m)^[ \t]+(?=\r?$)", RegexOptions.Compiled);
+
         public MarkdigMarkdownGenerator()
         {
             htmlSanitizer.AllowedAttributes.Add("data-line");
@@ -29,6 +39,8 @@ namespace MarkdigWrapper
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
         {
+            markDownText = WhitespaceOnlyLineRegex.Replace(markDownText, "");
+
             var sb = new StringBuilder();
             var htmlWriter = new StringWriter(sb);
             var htmlRenderer = new HtmlRenderer(htmlWriter);
