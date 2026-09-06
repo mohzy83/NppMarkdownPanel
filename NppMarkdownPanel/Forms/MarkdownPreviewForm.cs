@@ -30,6 +30,10 @@ namespace NppMarkdownPanel.Forms
                     <script>
                     if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
                     </script>
+                    <script>
+                    window.MathJax = {{ tex: {{ inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }} }};
+                    </script>
+                    <script src=""https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"" onerror=""this.remove();""></script>
                 </head>
                 <body class=""markdown-body"" style=""{2}"">
                 {3}
@@ -54,6 +58,10 @@ namespace NppMarkdownPanel.Forms
                     <script>
                     if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
                     </script>
+                    <script>
+                    window.MathJax = {{ tex: {{ inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] }} }};
+                    </script>
+                    <script src=""https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"" onerror=""this.remove();""></script>
                 </head>
                 <body class=""outline-enabled"" style=""{2}"">
                     <nav id=""outline-sidebar"" class=""outline-sidebar"">
