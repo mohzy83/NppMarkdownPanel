@@ -294,8 +294,16 @@ namespace Webview2Viewer
                             "var style = document.createElement('style');\n" +
                             "style.type = 'text/css'; \n" +
                             "style.textContent = '" + HttpUtility.JavaScriptStringEncode(currentStyle) + "'; \n" +
-                            "document.head.appendChild(style); \n"
+                            "document.head.appendChild(style); \n" +
+                            // Rendered Mermaid diagrams keep their old theme: re-initialize and render them again from the source
+                            "if(typeof mermaid!=='undefined' && document.querySelector('.mermaid')){\n" +
+                            "mermaid.initialize({ startOnLoad: false, theme: (getComputedStyle(document.documentElement).getPropertyValue('--mermaid-theme').trim() || 'default') });\n" +
+                            "var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}\n" +
+                            "mermaid.run();\n" +
+                            "}\n"
                             );
+                        await webView.ExecuteScriptAsync(checkboxToggleScript);
+                        await webView.ExecuteScriptAsync(radioToggleScript);
                     }));
                 }
             }

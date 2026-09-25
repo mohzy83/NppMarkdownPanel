@@ -37,6 +37,13 @@ namespace NppMarkdownPanel.Entities
         public Color EditorBackColor { get; set; }
         public Color EditorForeColor { get; set; }
 
+        // Markdown syntax colors sampled from the editor, Color.Empty if not available
+        public Color HeadingForeColor { get; set; }
+        public Color BoldForeColor { get; set; }
+        public Color ItalicForeColor { get; set; }
+        public Color CodeForeColor { get; set; }
+        public Color LinkForeColor { get; set; }
+
         public bool HasEditorThemeColors()
         {
             return UseNppThemeColors && !EditorBackColor.IsEmpty && !EditorForeColor.IsEmpty;

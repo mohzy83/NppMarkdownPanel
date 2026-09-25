@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TheArtOfDev.HtmlRenderer.WinForms.Utilities;
@@ -28,7 +29,7 @@ namespace NppMarkdownPanel.Forms
                     </style>
                     <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
                     <script>
-                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false, theme: (getComputedStyle(document.documentElement).getPropertyValue('--mermaid-theme').trim() || 'default') }});}}
                     </script>
                 </head>
                 <body class=""markdown-body"" style=""{2}"">
@@ -52,7 +53,7 @@ namespace NppMarkdownPanel.Forms
                     </style>
                     <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
                     <script>
-                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false, theme: (getComputedStyle(document.documentElement).getPropertyValue('--mermaid-theme').trim() || 'default') }});}}
                     </script>
                 </head>
                 <body class=""outline-enabled"" style=""{2}"">
@@ -341,9 +342,38 @@ OUTLINE_SCRIPT_PLACEHOLDER
             if (!forceLightTheme && settings.HasEditorThemeColors())
             {
                 cssContent += GetThemeColorsCss(settings.EditorBackColor, settings.EditorForeColor);
+                cssContent += GetSyntaxColorsCss(settings);
+            }
+
+            if (isDark)
+            {
+                // Dark scrollbars / form controls (WebView2) and dark Mermaid diagrams (read by the page script)
+                cssContent += "\n:root { color-scheme: dark; --mermaid-theme: dark; }\n";
             }
 
             return cssContent;
+        }
+
+        /// <summary>
+        /// CSS for the Markdown element colors sampled from the editor (headings, bold, italic, code, links).
+        /// </summary>
+        private static string GetSyntaxColorsCss(Settings settings)
+        {
+            var css = new StringBuilder();
+            AppendColorRule(css, "h1, h2, h3, h4, h5, h6", settings.HeadingForeColor);
+            AppendColorRule(css, "strong, b", settings.BoldForeColor);
+            AppendColorRule(css, "em, i", settings.ItalicForeColor);
+            AppendColorRule(css, "code, tt", settings.CodeForeColor);
+            AppendColorRule(css, "a", settings.LinkForeColor);
+            return css.ToString();
+        }
+
+        private static void AppendColorRule(StringBuilder css, string selector, Color color)
+        {
+            if (!color.IsEmpty)
+            {
+                css.Append($"{selector} {{ color: {ToCssColor(color)}; }}\n");
+            }
         }
 
         /// <summary>
