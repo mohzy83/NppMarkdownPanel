@@ -62,6 +62,7 @@
             this.cbAllowAllExtensions = new System.Windows.Forms.CheckBox();
             this.cbFilesWithNoExt = new System.Windows.Forms.CheckBox();
             this.cbEnableThreeStateToggle = new System.Windows.Forms.CheckBox();
+            this.cbUseNppThemeColors = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -102,7 +103,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(468, 583);
+            this.btnSave.Location = new System.Drawing.Point(468, 610);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(105, 36);
             this.btnSave.TabIndex = 20;
@@ -114,7 +115,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(579, 583);
+            this.btnCancel.Location = new System.Drawing.Point(579, 610);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(105, 36);
             this.btnCancel.TabIndex = 21;
@@ -420,14 +421,26 @@
             this.cbEnableThreeStateToggle.UseVisualStyleBackColor = true;
             this.cbEnableThreeStateToggle.CheckedChanged += new System.EventHandler(this.cbEnableThreeStateToggle_CheckedChanged);
             // 
+            // cbUseNppThemeColors
+            // 
+            this.cbUseNppThemeColors.AutoSize = true;
+            this.cbUseNppThemeColors.Location = new System.Drawing.Point(170, 583);
+            this.cbUseNppThemeColors.Name = "cbUseNppThemeColors";
+            this.cbUseNppThemeColors.Size = new System.Drawing.Size(317, 21);
+            this.cbUseNppThemeColors.TabIndex = 29;
+            this.cbUseNppThemeColors.Text = "Use Notepad++ theme colors (editor background / foreground)";
+            this.cbUseNppThemeColors.UseVisualStyleBackColor = true;
+            this.cbUseNppThemeColors.CheckedChanged += new System.EventHandler(this.cbUseNppThemeColors_CheckedChanged);
+            // 
             // SettingsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(696, 653);
+            this.ClientSize = new System.Drawing.Size(696, 680);
             this.Controls.Add(this.cbFilesWithNoExt);
             this.Controls.Add(this.cbEnableThreeStateToggle);
+            this.Controls.Add(this.cbUseNppThemeColors);
             this.Controls.Add(this.cbAllowAllExtensions);
             this.Controls.Add(this.comboRenderingEngine);
             this.Controls.Add(this.label6);
@@ -508,5 +521,6 @@
         private System.Windows.Forms.CheckBox cbAllowAllExtensions;
         private System.Windows.Forms.CheckBox cbFilesWithNoExt;
         private System.Windows.Forms.CheckBox cbEnableThreeStateToggle;
+        private System.Windows.Forms.CheckBox cbUseNppThemeColors;
     }
 }

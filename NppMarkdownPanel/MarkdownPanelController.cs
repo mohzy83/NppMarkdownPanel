@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -107,6 +108,8 @@ namespace NppMarkdownPanel
             settings.EnableThreeStateToggle = PluginUtils.ReadIniBool("Options", "EnableThreeStateToggle", iniFilePath);
             settings.RenderingEngine = Win32.ReadIniValue("Options", "RenderingEngine", iniFilePath, Settings.RENDERING_ENGINE_WEBVIEW2_EDGE);
             settings.ShowOutline = PluginUtils.ReadIniBool("Options", "ShowOutline", iniFilePath, false);
+            settings.UseNppThemeColors = PluginUtils.ReadIniBool("Options", "UseNppThemeColors", iniFilePath, true);
+            UpdateEditorThemeColors(settings);
             return settings;
         }
 
@@ -149,8 +152,18 @@ namespace NppMarkdownPanel
             if (notification.Header.Code == (uint)(NppMsg.NPPN_FIRST + 27))
             {
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
+                UpdateEditorThemeColors(settings);
                 viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
                 if (isPanelVisible) RenderMarkdownDirect();
+            }
+            // Theme or styles were changed in the Style Configurator
+            if (notification.Header.Code == (uint)NppMsg.NPPN_WORDSTYLESUPDATED)
+            {
+                if (UpdateEditorThemeColors(settings) && settings.UseNppThemeColors)
+                {
+                    viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
+                    if (isPanelVisible) RenderMarkdownDirect();
+                }
             }
             if (isPanelVisible && notification.Header.Code == (uint)SciMsg.SCN_MODIFIED)
             {
@@ -160,6 +173,11 @@ namespace NppMarkdownPanel
             if (notification.Header.Code == (uint)NppMsg.NPPN_READY)
             {
                 nppReady = true;
+                if (UpdateEditorThemeColors(settings) && settings.UseNppThemeColors && isPanelVisible)
+                {
+                    viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
+                    RenderMarkdownDirect();
+                }
                 var currentFilePath = notepadPPGateway.GetCurrentFilePath();
                 AutoShowOrHidePanel(currentFilePath);
             }
@@ -241,7 +259,60 @@ namespace NppMarkdownPanel
         {
             if (!_disposedValue)
             {
-                viewerInterface.RenderMarkdown(GetCurrentEditorText(), notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+                var text = GetCurrentEditorText();
+                UpdateSyntaxColors(text);
+                viewerInterface.RenderMarkdown(text, notepadPPGateway.GetCurrentFilePath(), preserveVerticalScrollPosition);
+            }
+        }
+
+        private static readonly Regex HeadingRegex = new Regex(@"^#{1,6}[ \t]+(?=\S)", RegexOptions.Multiline);
+        private static readonly Regex BoldRegex = new Regex(@"(?<!\*)\*\*(?=[^\s*])[^\n]*?\*\*");
+        private static readonly Regex ItalicRegex = new Regex(@"(?<![*\w])\*(?=[^\s*])[^*\n]+\*(?!\*)");
+        private static readonly Regex CodeRegex = new Regex(@"(?<!`)`(?=[^`\n])[^`\n]+`(?!`)");
+        private static readonly Regex LinkRegex = new Regex(@"(?<!!)\[(?=[^\]\n])[^\]\n]+\]\([^)\s]+\)");
+
+        /// <summary>
+        /// Samples the colors the editor uses for Markdown elements (headings, bold, italic, code, links)
+        /// by looking up the style of the first occurrence of each element in the current document.
+        /// Works for both the Markdown UDL and lexer based Markdown highlighting.
+        /// </summary>
+        private void UpdateSyntaxColors(string text)
+        {
+            if (!settings.HasEditorThemeColors()) return;
+
+            var gw = scintillaGatewayFactory();
+            settings.HeadingForeColor = SampleSyntaxColor(gw, text, HeadingRegex, m => m.Index + m.Length);
+            settings.BoldForeColor = SampleSyntaxColor(gw, text, BoldRegex, m => m.Index + 2);
+            settings.ItalicForeColor = SampleSyntaxColor(gw, text, ItalicRegex, m => m.Index + 1);
+            settings.CodeForeColor = SampleSyntaxColor(gw, text, CodeRegex, m => m.Index + 1);
+            settings.LinkForeColor = SampleSyntaxColor(gw, text, LinkRegex, m => m.Index + 1);
+        }
+
+        private Color SampleSyntaxColor(IScintillaGateway gw, string text, Regex regex, Func<Match, int> sampleCharIndex)
+        {
+            try
+            {
+                var match = regex.Match(text);
+                if (!match.Success) return Color.Empty;
+
+                // Scintilla positions are byte offsets in the UTF-8 document
+                var pos = Encoding.UTF8.GetByteCount(text.Substring(0, sampleCharIndex(match)));
+                var endStyled = gw.GetEndStyled();
+                if (pos >= endStyled)
+                {
+                    // Not yet styled (outside the visible area)
+                    gw.Colourise(endStyled, pos + 1);
+                }
+
+                var colour = gw.StyleGetFore(gw.GetStyleAt(pos));
+                var color = Color.FromArgb(colour.Red, colour.Green, colour.Blue);
+
+                // Same color as normal text: the language has no special highlighting for this element
+                return color.ToArgb() == settings.EditorForeColor.ToArgb() ? Color.Empty : color;
+            }
+            catch
+            {
+                return Color.Empty;
             }
         }
 
@@ -394,8 +465,10 @@ namespace NppMarkdownPanel
                 settings.AutoShowPanel = settingsForm.AutoShowPanel;
                 settings.EnableThreeStateToggle = settingsForm.EnableThreeStateToggle;
                 settings.RenderingEngine = settingsForm.RenderingEngine;
+                settings.UseNppThemeColors = settingsForm.UseNppThemeColors;
 
                 settings.IsDarkModeEnabled = IsDarkModeEnabled();
+                UpdateEditorThemeColors(settings);
                 viewerInterface.UpdateSettings(settings, OpenLocalFileInNpp);
                 SaveSettings();
                 //Update Preview
@@ -485,6 +558,7 @@ namespace NppMarkdownPanel
             Win32.WriteIniValue("Options", "AllowAllExtensions", settings.AllowAllExtensions.ToString(), iniFilePath);
             Win32.WriteIniValue("Options", "RenderingEngine", settings.RenderingEngine, iniFilePath);
             Win32.WriteIniValue("Options", "ShowOutline", settings.ShowOutline.ToString(), iniFilePath);
+            Win32.WriteIniValue("Options", "UseNppThemeColors", settings.UseNppThemeColors.ToString(), iniFilePath);
         }
         private void ShowAboutDialog()
         {
@@ -702,6 +776,30 @@ namespace NppMarkdownPanel
             // NPPM_ISDARKMODEENABLED (NPPMSG + 107)
             IntPtr ret = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)(Constants.NPPMSG + 107), Unused, Unused);
             return ret.ToInt32() == 1;
+        }
+
+        /// <summary>
+        /// Reads the default editor colors of the active Notepad++ theme.
+        /// Returns true if the colors have changed.
+        /// </summary>
+        private bool UpdateEditorThemeColors(Settings targetSettings)
+        {
+            var backColor = Color.Empty;
+            var foreColor = Color.Empty;
+
+            // Both return a COLORREF (0x00BBGGRR), -1 on failure
+            var back = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEDITORDEFAULTBACKGROUNDCOLOR, Unused, Unused).ToInt32();
+            var fore = Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETEDITORDEFAULTFOREGROUNDCOLOR, Unused, Unused).ToInt32();
+            if (back != -1 && fore != -1 && back != fore)
+            {
+                backColor = ColorTranslator.FromWin32(back);
+                foreColor = ColorTranslator.FromWin32(fore);
+            }
+
+            var changed = targetSettings.EditorBackColor.ToArgb() != backColor.ToArgb() || targetSettings.EditorForeColor.ToArgb() != foreColor.ToArgb();
+            targetSettings.EditorBackColor = backColor;
+            targetSettings.EditorForeColor = foreColor;
+            return changed;
         }
 
         [StructLayout(LayoutKind.Sequential)]

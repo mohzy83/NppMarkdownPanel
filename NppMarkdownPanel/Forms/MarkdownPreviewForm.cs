@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TheArtOfDev.HtmlRenderer.WinForms.Utilities;
@@ -28,7 +29,7 @@ namespace NppMarkdownPanel.Forms
                     </style>
                     <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
                     <script>
-                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false, theme: (getComputedStyle(document.documentElement).getPropertyValue('--mermaid-theme').trim() || 'default') }});}}
                     </script>
                 </head>
                 <body class=""markdown-body"" style=""{2}"">
@@ -52,7 +53,7 @@ namespace NppMarkdownPanel.Forms
                     </style>
                     <script src=""https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"" onerror=""this.remove();""></script>
                     <script>
-                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false }});}}
+                    if(typeof mermaid!=='undefined'){{mermaid.initialize({{ startOnLoad: false, theme: (getComputedStyle(document.documentElement).getPropertyValue('--mermaid-theme').trim() || 'default') }});}}
                     </script>
                 </head>
                 <body class=""outline-enabled"" style=""{2}"">
@@ -170,7 +171,20 @@ OUTLINE_SCRIPT_PLACEHOLDER
             this.settings = newSettings;
 
             var isDarkModeEnabled = newSettings.IsDarkModeEnabled;
-            if (isDarkModeEnabled)
+            if (newSettings.HasEditorThemeColors())
+            {
+                tbPreview.BackColor = newSettings.EditorBackColor;
+
+                foreach (ToolStripItem tsItem in tbPreview.Items)
+                {
+                    tsItem.ForeColor = newSettings.EditorForeColor;
+                }
+
+                // Footer
+                toolStripStatusLabel1.ForeColor = newSettings.EditorForeColor;
+                footerStatusStrip.BackColor = newSettings.EditorBackColor;
+            }
+            else if (isDarkModeEnabled)
             {
                 tbPreview.BackColor = Color.Black;
 
@@ -313,8 +327,9 @@ OUTLINE_SCRIPT_PLACEHOLDER
 
             var assemblyPath = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
 
-            var defaultCss = settings.IsDarkModeEnabled && !forceLightTheme ? Settings.DefaultDarkModeCssFile : Settings.DefaultCssFile;
-            var customCssFile = settings.IsDarkModeEnabled && !forceLightTheme ? settings.CssDarkModeFileName : settings.CssFileName;
+            var isDark = settings.IsPreviewDark() && !forceLightTheme;
+            var defaultCss = isDark ? Settings.DefaultDarkModeCssFile : Settings.DefaultCssFile;
+            var customCssFile = isDark ? settings.CssDarkModeFileName : settings.CssFileName;
             if (File.Exists(customCssFile))
             {
                 cssContent = File.ReadAllText(customCssFile);
@@ -324,7 +339,92 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 cssContent = File.ReadAllText(assemblyPath + "\\" + defaultCss);
             }
 
+            if (!forceLightTheme && settings.HasEditorThemeColors())
+            {
+                cssContent += GetThemeColorsCss(settings.EditorBackColor, settings.EditorForeColor);
+                cssContent += GetSyntaxColorsCss(settings);
+            }
+
+            if (isDark)
+            {
+                // Dark scrollbars / form controls (WebView2) and dark Mermaid diagrams (read by the page script)
+                cssContent += "\n:root { color-scheme: dark; --mermaid-theme: dark; }\n";
+            }
+
             return cssContent;
+        }
+
+        /// <summary>
+        /// CSS for the Markdown element colors sampled from the editor (headings, bold, italic, code, links).
+        /// </summary>
+        private static string GetSyntaxColorsCss(Settings settings)
+        {
+            var css = new StringBuilder();
+            AppendColorRule(css, "h1, h2, h3, h4, h5, h6", settings.HeadingForeColor);
+            AppendColorRule(css, "strong, b", settings.BoldForeColor);
+            AppendColorRule(css, "em, i", settings.ItalicForeColor);
+            AppendColorRule(css, "code, tt", settings.CodeForeColor);
+            AppendColorRule(css, "a", settings.LinkForeColor);
+            return css.ToString();
+        }
+
+        private static void AppendColorRule(StringBuilder css, string selector, Color color)
+        {
+            if (!color.IsEmpty)
+            {
+                css.Append($"{selector} {{ color: {ToCssColor(color)}; }}\n");
+            }
+        }
+
+        /// <summary>
+        /// CSS overrides that apply the Notepad++ theme colors on top of the base stylesheet.
+        /// Accent colors (links, syntax highlighting, alerts) are kept from the base stylesheet.
+        /// </summary>
+        private static string GetThemeColorsCss(Color back, Color fore)
+        {
+            var bg = ToCssColor(back);
+            var fg = ToCssColor(fore);
+            // Slightly shifted background for code blocks, table stripes etc.
+            var surface = ToCssColor(Blend(back, fore, 0.06));
+            var surfaceHover = ToCssColor(Blend(back, fore, 0.12));
+            var border = ToCssColor(Blend(back, fore, 0.25));
+            var muted = ToCssColor(Blend(back, fore, 0.65));
+
+            return $@"
+/* Notepad++ theme colors */
+html, body, .outline-main {{ background-color: {bg}; color: {fg}; }}
+h1, h2, h3, h4, h5, h6 {{ color: {fg}; }}
+h2 {{ border-bottom-color: {border}; }}
+h6, blockquote {{ color: {muted}; }}
+blockquote {{ border-left-color: {border}; }}
+hr {{ border-color: {border}; }}
+table tr {{ background-color: {bg}; border-top-color: {border}; }}
+table tr:nth-child(2n) {{ background-color: {surface}; }}
+table tr th, table tr td {{ border-color: {border}; }}
+code, tt {{ background-color: {surface}; border-color: {border}; }}
+pre, .highlight pre {{ background-color: {surface}; border-color: {border}; }}
+pre code, pre tt {{ background-color: transparent; }}
+.plainText {{ background-color: transparent; color: {fg}; }}
+.outline-sidebar, .outline-header {{ background-color: {surface}; border-color: {border}; }}
+.outline-item, .outline-header {{ color: {muted}; }}
+.outline-item:hover {{ color: {fg}; background-color: {surfaceHover}; }}
+.outline-item.active {{ color: {fg}; background-color: {surfaceHover}; }}
+.outline-toggle {{ background: {surface}; border-color: {border}; color: {muted}; }}
+.outline-toggle:hover {{ background: {surfaceHover}; }}
+";
+        }
+
+        private static Color Blend(Color from, Color to, double amount)
+        {
+            return Color.FromArgb(
+                (int)Math.Round(from.R + (to.R - from.R) * amount),
+                (int)Math.Round(from.G + (to.G - from.G) * amount),
+                (int)Math.Round(from.B + (to.B - from.B) * amount));
+        }
+
+        private static string ToCssColor(Color color)
+        {
+            return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
         }
 
         public void RenderMarkdown(string currentText, string filepath, bool preserveVerticalScrollPosition = true)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,37 @@ namespace NppMarkdownPanel.Entities
         public bool AutoShowPanel { get; set; }
         public bool EnableThreeStateToggle { get; set; }
         public bool ShowOutline { get; set; }
+
+        // Use the editor colors of the active Notepad++ theme (Style Configurator) in the preview
+        public bool UseNppThemeColors { get; set; }
+        public Color EditorBackColor { get; set; }
+        public Color EditorForeColor { get; set; }
+
+        // Markdown syntax colors sampled from the editor, Color.Empty if not available
+        public Color HeadingForeColor { get; set; }
+        public Color BoldForeColor { get; set; }
+        public Color ItalicForeColor { get; set; }
+        public Color CodeForeColor { get; set; }
+        public Color LinkForeColor { get; set; }
+
+        public bool HasEditorThemeColors()
+        {
+            return UseNppThemeColors && !EditorBackColor.IsEmpty && !EditorForeColor.IsEmpty;
+        }
+
+        /// <summary>
+        /// Dark mode for the preview: follows the Notepad++ theme background if theme colors are used,
+        /// otherwise the Notepad++ dark mode setting.
+        /// </summary>
+        public bool IsPreviewDark()
+        {
+            if (HasEditorThemeColors())
+            {
+                var luminance = 0.299 * EditorBackColor.R + 0.587 * EditorBackColor.G + 0.114 * EditorBackColor.B;
+                return luminance < 128;
+            }
+            return IsDarkModeEnabled;
+        }
 
         public string PreProcessorCommandFilename { get; set; }
         public string PreProcessorArguments { get; set; }
