@@ -17,6 +17,7 @@ namespace NppMarkdownPanel.Forms
         public bool AutoShowPanel { get; set; }
         public bool ShowStatusbar { get; set; }
         public bool EnableThreeStateToggle { get; set; }
+        public bool UseNppThemeColors { get; set; }
         public string RenderingEngine { get; set; }
 
 
@@ -34,6 +35,7 @@ namespace NppMarkdownPanel.Forms
             AllowAllExtensions = settings.AllowAllExtensions;
             SupportFilesWithNoExt = settings.SupportFilesWithNoExt;
             EnableThreeStateToggle = settings.EnableThreeStateToggle;
+            UseNppThemeColors = settings.UseNppThemeColors;
 
             InitializeComponent();
 
@@ -49,6 +51,7 @@ namespace NppMarkdownPanel.Forms
             cbAllowAllExtensions.Checked = AllowAllExtensions;
             cbFilesWithNoExt.Checked = SupportFilesWithNoExt;
             cbEnableThreeStateToggle.Checked = EnableThreeStateToggle;
+            cbUseNppThemeColors.Checked = UseNppThemeColors;
 
             if (settings.IsRenderingEngineIE11())
             {
@@ -246,6 +249,11 @@ namespace NppMarkdownPanel.Forms
         private void cbEnableThreeStateToggle_CheckedChanged(object sender, EventArgs e)
         {
             EnableThreeStateToggle = cbEnableThreeStateToggle.Checked;
+        }
+
+        private void cbUseNppThemeColors_CheckedChanged(object sender, EventArgs e)
+        {
+            UseNppThemeColors = cbUseNppThemeColors.Checked;
         }
     }
 }
