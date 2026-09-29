@@ -341,8 +341,25 @@ OUTLINE_SCRIPT_PLACEHOLDER
                 renderTask = new Task<RenderResult>(() => RenderHtmlInternal(currentText, filepath));
                 renderTask.ContinueWith((renderedText) =>
                 {
-                    if (!cleanupStarted && myGeneration == renderGeneration)
+                    if (cleanupStarted || myGeneration != renderGeneration)
+                        return;
+                    try
                     {
+                        if (renderedText.IsFaulted)
+                        {
+                            // The render task failed (CSS read error, external
+                            // pre/post processor, ...). Accessing .Result would
+                            // throw inside the continuation and silently freeze
+                            // the preview on stale content — show an error card
+                            // explaining the failure instead.
+                            var exception = renderedText.Exception;
+                            var reason = exception != null && exception.InnerException != null
+                                ? exception.InnerException.Message
+                                : (exception != null ? exception.Message : "unknown error");
+                            ShowRenderErrorCard(reason);
+                            return;
+                        }
+
                         webbrowserControl.SetContent(renderedText.Result.ResultForBrowser, renderedText.Result.ResultBody, renderedText.Result.ResultStyle, currentFilePath);
                         htmlContentForExport = renderedText.Result.ResultForExport;
                         htmlContentForExportWithLightTheme = renderedText.Result.ResultForExportWithLightTheme;
@@ -358,6 +375,12 @@ OUTLINE_SCRIPT_PLACEHOLDER
                         }
                         webbrowserControl.SetZoomLevel(settings.ZoomLevel);
                     }
+                    catch (Exception)
+                    {
+                        // The continuation must never throw — an unhandled
+                        // exception here would drop this and all subsequent
+                        // preview updates.
+                    }
 
                 }, context);
                 renderTask.Start();
@@ -371,7 +394,28 @@ OUTLINE_SCRIPT_PLACEHOLDER
         }
 
         /// <summary>
-        /// Makes and displays a screenshot of the current browser content to prevent it from flickering 
+        /// Shows a render-failure card replacing the preview content, so the
+        /// user sees why the preview stopped updating instead of being left
+        /// on stale content. The body keeps the markdown-body class so the
+        /// next successful render can seamlessly use the incremental path.
+        /// </summary>
+        private void ShowRenderErrorCard(string reason)
+        {
+            const string cardStyle = "body{margin:0;padding:16px;background:#fff;}";
+            var encoded = System.Net.WebUtility.HtmlEncode(reason ?? "");
+            var body = "<div style=\"max-width:680px;margin:2em auto;padding:12px 18px;border:1px solid #d9534f;" +
+                       "border-radius:6px;background:#fdf2f2;color:#333;font-family:'Segoe UI',Arial,sans-serif;\">" +
+                       "<h3 style=\"margin:0 0 8px 0;color:#a94442;font-size:15px;\">Markdown render error</h3>" +
+                       "<pre style=\"white-space:pre-wrap;margin:0;font-family:Consolas,'Courier New',monospace;" +
+                       "font-size:12px;color:#666;\">" + encoded + "</pre></div>";
+            var doc = "<!DOCTYPE html><html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
+                      "<style type=\"text/css\" id=\"md-preview-style\">" + cardStyle + "</style>" +
+                      "</head><body class=\"markdown-body\">" + body + "</body></html>";
+            webbrowserControl.SetContent(doc, body, cardStyle, currentFilePath);
+        }
+
+        /// <summary>
+        /// Makes and displays a screenshot of the current browser content to prevent it from flickering
         /// while loading updated content
         /// </summary>
         private void MakeAndDisplayScreenShot()
