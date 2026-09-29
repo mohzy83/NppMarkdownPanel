@@ -330,27 +330,57 @@ namespace Webview2Viewer
 
         void OnWebBrowser_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
-            // Allow same-document fragment navigations (#anchor links)
-            if (e.Uri.ToString().Contains("#"))
+            var navUri = e.Uri.ToString();
+
+            // Same-document fragment navigations (#anchor links) on our own
+            // pages. An external URL that happens to carry a '#fragment'
+            // must not qualify, so the origins are checked explicitly.
+            if (navUri.StartsWith("about:blank#")
+                || (navUri.StartsWith("data:") && navUri.Contains("#"))
+                || (navUri.StartsWith(virtualHostProtocol + virtualHostName) && navUri.Contains("#")))
                 return;
 
-            if (e.Uri.ToString().StartsWith("about:blank"))
+            if (navUri.StartsWith("about:blank"))
             {
                 e.Cancel = true;
             }
-            else if (!e.Uri.ToString().StartsWith("data:"))
+            else if (navUri.StartsWith("data:"))
             {
-                var navUri = e.Uri.ToString();
-                if (navUri.StartsWith(virtualHostProtocol + virtualHostName))
+                // NavigateToString delivery — allow.
+            }
+            else if (navUri.StartsWith(virtualHostProtocol + virtualHostName))
+            {
+                // Link to a file next to the document: open it in Notepad++.
+                e.Cancel = true;
+                var currentPath = Path.GetDirectoryName(currentDocumentPath);
+                var localUri = navUri.Replace(virtualHostProtocol + virtualHostName, currentPath);
+                var fragmentPos = localUri.IndexOf('#');
+                if (fragmentPos >= 0) localUri = localUri.Substring(0, fragmentPos);
+                localUri = Uri.UnescapeDataString(localUri);
+                openLocalFileInNppAction(localUri);
+            }
+            else
+            {
+                // Never navigate the preview panel away: it has no address
+                // bar and no back button, so the user would be stuck on a
+                // foreign page (which also runs inside our WebMessage bridge).
+                // Cancel and hand http(s)/mailto to the system browser;
+                // everything else (file://, unknown and OS protocol handlers)
+                // is cancelled without execution.
+                e.Cancel = true;
+                forceFullReload = true;
+                if (navUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                    || navUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase)
+                    || navUri.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase))
                 {
-                    e.Cancel = true;
-                    var currentPath = Path.GetDirectoryName(currentDocumentPath);
-                    navUri = navUri.Replace(virtualHostProtocol + virtualHostName, currentPath);
-                    navUri = Uri.UnescapeDataString(navUri);
-                    openLocalFileInNppAction(navUri); 
-                } else
-                {
-                    forceFullReload = true;
+                    try
+                    {
+                        using (Process.Start(
+                            new ProcessStartInfo(navUri) { UseShellExecute = true })) { }
+                    }
+                    catch (Exception)
+                    {
+                    }
                 }
             }
         }

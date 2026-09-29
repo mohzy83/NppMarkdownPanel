@@ -165,16 +165,32 @@ namespace NppMarkdownPanel.Webbrowser
 
         private void webBrowserPreview_Navigating(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (!e.Url.ToString().StartsWith("about:blank"))
-            {
+            var url = e.Url.ToString();
 
+            if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                // External link: never navigate the preview in-panel (no
+                // address bar, no back button) — cancel and hand it to the
+                // system browser.
+                e.Cancel = true;
+                try
+                {
+                    using (Process.Start(
+                        new ProcessStartInfo(url) { UseShellExecute = true })) { }
+                }
+                catch (Exception)
+                {
+                }
+                return;
             }
-            else
+
+            if (url.StartsWith("about:blank"))
             {
                 // Jump to correct anchor on the page
-                if (e.Url.ToString().Contains("#"))
+                if (url.Contains("#"))
                 {
-                    var urlParts = e.Url.ToString().Split('#');
+                    var urlParts = url.Split('#');
                     e.Cancel = true;
                     var element = webBrowserPreview.Document.GetElementById(urlParts[1]);
                     if (element != null)
@@ -183,7 +199,13 @@ namespace NppMarkdownPanel.Webbrowser
                         element.ScrollIntoView(true);
                     }
                 }
+                return;
             }
+
+            // Everything else (file://, unknown and OS protocol handlers) is
+            // cancelled without execution — same default-deny policy as the
+            // WebView2 control.
+            e.Cancel = true;
         }
 
         private void webBrowserPreview_StatusTextChanged(object sender, EventArgs e)
