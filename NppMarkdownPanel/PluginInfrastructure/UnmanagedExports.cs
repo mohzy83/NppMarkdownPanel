@@ -1,4 +1,4 @@
-﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
+// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 using System;
 using System.Runtime.InteropServices;
 using Kbg.NppPluginNET.PluginInfrastructure;
@@ -18,15 +18,29 @@ namespace Kbg.NppPluginNET
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void setInfo(NppData notepadPlusData)
         {
-            PluginBase.nppData = notepadPlusData;
-            Main.CommandMenuInit();
+            try
+            {
+                PluginBase.nppData = notepadPlusData;
+                Main.CommandMenuInit();
+            }
+            catch
+            {
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getFuncsArray(ref int nbF)
         {
-            nbF = PluginBase._funcItems.Items.Count;
-            return PluginBase._funcItems.NativePointer;
+            try
+            {
+                nbF = PluginBase._funcItems.Items.Count;
+                return PluginBase._funcItems.NativePointer;
+            }
+            catch
+            {
+                nbF = 0;
+                return IntPtr.Zero;
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -39,28 +53,45 @@ namespace Kbg.NppPluginNET
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getName()
         {
-            if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(Main.PluginName);
-            return _ptrPluginName;
+            try
+            {
+                if (_ptrPluginName == IntPtr.Zero)
+                    _ptrPluginName = Marshal.StringToHGlobalUni(Main.PluginName);
+                return _ptrPluginName;
+            }
+            catch
+            {
+                return IntPtr.Zero;
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
-            ScNotification notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
-            if (notification.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
+            try
             {
-                PluginBase._funcItems.RefreshItems();
-                Main.SetToolBarIcon();
+                ScNotification notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
+                if (notification.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
+                {
+                    PluginBase._funcItems.RefreshItems();
+                    Main.SetToolBarIcon();
+                }
+                else if (notification.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
+                {
+                    Main.PluginCleanUp();
+                    if (_ptrPluginName != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(_ptrPluginName);
+                        _ptrPluginName = IntPtr.Zero;
+                    }
+                }
+                else
+                {
+                    Main.OnNotification(notification);
+                }
             }
-            else if (notification.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
+            catch
             {
-                Main.PluginCleanUp();
-                Marshal.FreeHGlobal(_ptrPluginName);
-            }
-            else
-            {
-	            Main.OnNotification(notification);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using Kbg.NppPluginNET.PluginInfrastructure;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using NppMarkdownPanel.Entities;
 using NppMarkdownPanel.Forms;
 using NppMarkdownPanel.Generator;
@@ -51,6 +51,9 @@ namespace NppMarkdownPanel
         private MarkdownPreviewForm previewForm;
         private bool _disposedValue;
         IntPtr _ptrNppTbData;
+        IntPtr _ptrPluginTitle = IntPtr.Zero;
+        IntPtr _ptrModuleName = IntPtr.Zero;
+        IntPtr _ptrAddInfo = IntPtr.Zero;
         private Icon _icon;
         private IntPtr _fullScreenSplitterHandle;
         private double _savedWidthRatio;
@@ -560,14 +563,22 @@ namespace NppMarkdownPanel
             {
                 viewerInterface.InitRenderingEngine(settings, OpenLocalFileInNpp);
 
+                if (_ptrPluginTitle == IntPtr.Zero)
+                    _ptrPluginTitle = Marshal.StringToHGlobalUni(Main.PluginTitle);
+                if (_ptrModuleName == IntPtr.Zero)
+                    _ptrModuleName = Marshal.StringToHGlobalUni($"{Main.ModuleName}.dll");
+                if (_ptrAddInfo == IntPtr.Zero)
+                    _ptrAddInfo = Marshal.StringToHGlobalUni("");
+
                 NppTbData _nppTbData = new NppTbData();
                 _nppTbData.hClient = viewerInterface.Handle;
-                _nppTbData.pszName = Main.PluginTitle;
+                _nppTbData.pszName = _ptrPluginTitle;
                 _nppTbData.dlgID = idMyDlg;
                 _nppTbData.uMask = NppTbMsg.DWS_DF_CONT_RIGHT | NppTbMsg.DWS_ICONTAB | NppTbMsg.DWS_ICONBAR;
                 _icon = ConvertBitmapToIcon(Properties.Resources.markdown_16x16_solid_bmp);
                 _nppTbData.hIconTab = (uint)_icon.Handle;
-                _nppTbData.pszModuleName = $"{Main.ModuleName}.dll";
+                _nppTbData.pszAddInfo = _ptrAddInfo;
+                _nppTbData.pszModuleName = _ptrModuleName;
                 _ptrNppTbData = Marshal.AllocHGlobal(Marshal.SizeOf(_nppTbData));
                 Marshal.StructureToPtr(_nppTbData, _ptrNppTbData, false);
 
@@ -773,9 +784,23 @@ namespace NppMarkdownPanel
                     _icon = null;
                     if (_ptrNppTbData != IntPtr.Zero)
                     {
-                        Marshal.DestroyStructure(_ptrNppTbData, typeof(NppTbData));
                         Marshal.FreeHGlobal(_ptrNppTbData);
                         _ptrNppTbData = IntPtr.Zero;
+                    }
+                    if (_ptrPluginTitle != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(_ptrPluginTitle);
+                        _ptrPluginTitle = IntPtr.Zero;
+                    }
+                    if (_ptrModuleName != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(_ptrModuleName);
+                        _ptrModuleName = IntPtr.Zero;
+                    }
+                    if (_ptrAddInfo != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(_ptrAddInfo);
+                        _ptrAddInfo = IntPtr.Zero;
                     }
                     previewForm?.Cleanup();
                 }

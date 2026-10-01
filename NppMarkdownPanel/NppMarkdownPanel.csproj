@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -68,6 +68,7 @@
     <StartProgram Condition="'$(Platform)'=='x86'">$(MSBuildProgramFiles32)\Notepad++\notepad++.exe</StartProgram>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -155,17 +156,7 @@
   <ItemGroup>
     <None Include="Resources\markdown-16x16-solid.bmp" />
   </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="SHDocVw">
-      <Guid>{EAB22AC0-30C1-11CF-A7EB-0000C05BAE0B}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>1</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
+
   <ItemGroup>
     <None Include="Resources\markdown-16x16-solid-dark.png" />
     <Content Include="Resources\Copy_16x_32.bmp" />
@@ -197,6 +188,9 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <TargetFrameworkSDKToolsDirectory>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\packages\Unmanagedexports.Repack.Upgrade.1.2.1\tasks'))\</TargetFrameworkSDKToolsDirectory>
+  </PropertyGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\packages\Unmanagedexports.Repack.Upgrade.1.2.1\build\UnmanagedExports.Repack.Upgrade.targets" />
   <PropertyGroup>
     <PostBuildEvent>

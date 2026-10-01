@@ -1,4 +1,4 @@
-﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
+// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 //
 // This file should stay in sync with the CPP project file
 // "notepad-plus-plus/PowerEditor/src/WinControls/DockingWnd/Docking.h"
@@ -43,16 +43,16 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     public struct NppTbData
     {
         public IntPtr hClient;            // HWND: client Window Handle
-        public string pszName;            // TCHAR*: name of plugin (shown in window)
+        public IntPtr pszName;            // TCHAR*: name of plugin (shown in window)
         public int dlgID;                // int: a funcItem provides the function pointer to start a dialog. Please parse here these ID
                                          // user modifications
         public NppTbMsg uMask;                // UINT: mask params: look to above defines
         public uint hIconTab;            // HICON: icon for tabs
-        public string pszAddInfo;        // TCHAR*: for plugin to display additional informations
+        public IntPtr pszAddInfo;        // TCHAR*: for plugin to display additional informations
                                          // internal data, do not use !!!
         public RECT rcFloat;            // RECT: floating position
         public int iPrevCont;           // int: stores the privious container (toggling between float and dock)
-        public string pszModuleName;    // const TCHAR*: it's the plugin file name. It's used to identify the plugin
+        public IntPtr pszModuleName;    // const TCHAR*: it's the plugin file name. It's used to identify the plugin
     }
 
     [StructLayout(LayoutKind.Sequential)]

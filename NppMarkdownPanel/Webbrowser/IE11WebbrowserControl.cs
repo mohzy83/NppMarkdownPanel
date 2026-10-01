@@ -1,6 +1,5 @@
-﻿using PanelCommon;
+using PanelCommon;
 using NppMarkdownPanel.Forms;
-using SHDocVw;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -126,11 +125,12 @@ namespace NppMarkdownPanel.Webbrowser
         {
             Application.DoEvents();
 
-            var browserInst = ((SHDocVw.IWebBrowser2)(webBrowserPreview.ActiveXInstance));
-
-            int zoomLevel = zoomLevelVal;
-
-            browserInst.ExecWB(OLECMDID.OLECMDID_OPTICAL_ZOOM, OLECMDEXECOPT.OLECMDEXECOPT_DONTPROMPTUSER, zoomLevel, IntPtr.Zero);
+            dynamic browserInst = webBrowserPreview.ActiveXInstance;
+            if (browserInst != null)
+            {
+                int zoomLevel = zoomLevelVal;
+                browserInst.ExecWB(63, 2, zoomLevel, IntPtr.Zero);
+            }
         }
 
         /// <summary>
@@ -224,8 +224,11 @@ namespace NppMarkdownPanel.Webbrowser
             if (!IsInitialized()) return;
             try
             {
-                var browser = (SHDocVw.IWebBrowser2)webBrowserPreview.ActiveXInstance;
-                browser.ExecWB(OLECMDID.OLECMDID_PRINT, OLECMDEXECOPT.OLECMDEXECOPT_PROMPTUSER, IntPtr.Zero, IntPtr.Zero);
+                dynamic browser = webBrowserPreview.ActiveXInstance;
+                if (browser != null)
+                {
+                    browser.ExecWB(6, 1, IntPtr.Zero, IntPtr.Zero);
+                }
             }
             catch { }
         }
