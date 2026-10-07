@@ -316,7 +316,7 @@ Bugfix release
 | **markdown-it-github-alerts**     | 1.0.0       | antfu                               | [https://github.com/antfu/markdown-it-github-alerts](https://github.com/antfu/markdown-it-github-alerts)                                   |
 | **ClipboardHelper (HTML Renderer)**	| 1.5.2       | Arthur Teplitzki                    | [https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs](https://github.com/ArthurHub/HTML-Renderer/blob/master/Source/HtmlRenderer.WinForms/Utilities/ClipboardHelper.cs)                                   |
 | **HtmlSanitizer**					| 9.0.892       | Michael Ganss                    | [https://github.com/mganss/htmlsanitizer](https://github.com/mganss/htmlsanitizer)                                   |
-| **AngleSharp**					| 0.17.1       | AngleSharp                   | [https://github.com/anglesharp/anglesharp](https://github.com/anglesharp/anglesharp)                                   |
+| **AngleSharp**					| 1.8.3        | AngleSharp                   | [https://github.com/anglesharp/anglesharp](https://github.com/anglesharp/anglesharp)                                   |
 
 
 The plugin uses portions of nea's **MarkdownViewerPlusPlus** Plugin code - [https://github.com/nea/MarkdownViewerPlusPlus](https://github.com/nea/MarkdownViewerPlusPlus)

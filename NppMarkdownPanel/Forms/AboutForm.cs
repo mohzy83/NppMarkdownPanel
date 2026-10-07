@@ -26,7 +26,7 @@ namespace NppMarkdownPanel.Forms
                 "markdown-it-github-alerts 1.0.0 by antfu - \r\nhttps://github.com/antfu/markdown-it-github-alerts\r\n\r\n" +
                 "ClipboardHelper (HTML Renderer) 1.5.2 by Arthur Teplitzki - \r\nhttps://github.com/ArthurHub/HTML-Renderer\r\n\r\n" +
                 "HtmlSanitizer 9.0.892 by Michael Ganss - \r\nhttps://github.com/mganss/htmlsanitizer\r\n\r\n" +
-                "AngleSharp 0.17.1 by AngleSharp - \r\nhttps://github.com/anglesharp/anglesharp\r\n\r\n" +
+                "AngleSharp 1.8.3 by AngleSharp - \r\nhttps://github.com/anglesharp/anglesharp\r\n\r\n" +
                 "The plugin uses portions of nea's MarkdownViewerPlusPlus Plugin code - https://github.com/nea/MarkdownViewerPlusPlus";
 
         public AboutForm()

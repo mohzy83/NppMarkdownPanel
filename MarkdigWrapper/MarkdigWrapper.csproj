@@ -84,11 +84,11 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="AngleSharp">
-      <HintPath>..\packages\AngleSharp.0.17.1\lib\net472\AngleSharp.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.1.8.3\lib\net472\AngleSharp.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="AngleSharp.Css">
-      <HintPath>..\packages\AngleSharp.Css.0.17.0\lib\netstandard2.0\AngleSharp.Css.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.Css.1.1.2\lib\net472\AngleSharp.Css.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Collections.Immutable">
@@ -96,7 +96,7 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System.Text.Encoding.CodePages">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.6.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+      <HintPath>..\packages\System.Text.Encoding.CodePages.8.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
   </ItemGroup>
