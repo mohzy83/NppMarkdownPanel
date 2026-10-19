@@ -19,6 +19,17 @@ namespace MarkdigWrapper
     {
         private static readonly HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
 
+        // Matches \(...\) and \[...\] math delimiters so they can be rewritten into the
+        // $...$ / $$...$$ form before Markdig parses the text (Markdown would otherwise
+        // strip the backslashes as escapes and the math could never be rendered).
+        // Fenced code blocks and inline code spans are matched first and left untouched.
+        private static readonly Regex latexDelimiterRegex = new Regex(
+            @"(?<fence>^(?:```|~~~)[^\n]*\n(?:[\s\S]*?)(?:^(?:```|~~~)[^\n]*$|\z))" +
+            @"|(?<code>`[^`\r\n]*`)" +
+            @"|(?<disp>(?<!\\)\\\[(?<dcontent>[\s\S]*?)(?<!\\)\\\])" +
+            @"|(?<inl>(?<!\\)\\\((?<icontent>[^\r\n]*?)(?<!\\)\\\))",
+            RegexOptions.Multiline);
+
         public MarkdigMarkdownGenerator()
         {
             htmlSanitizer.AllowedAttributes.Add("data-line");
@@ -64,6 +75,7 @@ namespace MarkdigWrapper
 
             try
             {
+                markDownText = ConvertLatexMathDelimiters(markDownText);
                 var document = Markdown.Parse(markDownText, pipeline, null);
 
                 SetLineNoAttributeOnAllBlocks(document);
@@ -85,6 +97,26 @@ namespace MarkdigWrapper
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             result = htmlSanitizer.Sanitize(result);
             return result;
+        }
+
+        /// <summary>
+        /// Rewrites \(...\) and \[...\] math delimiters into $...$ / $$...$$ so that the
+        /// renderer's JavaScript sees them. Markdown would otherwise treat the backslashes
+        /// as escapes and strip them. Fenced code blocks and inline code spans are kept
+        /// verbatim; already-escaped delimiters (double backslash) are not touched.
+        /// </summary>
+        private static string ConvertLatexMathDelimiters(string markdown)
+        {
+            if (String.IsNullOrEmpty(markdown)) return markdown;
+            if (markdown.IndexOf("\\(", StringComparison.Ordinal) < 0 &&
+                markdown.IndexOf("\\[", StringComparison.Ordinal) < 0) return markdown;
+
+            return latexDelimiterRegex.Replace(markdown, match =>
+            {
+                if (match.Groups["disp"].Success) return "$$" + match.Groups["dcontent"].Value + "$$";
+                if (match.Groups["inl"].Success) return "$" + match.Groups["icontent"].Value + "$";
+                return match.Value;
+            });
         }
 
         private void SetLineNoAttributeOnAllBlocks(ContainerBlock rootBlock)

@@ -99,6 +99,17 @@ namespace Webview2Viewer
             if (e.IsSuccess)
             {
                 webViewInitialized = true;
+                try
+                {
+                    // Offline assets (MathJax runtime and the STIX2 font) live next to this
+                    // assembly in the plugin's lib folder; expose them to the preview page.
+                    var assetsRoot = Path.GetDirectoryName(typeof(Webview2WebbrowserControl).Assembly.Location);
+                    webView.CoreWebView2.SetVirtualHostNameToFolderMapping(
+                        "markdownpanel-assets", assetsRoot, CoreWebView2HostResourceAccessKind.Allow);
+                }
+                catch (Exception)
+                {
+                }
                 if (AfterInitCompletedAction != null) AfterInitCompletedAction();
             }
             else
@@ -277,7 +288,10 @@ namespace Webview2Viewer
                     ExecuteWebviewAction(new Action(async () =>
                     {
                         await webView.ExecuteScriptAsync(
-                            "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}})();" +
+                            "(function(){var om=document.getElementById('outline-main');var root=om||document.body;" +
+                            "if(window.clearTypesetMath)window.clearTypesetMath(root);" +
+                            "if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}" +
+                            "if(window.typesetMath)window.typesetMath(root);})();" +
                             "if(typeof mermaid!=='undefined'){mermaid.run();}"
                         );
                         await webView.ExecuteScriptAsync(checkboxToggleScript);

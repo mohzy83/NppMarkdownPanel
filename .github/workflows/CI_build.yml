@@ -14,6 +14,19 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v3
 
+    - name: Vendor math rendering assets (MathJax + STIX2 font, pinned)
+      shell: pwsh
+      run: |
+           $tmp = Join-Path $env:RUNNER_TEMP 'mj'
+           New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+           npm pack mathjax@4.1.3 --pack-destination $tmp --silent
+           npm pack "@mathjax/mathjax-stix2-font@4.1.3" --pack-destination $tmp --silent
+           New-Item -ItemType Directory -Force -Path "NppMarkdownPanel\mathjax-fonts" | Out-Null
+           tar -xzf (Join-Path $tmp 'mathjax-4.1.3.tgz') -C $tmp
+           Move-Item (Join-Path $tmp 'package') "NppMarkdownPanel\mathjax"
+           tar -xzf (Join-Path $tmp 'mathjax-mathjax-stix2-font-4.1.3.tgz') -C $tmp
+           Move-Item (Join-Path $tmp 'package') "NppMarkdownPanel\mathjax-fonts\mathjax-stix2-font"
+
     - name: Build of plugin dll and zip
       working-directory: .
       run: |
