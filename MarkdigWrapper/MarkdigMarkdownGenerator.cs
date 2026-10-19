@@ -25,6 +25,7 @@ namespace MarkdigWrapper
             htmlSanitizer.AllowedAttributes.Add("class");
             htmlSanitizer.AllowedAttributes.Add("id");
             htmlSanitizer.AllowedSchemes.Add("file");
+            htmlSanitizer.AllowedSchemes.Add("data");
         }
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
@@ -84,6 +85,7 @@ namespace MarkdigWrapper
             if (supportEscapeCharsInUris) result = UnescapeImageUris(result);
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             result = htmlSanitizer.Sanitize(result);
+            result = InlineLocalImages(result);
             return result;
         }
 
@@ -179,6 +181,58 @@ namespace MarkdigWrapper
                     return match.Value;
                 }
             });
+        }
+
+        private string InlineLocalImages(string html)
+        {
+            // Inline local image files as base64 data URIs so that images resolve
+            // regardless of their location relative to the document folder (the
+            // WebView2 virtual host only covers the document folder, so images
+            // in parent/absolute folders would otherwise fail to load). This also
+            // makes the preview fully offline and the exported HTML self-contained.
+            var regex = new Regex(@"src\s*=\s*\x22(file:///[^\x22]+)\x22", RegexOptions.IgnoreCase);
+            return regex.Replace(html, m =>
+            {
+                var src = m.Groups[1].Value;
+                try
+                {
+                    var uri = new Uri(src);
+                    var localPath = uri.LocalPath;
+                    if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))
+                        return m.Value;
+                    var fi = new FileInfo(localPath);
+                    if (fi.Length > 5 * 1024 * 1024)
+                        return m.Value;
+                    var mime = MimeFromExtension(fi.Extension.ToLowerInvariant());
+                    if (mime == null)
+                        return m.Value;
+                    var bytes = File.ReadAllBytes(localPath);
+                    var b64 = Convert.ToBase64String(bytes);
+                    return "src=\"data:" + mime + ";base64," + b64 + "\"";
+                }
+                catch
+                {
+                    return m.Value;
+                }
+            });
+        }
+
+        private static string MimeFromExtension(string ext)
+        {
+            switch (ext)
+            {
+                case ".png": return "image/png";
+                case ".jpg":
+                case ".jpeg": return "image/jpeg";
+                case ".gif": return "image/gif";
+                case ".webp": return "image/webp";
+                case ".svg": return "image/svg+xml";
+                case ".bmp": return "image/bmp";
+                case ".ico": return "image/x-icon";
+                case ".tif":
+                case ".tiff": return "image/tiff";
+                default: return null;
+            }
         }
     }
 }
