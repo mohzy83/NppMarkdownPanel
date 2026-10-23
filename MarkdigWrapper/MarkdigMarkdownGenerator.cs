@@ -11,6 +11,7 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.SyntaxHighlighting;
 using MarkdigWrapper.Markdig.YamlFrontMatter;
+using MarkdigWrapper.Markdig;
 using Ganss.Xss;
 
 namespace MarkdigWrapper
@@ -33,7 +34,7 @@ namespace MarkdigWrapper
             var htmlWriter = new StringWriter(sb);
             var htmlRenderer = new HtmlRenderer(htmlWriter);
 
-            var pipeline = new MarkdownPipelineBuilder()
+            var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 // YamlFrontMatter block needs to be parsed with UseYamlFrontMatter()
                 // and is then rendered as code block with UseRenderYamlFrontMatterAsCodeBlock()
@@ -41,8 +42,9 @@ namespace MarkdigWrapper
                 .UseRenderYamlFrontMatterAsCodeBlock()
                 // Syntax Highlighting
                 .UseSyntaxHighlighting()
-                .UsePreciseSourceLocation()
-                .Build();
+                .UsePreciseSourceLocation();
+            pipelineBuilder.Extensions.Add(new PipeTableEmphasisExtension());
+            var pipeline = pipelineBuilder.Build();
             try
             {
                 if (filepath != null)
