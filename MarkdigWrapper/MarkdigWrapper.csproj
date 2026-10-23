@@ -41,6 +41,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Markdig\PipeTableEmphasisExtension.cs" />
     <Compile Include="Markdig\SyntaxHighlighting\StyleToCssWriter.cs" />
     <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockExtensions.cs" />
     <Compile Include="Markdig\YamlFrontMatter\YamlFrontMatterAsCodeBlockHtmlRenderer.cs" />

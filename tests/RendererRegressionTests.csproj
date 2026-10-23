@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <OutputPath>bin\Release\</OutputPath>
+    <AssemblyName>RendererRegressionTests</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Compile Include="RendererRegressionTests.cs" />
+    <ProjectReference Include="..\MarkdigWrapper\MarkdigWrapper.csproj">
+      <Project>{00858D38-B221-40B2-90F4-E029A1AFFE5A}</Project>
+      <Name>MarkdigWrapper</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
