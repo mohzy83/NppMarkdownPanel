@@ -41,6 +41,19 @@ namespace Markdig.SyntaxHighlighting
                 return;
             }
 
+            // ColorCode's Markdown tokenizer matches fenced code blocks with a regex that
+            // backtracks catastrophically:
+            //     ^(```+[ \t]*\w*)((?:[ \t\r\n]|.)*?)(^```+)[ \t]*\r?$
+            // A large ```markdown block (especially one containing nested fences) makes
+            // Colorize() never return. Rendering runs on a background task, so the preview
+            // silently keeps showing the previous document instead of the new one.
+            // Render markdown blocks as plain code instead of highlighting them.
+            if (IsMarkdownLanguage(languageMoniker))
+            {
+                _underlyingRenderer.Write(renderer, obj);
+                return;
+            }
+
             if (_underlyingRenderer != null
                 && ((_underlyingRenderer.BlockMapping != null && _underlyingRenderer.BlockMapping.ContainsKey(languageMoniker))
                     || (_underlyingRenderer.BlocksAsDiv != null && _underlyingRenderer.BlocksAsDiv.Contains(languageMoniker))))
@@ -66,6 +79,13 @@ namespace Markdig.SyntaxHighlighting
 
             renderer.WriteLine(markup);
             renderer.WriteLine("</div>");
+        }
+
+        private static bool IsMarkdownLanguage(string languageMoniker)
+        {
+            var moniker = languageMoniker.Trim();
+            return string.Equals(moniker, "markdown", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(moniker, "md", StringComparison.OrdinalIgnoreCase);
         }
 
         private string ApplySyntaxHighlighting(string languageMoniker, string firstLine, string code)
