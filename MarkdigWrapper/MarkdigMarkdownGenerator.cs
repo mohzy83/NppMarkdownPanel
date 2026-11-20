@@ -17,14 +17,37 @@ namespace MarkdigWrapper
 {
     public class MarkdigMarkdownGenerator
     {
-        private static readonly HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
-
-        public MarkdigMarkdownGenerator()
+        /// <summary>
+        /// Disallowed tags whose content must never be shown. They are removed together with
+        /// their children, while any other disallowed tag (e.g. a custom &lt;INSTRUCTIONS&gt; wrapper)
+        /// is unwrapped so its content stays visible.
+        /// </summary>
+        private static readonly HashSet<string> tagsRemovedWithContent = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            htmlSanitizer.AllowedAttributes.Add("data-line");
-            htmlSanitizer.AllowedAttributes.Add("class");
-            htmlSanitizer.AllowedAttributes.Add("id");
-            htmlSanitizer.AllowedSchemes.Add("file");
+            "script", "style", "template", "noscript", "noembed", "noframes", "xmp", "plaintext",
+            "iframe", "frame", "frameset", "object", "embed", "applet", "param",
+            "svg", "math", "head", "title", "meta", "link", "base"
+        };
+
+        private static readonly HtmlSanitizer htmlSanitizer = CreateHtmlSanitizer();
+
+        private static HtmlSanitizer CreateHtmlSanitizer()
+        {
+            var sanitizer = new HtmlSanitizer();
+            sanitizer.AllowedAttributes.Add("data-line");
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("id");
+            sanitizer.AllowedSchemes.Add("file");
+            // Unwrap unknown tags instead of deleting everything inside them (issue #194)
+            sanitizer.KeepChildNodes = true;
+            sanitizer.RemovingTag += (s, e) =>
+            {
+                if (tagsRemovedWithContent.Contains(e.Tag.LocalName))
+                {
+                    while (e.Tag.HasChildNodes) e.Tag.RemoveChild(e.Tag.FirstChild);
+                }
+            };
+            return sanitizer;
         }
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
