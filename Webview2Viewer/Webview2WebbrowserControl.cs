@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -14,11 +15,29 @@ namespace Webview2Viewer
 {
     public class Webview2WebbrowserControl : IWebbrowserControl, IDisposable
     {
-        const string virtualHostProtocol = "http://";
-        const string virtualHostName = "markdownpanel-virtualhost";
-        const string CONFIG_FOLDER_NAME = "MarkdownPanel";
+        private const string VirtualHostProtocol = "http://";
+        private const string VirtualHostName =
+            WebviewResourceConstants.DocumentVirtualHostName;
+        private const string ConfigFolderName = "MarkdownPanel";
+
+        private const string OfflineBrowserArguments =
+            "--disable-background-networking " +
+            "--disable-component-update " +
+            "--disable-domain-reliability " +
+            "--disable-sync " +
+            "--disable-default-apps " +
+            "--disable-client-side-phishing-detection " +
+            "--disable-dns-prefetch " +
+            "--disable-breakpad " +
+            "--no-first-run " +
+            "--disable-features=OptimizationHints,MediaRouter,Translate," +
+            "AutofillServerCommunication," +
+            "CertificateTransparencyComponentUpdater";
+
         private Microsoft.Web.WebView2.WinForms.WebView2 webView;
         private bool webViewInitialized = false;
+        private readonly bool offlineMode;
+        private readonly string offlineMermaidScriptFileName;
 
         public Action<string> StatusTextChangedAction { get; set; }
         public Action RenderingDoneAction { get; set; }
@@ -29,6 +48,11 @@ namespace Webview2Viewer
         private string currentBody;
         private string currentStyle;
 
+        // Set right before a "shell" NavigateToString (see SetContent) when the
+        // real body was stripped out of it for size reasons; consumed by
+        // WebView_NavigationCompleted once the shell has actually loaded.
+        private string pendingBodyInjection;
+
         private string currentDocumentPath;
 
         private bool currentPageHasOutline;
@@ -37,75 +61,158 @@ namespace Webview2Viewer
         private Action<string> openLocalFileInNppAction;
 
         private CoreWebView2Environment environment = null;
+        private bool documentFolderMappingConfigured;
 
         public Webview2WebbrowserControl()
+            : this(false, null)
         {
+        }
+
+        public Webview2WebbrowserControl(
+            bool offlineMode,
+            string offlineMermaidScriptFileName)
+        {
+            this.offlineMode = offlineMode;
+
+            string localScriptFileName;
+            if (WebviewResourceConstants.TryGetExistingLocalFile(
+                offlineMermaidScriptFileName,
+                out localScriptFileName))
+            {
+                this.offlineMermaidScriptFileName =
+                    localScriptFileName;
+            }
+
             webView = null;
         }
 
         public void Dispose()
         {
-            webView?.Dispose();
-            webView = null;
+            if (webView != null)
+            {
+                webView.Dispose();
+                webView = null;
+            }
+
+            environment = null;
+            webViewInitialized = false;
         }
 
-        public void Initialize(int zoomLevel, Action<string> openLocalFileInNppAction)
+        public async void Initialize(
+            int zoomLevel,
+            Action<string> openLocalFileInNppAction)
         {
             this.openLocalFileInNppAction = openLocalFileInNppAction;
-            var cacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CONFIG_FOLDER_NAME, "webview2");
-            //var props = new Microsoft.Web.WebView2.WinForms.CoreWebView2CreationProperties();
-            //props.UserDataFolder = cacheDir;
-            //props.AdditionalBrowserArguments = "--disable-web-security --allow-file-access-from-files --allow-file-access";
-            webView = new Microsoft.Web.WebView2.WinForms.WebView2();
-            webView.CoreWebView2InitializationCompleted += WebView_CoreWebView2InitializationCompleted;
-            var opt = new CoreWebView2EnvironmentOptions();
 
-            var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            CoreWebView2Environment.CreateAsync(null, cacheDir, opt)
-                    .ContinueWith(envTask =>
-                    {
-                        if (envTask.IsFaulted)
-                        {
-                            return;
-                        }
+            string profileFolderName =
+                offlineMode ? "webview2-offline" : "webview2";
+            string cacheDir = Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.LocalApplicationData),
+                ConfigFolderName,
+                profileFolderName);
 
-                        environment = envTask.Result;
-                        webView.EnsureCoreWebView2Async(environment)
-                            .ContinueWith(ensureTask =>
-                            {
-                                if (ensureTask.IsFaulted)
-                                {
-                                    return;
-                                }
+            webView =
+                new Microsoft.Web.WebView2.WinForms.WebView2();
 
-                                webView.AccessibleName = "webView";
-                                webView.Name = "webView";
-                                webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
-                                webView.Source = new Uri("about:blank", UriKind.Absolute);
-                                webView.Location = new Point(1, 27);
-                                webView.Size = new Size(800, 424);
-                                webView.Dock = DockStyle.Fill;
-                                webView.TabIndex = 0;
-                                webView.NavigationStarting += OnWebBrowser_NavigationStarting;
-                                webView.CoreWebView2.WebMessageReceived += WebView_WebMessageReceived;
-                                webView.NavigationCompleted += WebView_NavigationCompleted;
-                                webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
-                            }, scheduler);
-                    }, scheduler);
+            CoreWebView2EnvironmentOptions options =
+                new CoreWebView2EnvironmentOptions();
+
+            if (offlineMode)
+            {
+                options.AdditionalBrowserArguments =
+                    OfflineBrowserArguments;
+
+                // This property exists in recent WebView2 SDKs. Reflection
+                // keeps the plugin compatible with older SDKs as well.
+                TrySetBooleanProperty(
+                    options,
+                    "IsCustomCrashReportingEnabled",
+                    true);
+            }
+
+            try
+            {
+                environment =
+                    await CoreWebView2Environment.CreateAsync(
+                        null,
+                        cacheDir,
+                        options);
+                await webView.EnsureCoreWebView2Async(environment);
+
+                ConfigureWebView(zoomLevel);
+                webViewInitialized = true;
+
+                Action afterInitialization =
+                    AfterInitCompletedAction;
+                if (afterInitialization != null)
+                    afterInitialization();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "WebView2 Initialization Error: " + ex.Message,
+                    "WebView2 Initialization Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
 
-        private void WebView_CoreWebView2InitializationCompleted(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        private void ConfigureWebView(int zoomLevel)
         {
-            if (e.IsSuccess)
+            webView.AccessibleName = "webView";
+            webView.Name = "webView";
+            webView.ZoomFactor = ConvertToZoomFactor(zoomLevel);
+            webView.Location = new Point(1, 27);
+            webView.Size = new Size(800, 424);
+            webView.Dock = DockStyle.Fill;
+            webView.TabIndex = 0;
+
+            webView.NavigationStarting +=
+                OnWebBrowser_NavigationStarting;
+            webView.CoreWebView2.WebMessageReceived +=
+                WebView_WebMessageReceived;
+            webView.NavigationCompleted +=
+                WebView_NavigationCompleted;
+
+            if (offlineMode)
+                ConfigureOfflineMode();
+
+            webView.Source =
+                new Uri("about:blank", UriKind.Absolute);
+        }
+
+        private void ConfigureOfflineMode()
+        {
+            CoreWebView2 coreWebView = webView.CoreWebView2;
+
+            // Disable SmartScreen URL reputation checks when the installed
+            // WebView2 SDK/runtime exposes the setting.
+            TrySetBooleanProperty(
+                coreWebView.Settings,
+                "IsReputationCheckingRequired",
+                false);
+
+            if (!String.IsNullOrWhiteSpace(
+                offlineMermaidScriptFileName))
             {
-                webViewInitialized = true;
-                if (AfterInitCompletedAction != null) AfterInitCompletedAction();
-            }
-            else
-            {
-                MessageBox.Show("WebView2 Initialization Error: " + e?.InitializationException?.Message, "WebView2 Initialization Error");
+                string scriptDirectory = Path.GetDirectoryName(
+                    offlineMermaidScriptFileName);
+
+                coreWebView.SetVirtualHostNameToFolderMapping(
+                    WebviewResourceConstants
+                        .OfflineAssetsVirtualHostName,
+                    scriptDirectory,
+                    CoreWebView2HostResourceAccessKind.DenyCors);
             }
 
+            coreWebView.AddWebResourceRequestedFilter(
+                "*",
+                CoreWebView2WebResourceContext.All);
+            coreWebView.WebResourceRequested +=
+                CoreWebView2_WebResourceRequested;
+            coreWebView.NewWindowRequested +=
+                CoreWebView2_NewWindowRequested;
         }
 
         public void AddToHost(Control host)
@@ -119,7 +226,7 @@ namespace Webview2Viewer
 
             if (!String.IsNullOrEmpty(currentDocumentPath) && scrollYForFilename.ContainsKey(currentDocumentPath) && scrollYForFilename[currentDocumentPath] > 0)
             {
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync("window.scrollBy(0, " + scrollYForFilename[currentDocumentPath] + " )");
                     if (RenderingDoneAction != null) RenderingDoneAction();
@@ -128,7 +235,17 @@ namespace Webview2Viewer
 
             if (e.IsSuccess)
             {
-                ExecuteWebviewAction(new Action(async () =>
+                if (pendingBodyInjection != null)
+                {
+                    string bodyToInject = pendingBodyInjection;
+                    pendingBodyInjection = null;
+                    ExecuteWebviewAction(new Func<Task>(async () =>
+                    {
+                        await webView.ExecuteScriptAsync(BuildBodyInjectionScript(bodyToInject));
+                    }));
+                }
+
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     // inject JS to listen to the "Scrollend" event
                     string jsScript = @"
@@ -140,17 +257,21 @@ namespace Webview2Viewer
                     await webView.ExecuteScriptAsync(jsScript);
                 }));
 
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync(checkboxToggleScript);
                 }));
 
-                ExecuteWebviewAction(new Action(async () =>
+                ExecuteWebviewAction(new Func<Task>(async () =>
                 {
                     await webView.ExecuteScriptAsync(radioToggleScript);
                 }));
 
                 blockScrollUpdates = false;
+            }
+            else if (pendingBodyInjection != null)
+            {
+                pendingBodyInjection = null;
             }
 
         }
@@ -226,7 +347,7 @@ namespace Webview2Viewer
         {
             if (!IsInitialized()) return;
             if (lineNo <= 0) lineNo = 0;
-            ExecuteWebviewAction(new Action(async () =>
+            ExecuteWebviewAction(new Func<Task>(async () =>
             {
                 await webView.ExecuteScriptAsync(string.Format(scrollScript, lineNo));
             }));
@@ -236,11 +357,27 @@ namespace Webview2Viewer
         {
             if (!IsInitialized()) return;
 
-            var currentPath = Path.GetDirectoryName(currentDocumentPath);
-            var replaceFileMapping = "file:///" + currentPath.Replace('\\', '/');
+            string currentPath =
+                Path.GetDirectoryName(currentDocumentPath);
+            bool canMapDocumentFolder =
+                !String.IsNullOrWhiteSpace(currentPath) &&
+                (!offlineMode ||
+                 !WebviewResourceConstants.IsNetworkPath(currentPath));
 
-            content = content.Replace(replaceFileMapping, virtualHostProtocol + virtualHostName);
-            body = body.Replace(replaceFileMapping, virtualHostProtocol + virtualHostName);
+            if (canMapDocumentFolder)
+            {
+                string replaceFileMapping =
+                    "file:///" + currentPath.Replace('\\', '/');
+                string virtualBaseUrl =
+                    VirtualHostProtocol + VirtualHostName;
+
+                content = content.Replace(
+                    replaceFileMapping,
+                    virtualBaseUrl);
+                body = body.Replace(
+                    replaceFileMapping,
+                    virtualBaseUrl);
+            }
 
             var fullReload = false;
             if (forceFullReload)
@@ -252,7 +389,30 @@ namespace Webview2Viewer
             {
                 ExecuteWebviewAction(new Action(() =>
                 {
-                    webView.CoreWebView2.SetVirtualHostNameToFolderMapping(virtualHostName, currentPath, CoreWebView2HostResourceAccessKind.Allow);
+                    if (documentFolderMappingConfigured)
+                    {
+                        webView.CoreWebView2
+                            .ClearVirtualHostNameToFolderMapping(
+                                VirtualHostName);
+                        documentFolderMappingConfigured = false;
+                    }
+
+                    if (canMapDocumentFolder)
+                    {
+                        CoreWebView2HostResourceAccessKind accessKind =
+                            offlineMode
+                                ? CoreWebView2HostResourceAccessKind
+                                    .DenyCors
+                                : CoreWebView2HostResourceAccessKind
+                                    .Allow;
+
+                        webView.CoreWebView2
+                            .SetVirtualHostNameToFolderMapping(
+                                VirtualHostName,
+                                currentPath,
+                                accessKind);
+                        documentFolderMappingConfigured = true;
+                    }
                 }));
                 this.currentDocumentPath = currentDocumentPath;
                 fullReload = true;
@@ -274,12 +434,10 @@ namespace Webview2Viewer
                 if (currentBody != body)
                 {
                     currentBody = body;
-                    ExecuteWebviewAction(new Action(async () =>
+                    string bodyToInject = currentBody;
+                    ExecuteWebviewAction(new Func<Task>(async () =>
                     {
-                        await webView.ExecuteScriptAsync(
-                            "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(currentBody) + "';}})();" +
-                            "if(typeof mermaid!=='undefined'){mermaid.run();}"
-                        );
+                        await webView.ExecuteScriptAsync(BuildBodyInjectionScript(bodyToInject));
                         await webView.ExecuteScriptAsync(checkboxToggleScript);
                         await webView.ExecuteScriptAsync(radioToggleScript);
                     }));
@@ -287,7 +445,7 @@ namespace Webview2Viewer
                 if (currentStyle != style)
                 {
                     currentStyle = style;
-                    ExecuteWebviewAction(new Action(async () =>
+                    ExecuteWebviewAction(new Func<Task>(async () =>
                     {
                         await webView.ExecuteScriptAsync(
                             "document.head.removeChild(document.head.lastElementChild);\n" +
@@ -303,11 +461,42 @@ namespace Webview2Viewer
             {
                 currentBody = body;
                 currentStyle = style;
+
+                // NavigateToString appears to have an internal size limit: WebView2
+                // silently cancels the navigation (NavigationCompleted fires with
+                // WebErrorStatus == OperationCanceled) once the document gets large
+                // enough - observed right around 32K characters, suspiciously close
+                // to Int16.MaxValue. Once that happens nothing ever retries it, since
+                // currentBody/currentStyle are already updated to the "new" values,
+                // so a later render of the same unchanged text sees no diff and does
+                // nothing - the page is stuck on its previous content permanently.
+                // Route around the limit: navigate to a small shell (everything the
+                // real page has except the body, which is what's actually large) and
+                // inject the body via the same ExecuteScriptAsync mechanism the
+                // in-place update path above uses - already proven to handle bodies
+                // this size without issue.
+                string shellContent = content;
+                if (!String.IsNullOrEmpty(body) && content.Contains(body))
+                {
+                    shellContent = content.Replace(body, "");
+                    pendingBodyInjection = body;
+                }
+                else
+                {
+                    pendingBodyInjection = null;
+                }
+
                 ExecuteWebviewAction(new Action(() =>
                 {
-                    webView.NavigateToString(content);
+                    webView.NavigateToString(shellContent);
                 }));
             }
+        }
+
+        private string BuildBodyInjectionScript(string bodyContent)
+        {
+            return "(function(){var om=document.getElementById('outline-main');if(om){om.innerHTML='" + HttpUtility.JavaScriptStringEncode(bodyContent) + "';if(window.buildOutline)window.buildOutline();}else{document.body.innerHTML='" + HttpUtility.JavaScriptStringEncode(bodyContent) + "';}})();" +
+                "if(typeof mermaid!=='undefined'){mermaid.run();}";
         }
 
         public void SetZoomLevel(int zoomLevel)
@@ -328,30 +517,201 @@ namespace Webview2Viewer
             return zoomFactor;
         }
 
-        void OnWebBrowser_NavigationStarting(object sender, CoreWebView2NavigationStartingEventArgs e)
+        void OnWebBrowser_NavigationStarting(
+            object sender,
+            CoreWebView2NavigationStartingEventArgs e)
         {
-            // Allow same-document fragment navigations (#anchor links)
-            if (e.Uri.ToString().Contains("#"))
-                return;
+            string navUri = e.Uri ?? String.Empty;
+            string documentVirtualBaseUrl =
+                VirtualHostProtocol + VirtualHostName;
 
-            if (e.Uri.ToString().StartsWith("about:blank"))
+            if (navUri.StartsWith(
+                documentVirtualBaseUrl,
+                StringComparison.OrdinalIgnoreCase))
             {
                 e.Cancel = true;
-            }
-            else if (!e.Uri.ToString().StartsWith("data:"))
-            {
-                var navUri = e.Uri.ToString();
-                if (navUri.StartsWith(virtualHostProtocol + virtualHostName))
+
+                string currentPath =
+                    Path.GetDirectoryName(currentDocumentPath);
+                if (String.IsNullOrWhiteSpace(currentPath) ||
+                    (offlineMode &&
+                     WebviewResourceConstants.IsNetworkPath(
+                         currentPath)))
                 {
-                    e.Cancel = true;
-                    var currentPath = Path.GetDirectoryName(currentDocumentPath);
-                    navUri = navUri.Replace(virtualHostProtocol + virtualHostName, currentPath);
-                    navUri = Uri.UnescapeDataString(navUri);
-                    openLocalFileInNppAction(navUri); 
-                } else
-                {
-                    forceFullReload = true;
+                    return;
                 }
+
+                string localPath = navUri.Replace(
+                    documentVirtualBaseUrl,
+                    currentPath);
+                localPath = Uri.UnescapeDataString(localPath);
+
+                if (openLocalFileInNppAction != null)
+                    openLocalFileInNppAction(localPath);
+
+                return;
+            }
+
+            Uri parsedUri;
+            if (!Uri.TryCreate(
+                navUri,
+                UriKind.Absolute,
+                out parsedUri))
+            {
+                if (offlineMode)
+                    e.Cancel = true;
+                return;
+            }
+
+            if (String.Equals(
+                parsedUri.Scheme,
+                "about",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (offlineMode && !IsAllowedOfflineUri(parsedUri))
+            {
+                e.Cancel = true;
+                forceFullReload = true;
+                return;
+            }
+
+            if (!String.Equals(
+                parsedUri.Scheme,
+                "data",
+                StringComparison.OrdinalIgnoreCase) &&
+                parsedUri.Fragment.Length == 0)
+            {
+                forceFullReload = true;
+            }
+        }
+
+        private void CoreWebView2_WebResourceRequested(
+            object sender,
+            CoreWebView2WebResourceRequestedEventArgs e)
+        {
+            Uri requestUri;
+            if (Uri.TryCreate(
+                e.Request.Uri,
+                UriKind.Absolute,
+                out requestUri) &&
+                IsAllowedOfflineUri(requestUri))
+            {
+                return;
+            }
+
+            byte[] responseBytes = Encoding.UTF8.GetBytes(
+                "Blocked by NppMarkdownPanel Offline-mode.");
+            MemoryStream responseStream =
+                new MemoryStream(responseBytes, false);
+
+            e.Response = environment.CreateWebResourceResponse(
+                responseStream,
+                403,
+                "Blocked by Offline-mode",
+                "Content-Type: text/plain; charset=utf-8\r\n" +
+                "Cache-Control: no-store\r\n");
+        }
+
+        private void CoreWebView2_NewWindowRequested(
+            object sender,
+            CoreWebView2NewWindowRequestedEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private bool IsAllowedOfflineUri(Uri uri)
+        {
+            if (uri == null)
+                return false;
+
+            string scheme = uri.Scheme;
+
+            if (String.Equals(
+                scheme,
+                Uri.UriSchemeHttp,
+                StringComparison.OrdinalIgnoreCase) ||
+                String.Equals(
+                    scheme,
+                    Uri.UriSchemeHttps,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                if (String.Equals(
+                    uri.Host,
+                    VirtualHostName,
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    return documentFolderMappingConfigured;
+                }
+
+                return String.Equals(
+                    uri.Host,
+                    WebviewResourceConstants
+                        .OfflineAssetsVirtualHostName,
+                    StringComparison.OrdinalIgnoreCase) &&
+                    !String.IsNullOrWhiteSpace(
+                        offlineMermaidScriptFileName);
+            }
+
+            if (String.Equals(
+                scheme,
+                Uri.UriSchemeFile,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return !uri.IsUnc &&
+                    !WebviewResourceConstants.IsNetworkPath(
+                        uri.LocalPath);
+            }
+
+            if (String.Equals(
+                scheme,
+                "about",
+                StringComparison.OrdinalIgnoreCase) ||
+                String.Equals(
+                    scheme,
+                    "data",
+                    StringComparison.OrdinalIgnoreCase) ||
+                String.Equals(
+                    scheme,
+                    "blob",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            // Deny WebSocket, FTP, custom protocols, and every other
+            // unrecognized scheme in Offline-mode.
+            return false;
+        }
+
+        private static void TrySetBooleanProperty(
+            object target,
+            string propertyName,
+            bool value)
+        {
+            if (target == null)
+                return;
+
+            try
+            {
+                var property = target.GetType().GetProperty(
+                    propertyName);
+
+                if (property != null &&
+                    property.CanWrite &&
+                    property.PropertyType == typeof(bool))
+                {
+                    property.SetValue(target, value, null);
+                }
+            }
+            catch (Exception)
+            {
+                // Optional WebView2 properties may not be exposed by an
+                // older installed runtime. Request interception and CSP
+                // remain active regardless.
             }
         }
 
@@ -370,7 +730,39 @@ namespace Webview2Viewer
             }
             catch (Exception ex)
             {
+                ReportWebviewActionError(ex);
             }
+        }
+
+        // Overload for the (majority of) call sites that pass an async lambda.
+        // An async lambda assigned to a plain Action compiles as "async void":
+        // exceptions thrown after the first await escape the synchronous
+        // Invoke(...) call above entirely (they surface later as unobserved
+        // exceptions on the message loop instead), so the try/catch there
+        // never sees them. Awaiting the Task here means failures in these
+        // WebView2 calls (e.g. ExecuteScriptAsync, NavigateToString) are
+        // actually caught and reported instead of silently doing nothing.
+        private void ExecuteWebviewAction(Func<Task> asyncAction)
+        {
+            if (webView == null) return;
+            webView.Invoke(new Action(async () =>
+            {
+                try
+                {
+                    await asyncAction();
+                }
+                catch (Exception ex)
+                {
+                    ReportWebviewActionError(ex);
+                }
+            }));
+        }
+
+        private void ReportWebviewActionError(Exception ex)
+        {
+            Debug.WriteLine("NppMarkdownPanel WebView2 action failed: " + ex);
+            if (StatusTextChangedAction != null)
+                StatusTextChangedAction("Preview update failed: " + ex.Message);
         }
 
         public bool IsInitialized()
@@ -457,7 +849,7 @@ namespace Webview2Viewer
         public void ExportToPdf(string filePath)
         {
             if (!IsInitialized()) return;
-            ExecuteWebviewAction(new Action(async () =>
+            ExecuteWebviewAction(new Func<Task>(async () =>
             {
                 await webView.CoreWebView2.PrintToPdfAsync(filePath);
             }));

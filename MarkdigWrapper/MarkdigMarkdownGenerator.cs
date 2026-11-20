@@ -6,6 +6,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Markdig;
+using Markdig.Extensions.AutoIdentifiers;
+using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
 using Markdig.Syntax;
@@ -19,6 +21,16 @@ namespace MarkdigWrapper
     {
         private static readonly HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
 
+        // Markdig only treats a line as "blank" (and so ends an open HTML block,
+        // e.g. <details>...</details>) when it has zero characters. A line containing
+        // only spaces/tabs (with an optional trailing \r from a CRLF file) does not
+        // count, so a heading placed right after such a line gets swallowed as raw text
+        // inside the still-open HTML block instead of being parsed as a heading.
+        // Clearing the whitespace keeps line numbers (and therefore data-line/#anchors)
+        // unchanged while making these lines genuinely blank.
+        private static readonly Regex WhitespaceOnlyLineRegex =
+            new Regex(@"(?m)^[ \t]+(?=\r?$)", RegexOptions.Compiled);
+
         public MarkdigMarkdownGenerator()
         {
             htmlSanitizer.AllowedAttributes.Add("data-line");
@@ -29,11 +41,13 @@ namespace MarkdigWrapper
 
         public string ConvertToHtml(string markDownText, string filepath, bool supportEscapeCharsInUris)
         {
+            markDownText = WhitespaceOnlyLineRegex.Replace(markDownText, "");
+
             var sb = new StringBuilder();
             var htmlWriter = new StringWriter(sb);
             var htmlRenderer = new HtmlRenderer(htmlWriter);
 
-            var pipeline = new MarkdownPipelineBuilder()
+            var pipelineBuilder = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 // YamlFrontMatter block needs to be parsed with UseYamlFrontMatter()
                 // and is then rendered as code block with UseRenderYamlFrontMatterAsCodeBlock()
@@ -41,8 +55,19 @@ namespace MarkdigWrapper
                 .UseRenderYamlFrontMatterAsCodeBlock()
                 // Syntax Highlighting
                 .UseSyntaxHighlighting()
-                .UsePreciseSourceLocation()
-                .Build();
+                .UsePreciseSourceLocation();
+
+            // Markdig's built-in AutoIdentifierExtension (bundled by UseAdvancedExtensions)
+            // resolves duplicate heading ids by retrying "-1", "-2", "-3"... against a
+            // HashSet until a free one is found, so the Nth heading sharing a base id costs
+            // O(N) - making a document with many (duplicate or not) headings cost O(n^2)
+            // overall. That turns documents with a few hundred+ headings into multi-second
+            // (or worse) parses, which is what made large files appear to hang/not render.
+            // AssignHeadingIdentifiers below replaces it with an O(n) equivalent that
+            // produces identical ids (verified against real documents).
+            pipelineBuilder.Extensions.RemoveAll(ext => ext is AutoIdentifierExtension);
+
+            var pipeline = pipelineBuilder.Build();
             try
             {
                 if (filepath != null)
@@ -66,6 +91,7 @@ namespace MarkdigWrapper
             {
                 var document = Markdown.Parse(markDownText, pipeline, null);
 
+                AssignHeadingIdentifiers(document);
                 SetLineNoAttributeOnAllBlocks(document);
 
                 pipeline.Setup(htmlRenderer);
@@ -85,6 +111,43 @@ namespace MarkdigWrapper
             if (supportEscapeCharsInUris) result = UnescapeAnchorUris(result);
             result = htmlSanitizer.Sanitize(result);
             return result;
+        }
+
+        // Equivalent to Markdig's built-in AutoIdentifierExtension (see the comment where
+        // it's removed from the pipeline above), but O(n) instead of O(n^2): duplicate base
+        // ids are disambiguated by a counter we already know is next, instead of retrying
+        // "-1", "-2", "-3"... against a HashSet until one is free.
+        private void AssignHeadingIdentifiers(MarkdownDocument document)
+        {
+            var usedIds = new Dictionary<string, int>();
+            var stripWriter = new StringWriter();
+            var stripRenderer = new HtmlRenderer(stripWriter) { EnableHtmlForInline = false };
+
+            foreach (var node in document.Descendants())
+            {
+                if (!(node is HeadingBlock heading) || heading.Inline == null) continue;
+
+                stripWriter.GetStringBuilder().Clear();
+                stripRenderer.Render(heading.Inline);
+                var plainText = System.Net.WebUtility.HtmlDecode(stripWriter.ToString());
+                var baseId = LinkHelper.Urilize(plainText, true, false);
+
+                string id;
+                if (usedIds.TryGetValue(baseId, out int count))
+                {
+                    id = baseId + "-" + count;
+                    usedIds[baseId] = count + 1;
+                }
+                else
+                {
+                    id = baseId;
+                    usedIds[baseId] = 1;
+                }
+
+                var attributes = heading.GetAttributes();
+                attributes.Id = id;
+                heading.SetAttributes(attributes);
+            }
         }
 
         private void SetLineNoAttributeOnAllBlocks(ContainerBlock rootBlock)
